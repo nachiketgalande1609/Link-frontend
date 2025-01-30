@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Typography, Avatar, Button, Grid, Paper, Dialog } from "@mui/material";
-import ProfilePagePost from "../features/post/ProfilePagePost";
-import ModalPost from "../features/post/ModalPost";
+import ProfilePagePost from "../component/post/ProfilePagePost";
+import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts } from "../services/api";
 import { useUser } from "../context/userContext";
 

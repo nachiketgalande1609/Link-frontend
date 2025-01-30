@@ -13,7 +13,7 @@ import {
     Add as AddIcon,
 } from "@mui/icons-material";
 
-import CreatePostModal from "./features/post/CreatePostModal";
+import CreatePostModal from "./component/post/CreatePostModal";
 
 import PrivateRoute from "./component/PrivateRoute";
 import PublicRoute from "./component/PublicRoute";

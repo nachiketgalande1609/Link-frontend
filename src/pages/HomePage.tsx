@@ -1,5 +1,5 @@
 import { Container, Grid } from "@mui/material";
-import Post from "../features/post/Post";
+import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
 
