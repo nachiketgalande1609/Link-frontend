@@ -22,7 +22,7 @@ const ProfilePage = () => {
             try {
                 if (user) {
                     const res = await getProfile(user?.id);
-                    setProfileData(res.data); // Assuming res.data contains the profile data
+                    setProfileData(res.data);
                 }
             } catch (error) {
                 console.log(error);
@@ -58,33 +58,7 @@ const ProfilePage = () => {
 
             {/* Display user's posts */}
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Post
-                        username={"Nachiket"}
-                        content={"Hello"}
-                        likes={10}
-                        comments={20}
-                        avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Post
-                        username={"Nachiket"}
-                        content={"Hello"}
-                        likes={10}
-                        comments={20}
-                        avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                    <Post
-                        username={"Nachiket"}
-                        content={"Hello"}
-                        likes={10}
-                        comments={20}
-                        avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"}
-                    />
-                </Grid>
+                <Grid item xs={12} sm={6} md={4}></Grid>
             </Grid>
         </Container>
     );

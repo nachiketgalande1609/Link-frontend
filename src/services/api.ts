@@ -19,7 +19,6 @@ interface PostData {
     video_url: string;
     location: string;
     tags: string;
-    privacy: string;
 }
 
 export const registerUser = async (userData: UserRegisterData) => {
@@ -66,13 +65,13 @@ export const getPosts = async () => {
 
 export const getProfile = async (userId: string) => {
     try {
-        const response = await api.post(GET_PROFILE_ENDPOINT, { userId });
+        const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}`);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(error.message);
         } else {
-            console.error("unknown Error");
+            console.error("Unknown Error");
         }
         throw error;
     }

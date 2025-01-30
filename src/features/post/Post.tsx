@@ -8,10 +8,11 @@ interface PostProps {
     likes: number;
     comments: number;
     avatarUrl?: string;
-    imageUrl?: string; // Add imageUrl prop to handle the image
+    imageUrl?: string;
+    timeAgo: string;
 }
 
-const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarUrl, imageUrl }) => {
+const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarUrl, imageUrl, timeAgo }) => {
     const handleLike = () => {
         console.log("Liked the post");
     };
@@ -34,7 +35,7 @@ const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarU
                     <Grid item xs>
                         <Typography variant="h6">{username}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            2 hours ago
+                            {timeAgo}
                         </Typography>
                     </Grid>
                 </Grid>

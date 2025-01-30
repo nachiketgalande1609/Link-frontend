@@ -61,7 +61,7 @@ const App = () => {
 
 const AppContent = () => {
     const [open, setOpen] = useState(true);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // For Menu dropdown
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -85,6 +85,7 @@ const AppContent = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("token");
+        setAnchorEl(null);
         navigate("/login");
     };
 

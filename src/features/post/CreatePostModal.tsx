@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { Box, Button, Modal, TextField, Typography, Backdrop, Fade } from "@mui/material";
 import { createPost } from "../../services/api";
 import { useUser } from "../../context/userContext";
 
@@ -15,20 +15,18 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     const [videoUrl, setVideoUrl] = useState<string>("");
     const [location, setLocation] = useState<string>("");
     const [tags, setTags] = useState<string>("");
-    const [privacy, setPrivacy] = useState<string>("public");
 
     const { user } = useUser();
 
     const handleSubmit = async () => {
         if (postContent.trim() && user) {
             const res = await createPost({
-                user_id: user.userId,
+                user_id: user.id,
                 content: postContent,
                 image_url: imageUrl,
                 video_url: videoUrl,
                 location,
                 tags,
-                privacy,
             });
             if (res?.success) {
                 setPostContent("");
@@ -36,7 +34,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                 setVideoUrl("");
                 setLocation("");
                 setTags("");
-                setPrivacy("public");
                 handleClose();
             }
         }
@@ -103,14 +100,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         onChange={(e) => setTags(e.target.value)}
                         sx={{ marginBottom: 2 }}
                     />
-                    <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                        <InputLabel>Privacy</InputLabel>
-                        <Select value={privacy} onChange={(e) => setPrivacy(e.target.value)} label="Privacy">
-                            <MenuItem value="public">Public</MenuItem>
-                            <MenuItem value="private">Private</MenuItem>
-                            <MenuItem value="friends">Friends</MenuItem>
-                        </Select>
-                    </FormControl>
                     <Button variant="contained" color="primary" fullWidth onClick={handleSubmit} disabled={!postContent.trim()}>
                         Post
                     </Button>

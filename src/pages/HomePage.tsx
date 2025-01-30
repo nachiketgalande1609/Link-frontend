@@ -32,7 +32,8 @@ const HomePage = () => {
                                 likes={post.likes_count}
                                 comments={post.comments_count}
                                 imageUrl={post.image_url}
-                                avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"} // Replace with actual avatar URL if available
+                                avatarUrl={post.profile_picture}
+                                timeAgo={post.timeAgo}
                             />
                         </Grid>
                     ))
