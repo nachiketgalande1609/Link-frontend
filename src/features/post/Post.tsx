@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
     Card,
     CardContent,
@@ -44,7 +44,9 @@ interface PostProps {
         updated_at: string;
         commenter_username: string;
         commenter_profile_picture: string;
+        timeAgo: string;
     }>;
+    borderRadius: string;
 }
 
 const Post: React.FC<PostProps> = ({
@@ -60,6 +62,7 @@ const Post: React.FC<PostProps> = ({
     fetchPosts,
     hasUserLikedPost,
     initialComments,
+    borderRadius,
 }) => {
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
@@ -69,6 +72,18 @@ const Post: React.FC<PostProps> = ({
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
+
+    const [showAllComments, setShowAllComments] = useState(false);
+
+    const visibleComments = showAllComments ? postComments : postComments.slice(0, 2);
+
+    const commentInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFocusCommentField = () => {
+        if (commentInputRef.current) {
+            commentInputRef.current.focus();
+        }
+    };
 
     const handleLike = async () => {
         try {
@@ -95,8 +110,9 @@ const Post: React.FC<PostProps> = ({
                         updated_at: new Date().toISOString(),
                         commenter_username: username,
                         commenter_profile_picture: currentUser.profile_picture_url,
+                        timeAgo: "Just now",
                     };
-                    setPostComments([...postComments, newComment]);
+                    setPostComments([newComment, ...postComments]);
                     setCommentText("");
                     setCommentCount(commentCount + 1);
                     fetchPosts();
@@ -137,12 +153,12 @@ const Post: React.FC<PostProps> = ({
     };
 
     return (
-        <Card sx={{ mb: 3, borderRadius: "20px" }}>
+        <Card sx={{ borderRadius: borderRadius }}>
             <CardContent sx={{ padding: 0 }}>
                 <Box sx={{ padding: "16px" }}>
                     <Grid container spacing={2}>
                         <Grid item>
-                            <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 40, height: 40 }} />
+                            <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 52, height: 52 }} />
                         </Grid>
                         <Grid item xs>
                             <Typography variant="h6">{username}</Typography>
@@ -207,13 +223,13 @@ const Post: React.FC<PostProps> = ({
                         <Favorite />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                        {likes} Likes
+                        {likes}
                     </Typography>
-                    <IconButton color="primary" sx={{ color: "white" }}>
+                    <IconButton sx={{ color: "#ffffff" }} onClick={handleFocusCommentField}>
                         <Comment />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                        {commentCount} Comments
+                        {commentCount}
                     </Typography>
                 </Box>
             </CardActions>
@@ -232,27 +248,38 @@ const Post: React.FC<PostProps> = ({
                             borderRadius: "8px",
                         },
                     }}
+                    inputRef={commentInputRef}
                 />
 
-                {postComments.length === 0 ? (
+                {visibleComments.length === 0 ? (
                     <Typography variant="body2" color="text.secondary">
                         No comments yet
                     </Typography>
                 ) : (
-                    postComments.map((comment) => (
+                    visibleComments.map((comment) => (
                         <Box key={comment.id} sx={{ mb: 1 }}>
-                            <Grid container spacing={2}>
+                            <Grid container spacing={2} alignItems="center">
                                 <Grid item>
                                     <Avatar src={comment.commenter_profile_picture} alt={comment.commenter_username} sx={{ width: 30, height: 30 }} />
                                 </Grid>
                                 <Grid item xs>
-                                    <Typography variant="body2" color="text.primary">
-                                        <strong>{comment.commenter_username}:</strong> {comment.content}
-                                    </Typography>
+                                    <Grid container justifyContent="space-between" alignItems="center">
+                                        <Typography variant="body2" color="text.primary">
+                                            <strong>{comment.commenter_username}:</strong> {comment.content}
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ ml: 2, color: "#666666" }}>
+                                            {comment.timeAgo}
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Box>
                     ))
+                )}
+                {postComments.length > 3 && !showAllComments && (
+                    <Typography variant="body2" color="primary" sx={{ mt: 2, cursor: "pointer", mb: 1 }} onClick={() => setShowAllComments(true)}>
+                        View all {postComments.length} comments
+                    </Typography>
                 )}
             </Box>
 

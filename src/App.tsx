@@ -2,9 +2,12 @@ import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, Menu, MenuItem } from "@mui/material";
 import {
-    HomeOutlined as Home,
-    AccountCircleOutlined as Profile,
-    ExploreOutlined as Compass,
+    HomeOutlined as HomeOutlined,
+    Home as HomeFilled,
+    AccountCircleOutlined as ProfileOutlined,
+    AccountCircle as ProfileFilled,
+    ExploreOutlined as CompassOutlined,
+    Explore as CompassFilled,
     SearchOutlined as Search,
     Menu as MenuIcon,
     Add as AddIcon,
@@ -41,10 +44,30 @@ const demoTheme = extendTheme({
 
 const NAVIGATION = [
     { kind: "header", title: "Link" },
-    { segment: "", title: "Home", icon: <Home sx={{ fontSize: "2rem" }} /> },
-    { segment: "profile", title: "Profile", icon: <Profile sx={{ fontSize: "2rem" }} /> },
-    { segment: "explore", title: "Explore", icon: <Compass sx={{ fontSize: "2rem" }} /> },
-    { segment: "search", title: "Search", icon: <Search sx={{ fontSize: "2rem" }} /> },
+    {
+        segment: "",
+        title: "Home",
+        icon: <HomeOutlined sx={{ fontSize: "2rem" }} />,
+        filledIcon: <HomeFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+    },
+    {
+        segment: "profile",
+        title: "Profile",
+        icon: <ProfileOutlined sx={{ fontSize: "2rem" }} />,
+        filledIcon: <ProfileFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+    },
+    {
+        segment: "explore",
+        title: "Explore",
+        icon: <CompassOutlined sx={{ fontSize: "2rem" }} />,
+        filledIcon: <CompassFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+    },
+    {
+        segment: "search",
+        title: "Search",
+        icon: <Search sx={{ fontSize: "2rem" }} />,
+        filledIcon: <Search sx={{ fontSize: "2rem", color: "#000000" }} />,
+    },
 ];
 
 const DrawerWidth = 240;
@@ -72,15 +95,14 @@ const AppContent = () => {
 
     const toggleDrawer = () => setOpen(!open);
 
-    // Hide the drawer on login & register pages
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget); // Open the menu
+        setAnchorEl(event.currentTarget);
     };
 
     const handleMenuClose = () => {
-        setAnchorEl(null); // Close the menu
+        setAnchorEl(null);
     };
 
     const handleLogout = () => {
@@ -110,35 +132,59 @@ const AppContent = () => {
                         {NAVIGATION.map((item, index) => {
                             if (item.kind === "header") {
                                 return (
-                                    <ListItem key={index} sx={{ padding: 3 }}>
+                                    <ListItem key={index} sx={{ padding: 3, mb: 3 }}>
                                         <img src={logo} alt="Logo" style={{ width: "100px", height: "auto" }} />
                                     </ListItem>
                                 );
                             }
+                            const isActive = location.pathname === `/${item.segment}`;
                             return (
                                 <ListItem
                                     key={item.segment}
                                     component={Link}
                                     to={`/${item.segment}`}
-                                    style={{ textDecoration: "none", padding: "15px" }}
+                                    style={{
+                                        textDecoration: "none",
+                                        padding: "15px",
+                                        borderRadius: "20px",
+                                    }}
+                                    sx={{
+                                        backgroundColor: isActive ? "#ffffff" : "transparent",
+                                        "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#222222" },
+                                    }}
                                 >
-                                    <ListItemIcon>{item.icon}</ListItemIcon>
-                                    <Typography sx={{ fontSize: "1rem", color: "white" }}>{item.title}</Typography>
+                                    <ListItemIcon>{isActive ? item.filledIcon : item.icon}</ListItemIcon>
+                                    <Typography sx={{ fontSize: "1rem", color: isActive ? "#000000" : "white", fontWeight: "444444" }}>
+                                        {item.title}
+                                    </Typography>
                                 </ListItem>
                             );
                         })}
-                        <ListItem onClick={handleOpen} key={"create post"} style={{ textDecoration: "none", padding: "15px", cursor: "pointer" }}>
+                        <ListItem
+                            onClick={handleOpen}
+                            key={"create post"}
+                            style={{ textDecoration: "none", padding: "15px", cursor: "pointer", borderRadius: "20px" }}
+                            sx={{
+                                "&:hover": { backgroundColor: "#222" },
+                            }}
+                        >
                             <ListItemIcon>
                                 <AddIcon sx={{ fontSize: "2rem" }} />
                             </ListItemIcon>
-                            <Typography sx={{ fontSize: "1rem", color: "white" }}>Create Post</Typography>
+                            <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: "333" }}>Create Post</Typography>
                         </ListItem>
                         <Box sx={{ flexGrow: 1 }} />
-                        <ListItem onClick={handleMenuClick} style={{ textDecoration: "none", padding: "15px", cursor: "pointer" }}>
+                        <ListItem
+                            onClick={handleMenuClick}
+                            style={{ textDecoration: "none", padding: "15px", cursor: "pointer", borderRadius: "20px" }}
+                            sx={{
+                                "&:hover": { backgroundColor: "#222" },
+                            }}
+                        >
                             <ListItemIcon>
                                 <MenuIcon sx={{ fontSize: "2rem" }} />
                             </ListItemIcon>
-                            <Typography sx={{ fontSize: "1rem", color: "white" }}>More</Typography>
+                            <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: "333" }}>More</Typography>
                         </ListItem>
                     </List>
 
@@ -217,7 +263,7 @@ const AppContent = () => {
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </Box>
-            <CreatePostModal open={modalOpen} handleClose={handleClose} />;
+            <CreatePostModal open={modalOpen} handleClose={handleClose} />
         </Box>
     );
 };

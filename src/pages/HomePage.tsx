@@ -42,6 +42,7 @@ const HomePage = () => {
                                 fetchPosts={fetchPosts}
                                 hasUserLikedPost={post.liked_by_current_user}
                                 initialComments={post.comments}
+                                borderRadius="20px"
                             />
                         </Grid>
                     ))
