@@ -18,7 +18,7 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { Favorite, Comment, MoreVert } from "@mui/icons-material";
+import { Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment } from "../../services/api";
 
 interface PostProps {
@@ -229,14 +229,14 @@ const ModalPost: React.FC<PostProps> = ({
                                     }}
                                 >
                                     <Box>
-                                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white" }}>
-                                            <Favorite />
+                                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
+                                            <Favorite sx={{ fontSize: "30px", mr: 1 }} />
                                         </IconButton>
-                                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
+                                        <Typography variant="body2" component="span" sx={{ mr: 2 }}>
                                             {likes}
                                         </Typography>
-                                        <IconButton sx={{ color: "#ffffff" }} onClick={handleFocusCommentField}>
-                                            <Comment />
+                                        <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
+                                            <ChatBubbleOutline sx={{ fontSize: "30px", mr: 1 }} />
                                         </IconButton>
                                         <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                                             {commentCount}
@@ -265,7 +265,6 @@ const ModalPost: React.FC<PostProps> = ({
                                         sx={{
                                             maxHeight: "50vh",
                                             overflowY: "auto",
-                                            mb: 2,
                                             paddingRight: 2,
                                         }}
                                     >
@@ -284,7 +283,10 @@ const ModalPost: React.FC<PostProps> = ({
                                                         />
                                                         <Box sx={{ ml: 2, display: "flex", justifyContent: "space-between", width: "100%" }}>
                                                             <Typography variant="body2" color="text.primary">
-                                                                <strong>{comment.commenter_username}:</strong> {comment.content}
+                                                                <strong style={{ fontWeight: "bold", marginRight: "4px" }}>
+                                                                    {comment.commenter_username}
+                                                                </strong>
+                                                                {comment.content}
                                                             </Typography>
                                                             <Typography variant="caption" sx={{ ml: 2, color: "#666666" }}>
                                                                 {comment.timeAgo}
@@ -300,7 +302,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         <Typography
                                             variant="body2"
                                             color="primary"
-                                            sx={{ mt: 2, cursor: "pointer", mb: 1 }}
+                                            sx={{ mt: 1, cursor: "pointer", mb: 1 }}
                                             onClick={() => setShowAllComments(true)}
                                         >
                                             View all {postComments.length} comments

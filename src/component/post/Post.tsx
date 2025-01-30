@@ -5,7 +5,6 @@ import {
     Typography,
     CardActions,
     IconButton,
-    Divider,
     Avatar,
     Grid,
     Box,
@@ -19,7 +18,7 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { Favorite, Comment, MoreVert } from "@mui/icons-material";
+import { Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment } from "../../services/api";
 
 interface PostProps {
@@ -161,8 +160,8 @@ const Post: React.FC<PostProps> = ({
                             <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 52, height: 52 }} />
                         </Grid>
                         <Grid item xs>
-                            <Typography variant="h6">{username}</Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>{username}</Typography>
+                            <Typography variant="caption" sx={{ color: "#666666" }}>
                                 {timeAgo}
                             </Typography>
                         </Grid>
@@ -209,24 +208,22 @@ const Post: React.FC<PostProps> = ({
                     </Box>
                 )}
 
-                <Typography variant="body1" sx={{ mt: 2, padding: "16px", margin: 0 }}>
+                <Typography variant="body1" sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
                     <span style={{ fontWeight: "bold", marginRight: "8px" }}>{username}</span>
                     {content}
                 </Typography>
             </CardContent>
 
-            <Divider />
-
-            <CardActions sx={{ justifyContent: "space-between", height: "60px", padding: "8px" }}>
+            <CardActions sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px" }}>
                 <Box>
                     <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white" }}>
-                        <Favorite />
+                        <Favorite sx={{ fontSize: "30px" }} />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {likes}
                     </Typography>
                     <IconButton sx={{ color: "#ffffff" }} onClick={handleFocusCommentField}>
-                        <Comment />
+                        <ChatBubbleOutline sx={{ fontSize: "30px" }} />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {commentCount}
@@ -250,37 +247,51 @@ const Post: React.FC<PostProps> = ({
                     }}
                     inputRef={commentInputRef}
                 />
-
-                {visibleComments.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
-                        No comments yet
-                    </Typography>
-                ) : (
-                    visibleComments.map((comment) => (
-                        <Box key={comment.id} sx={{ mb: 1 }}>
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item>
-                                    <Avatar src={comment.commenter_profile_picture} alt={comment.commenter_username} sx={{ width: 30, height: 30 }} />
-                                </Grid>
-                                <Grid item xs>
-                                    <Grid container justifyContent="space-between" alignItems="center">
+                <Box
+                    sx={{
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                        paddingRight: 2,
+                        "&::-webkit-scrollbar": {
+                            width: "4px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                            backgroundColor: "#ffffff",
+                            borderRadius: "10px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                            backgroundColor: "#1E1E1E",
+                        },
+                    }}
+                >
+                    {visibleComments.length === 0 ? (
+                        <Typography variant="body2" color="text.secondary">
+                            No comments yet
+                        </Typography>
+                    ) : (
+                        visibleComments.map((comment) => (
+                            <Box key={comment.id} sx={{ mb: 2 }}>
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                    <Avatar src={comment.commenter_profile_picture} alt={comment.commenter_username} sx={{ width: 40, height: 40 }} />
+                                    <Box sx={{ ml: 2, display: "flex", justifyContent: "space-between", width: "100%" }}>
                                         <Typography variant="body2" color="text.primary">
-                                            <strong>{comment.commenter_username}:</strong> {comment.content}
+                                            <strong style={{ fontWeight: "bold", marginRight: "4px" }}>{comment.commenter_username}</strong>
+                                            {comment.content}
                                         </Typography>
                                         <Typography variant="caption" sx={{ ml: 2, color: "#666666" }}>
                                             {comment.timeAgo}
                                         </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    ))
-                )}
-                {postComments.length > 3 && !showAllComments && (
-                    <Typography variant="body2" color="primary" sx={{ mt: 2, cursor: "pointer", mb: 1 }} onClick={() => setShowAllComments(true)}>
-                        View all {postComments.length} comments
-                    </Typography>
-                )}
+                                    </Box>
+                                </Box>
+                            </Box>
+                        ))
+                    )}
+                    {postComments.length > 3 && !showAllComments && (
+                        <Typography variant="body2" color="primary" sx={{ mt: 2, cursor: "pointer", mb: 1 }} onClick={() => setShowAllComments(true)}>
+                            View all {postComments.length} comments
+                        </Typography>
+                    )}
+                </Box>
             </Box>
 
             {/* Confirmation Dialog */}
