@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardContent, Typography, CardActions, IconButton, Divider, Avatar, Grid, Box } from "@mui/material";
+import { Card, CardContent, Typography, CardActions, IconButton, Divider, Avatar, Grid, Box, CardMedia } from "@mui/material";
 import { ThumbUp, Comment, Delete } from "@mui/icons-material";
 
 interface PostProps {
@@ -8,9 +8,10 @@ interface PostProps {
     likes: number;
     comments: number;
     avatarUrl?: string;
+    imageUrl?: string; // Add imageUrl prop to handle the image
 }
 
-const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarUrl }) => {
+const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarUrl, imageUrl }) => {
     const handleLike = () => {
         console.log("Liked the post");
     };
@@ -24,11 +25,11 @@ const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarU
     };
 
     return (
-        <Card sx={{ mb: 3 }}>
+        <Card sx={{ mb: 3, borderRadius: "20px" }}>
             <CardContent>
                 <Grid container spacing={2}>
                     <Grid item>
-                        <Avatar src={avatarUrl} alt={username} sx={{ width: 40, height: 40 }} />
+                        <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 40, height: 40 }} />
                     </Grid>
                     <Grid item xs>
                         <Typography variant="h6">{username}</Typography>
@@ -37,6 +38,8 @@ const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarU
                         </Typography>
                     </Grid>
                 </Grid>
+
+                {imageUrl && <CardMedia component="img" image={imageUrl} alt="Post Image" sx={{ mt: 2, borderRadius: 1 }} />}
                 <Typography variant="body1" sx={{ mt: 2 }}>
                     {content}
                 </Typography>
@@ -44,7 +47,7 @@ const Post: React.FC<PostProps> = ({ username, content, likes, comments, avatarU
 
             <Divider />
 
-            <CardActions sx={{ justifyContent: "space-between" }}>
+            <CardActions sx={{ justifyContent: "space-between", height: "60px" }}>
                 <Box>
                     <IconButton color="primary" onClick={handleLike}>
                         <ThumbUp />

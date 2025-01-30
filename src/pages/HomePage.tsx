@@ -1,38 +1,46 @@
-import { Container, Typography, Grid, Button } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import Post from "../features/post/Post";
+import { useEffect, useState } from "react";
+import { getPosts } from "../services/api";
 
 const HomePage = () => {
+    const [posts, setPosts] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const res = await getPosts();
+                setPosts(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchPosts();
+    }, []);
+
     return (
-        <Container>
-            {/* Display posts (for now, it's just a placeholder) */}
+        <Container maxWidth="sm">
+            {/* Display posts dynamically */}
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={12} md={12}>
-                    <Post
-                        username={"Nachiket"}
-                        content={"Hello"}
-                        likes={10}
-                        comments={20}
-                        avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <Post
-                        username={"Nachiket"}
-                        content={"Hello"}
-                        likes={10}
-                        comments={20}
-                        avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12} md={12}>
-                    <Post
-                        username={"Nachiket"}
-                        content={"Hello"}
-                        likes={10}
-                        comments={20}
-                        avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"}
-                    />
-                </Grid>
+                {posts.length > 0 ? (
+                    posts.map((post) => (
+                        <Grid item xs={12} sm={12} md={12} key={post.id}>
+                            <Post
+                                username={post.username}
+                                content={post.content}
+                                likes={post.likes_count}
+                                comments={post.comments_count}
+                                imageUrl={post.image_url}
+                                avatarUrl={"https://nachiketgalande1609.github.io/MyPortfolio/assets/img/profile-img.jpg"} // Replace with actual avatar URL if available
+                            />
+                        </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12}>
+                        <div>No posts available.</div>
+                    </Grid>
+                )}
             </Grid>
         </Container>
     );
