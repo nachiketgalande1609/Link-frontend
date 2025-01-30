@@ -5,17 +5,20 @@ import { getPosts } from "../services/api";
 
 const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
+    const user = JSON.parse(localStorage.getItem("user") || "");
+
+    const fetchPosts = async () => {
+        try {
+            if (user) {
+                const res = await getPosts(user?.id);
+                setPosts(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                const res = await getPosts();
-                setPosts(res.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
         fetchPosts();
     }, []);
 
@@ -29,11 +32,16 @@ const HomePage = () => {
                             <Post
                                 username={post.username}
                                 content={post.content}
-                                likes={post.likes_count}
-                                comments={post.comments_count}
+                                likes={post.like_count}
+                                comments={post.comment_count}
                                 imageUrl={post.image_url}
                                 avatarUrl={post.profile_picture}
                                 timeAgo={post.timeAgo}
+                                postId={post.id}
+                                userId={post.user_id}
+                                fetchPosts={fetchPosts}
+                                hasUserLikedPost={post.liked_by_current_user}
+                                initialComments={post.comments}
                             />
                         </Grid>
                     ))

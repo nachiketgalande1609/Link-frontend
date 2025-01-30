@@ -1,5 +1,12 @@
 import api from "./config";
-import { REGISTER_ENDPOINT, LOGIN_ENDPOINT, POSTS_ENDPOINT, GET_PROFILE_ENDPOINT } from "./apiEndpoints";
+import {
+    REGISTER_ENDPOINT,
+    LOGIN_ENDPOINT,
+    POSTS_ENDPOINT,
+    GET_PROFILE_ENDPOINT,
+    LIKE_POST_ENDPOINT,
+    ADD_POST_COMMENT_ENDPOINT,
+} from "./apiEndpoints";
 
 interface UserRegisterData {
     email: string;
@@ -20,6 +27,8 @@ interface PostData {
     location: string;
     tags: string;
 }
+
+// User APIs
 
 export const registerUser = async (userData: UserRegisterData) => {
     try {
@@ -49,15 +58,18 @@ export const loginUser = async (userData: UserLoginData) => {
     }
 };
 
-export const getPosts = async () => {
+// Post APIs
+
+export const getPosts = async (userId: string) => {
     try {
-        const response = await api.get(POSTS_ENDPOINT);
+        const response = await api.get(`${POSTS_ENDPOINT}?userId=${userId}`);
+
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(error.message);
         } else {
-            console.error("unknown Error");
+            console.error("Unknown Error");
         }
         throw error;
     }
@@ -66,6 +78,20 @@ export const getPosts = async () => {
 export const getProfile = async (userId: string) => {
     try {
         const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}`);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getUserPosts = async (userId: string) => {
+    try {
+        const response = await api.get(`${POSTS_ENDPOINT}/${userId}`);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -88,5 +114,47 @@ export const createPost = async (postData: PostData) => {
             console.error("unknown Error");
         }
         throw error;
+    }
+};
+
+export const deletePost = async (userId: string, postId: string) => {
+    try {
+        const response = await api.delete(`${POSTS_ENDPOINT}?userId=${userId}&postId=${postId}`);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const likePost = async (userId: string, postId: string) => {
+    try {
+        const response = await api.post(LIKE_POST_ENDPOINT, { userId, postId });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error liking the post:", error.message);
+        } else {
+            console.error("Unknown error while liking the post");
+        }
+        throw error; // Re-throws the error to be handled by the caller
+    }
+};
+
+export const addComment = async (userId: string, postId: string, comment: string) => {
+    try {
+        const response = await api.post(ADD_POST_COMMENT_ENDPOINT, { userId, postId, comment });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error adding the comment:", error.message);
+        } else {
+            console.error("Unknown error while adding the comment");
+        }
+        throw error; // Re-throws the error to be handled by the caller
     }
 };

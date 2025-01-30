@@ -123,7 +123,7 @@ const AppContent = () => {
                                     style={{ textDecoration: "none", padding: "15px" }}
                                 >
                                     <ListItemIcon>{item.icon}</ListItemIcon>
-                                    <Typography sx={{ fontSize: "1.25rem", color: "white" }}>{item.title}</Typography>
+                                    <Typography sx={{ fontSize: "1rem", color: "white" }}>{item.title}</Typography>
                                 </ListItem>
                             );
                         })}
@@ -131,14 +131,14 @@ const AppContent = () => {
                             <ListItemIcon>
                                 <AddIcon sx={{ fontSize: "2rem" }} />
                             </ListItemIcon>
-                            <Typography sx={{ fontSize: "1.25rem", color: "white" }}>Create Post</Typography>
+                            <Typography sx={{ fontSize: "1rem", color: "white" }}>Create Post</Typography>
                         </ListItem>
                         <Box sx={{ flexGrow: 1 }} />
                         <ListItem onClick={handleMenuClick} style={{ textDecoration: "none", padding: "15px", cursor: "pointer" }}>
                             <ListItemIcon>
                                 <MenuIcon sx={{ fontSize: "2rem" }} />
                             </ListItemIcon>
-                            <Typography sx={{ fontSize: "1.25rem", color: "white" }}>More</Typography>
+                            <Typography sx={{ fontSize: "1rem", color: "white" }}>More</Typography>
                         </ListItem>
                     </List>
 

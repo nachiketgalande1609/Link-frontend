@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Typography, Avatar, Button, Grid, Paper } from "@mui/material";
 import Post from "../features/post/Post";
-import { getProfile } from "../services/api";
+import { getProfile, getUserPosts } from "../services/api";
 import { useUser } from "../context/userContext";
 
 // Define the type for the profile data
@@ -17,24 +17,38 @@ const ProfilePage = () => {
 
     const [profileData, setProfileData] = useState<Profile | null>(null);
 
-    useEffect(() => {
-        async function fetchProfile() {
-            try {
-                if (user) {
-                    const res = await getProfile(user?.id);
-                    setProfileData(res.data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
+    const [posts, setPosts] = useState<any[]>([]);
 
+    async function fetchProfile() {
+        try {
+            if (user) {
+                const res = await getProfile(user?.id);
+                setProfileData(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function fetchUserPosts() {
+        try {
+            if (user) {
+                const res = await getUserPosts(user?.id);
+                setPosts(res.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
         fetchProfile();
+        fetchUserPosts();
     }, [user]);
 
     return (
         <Container>
-            <Paper sx={{ padding: 3, mb: 3 }}>
+            <Paper sx={{ padding: 3, mb: 3, borderRadius: "20px" }}>
                 <Grid container spacing={2}>
                     <Grid item>
                         <Avatar src={profileData?.profile_picture} sx={{ width: 100, height: 100 }} />
@@ -51,14 +65,32 @@ const ProfilePage = () => {
                     </Grid>
                 </Grid>
             </Paper>
-
-            <Typography variant="h5" gutterBottom>
-                Posts by {profileData?.username}
-            </Typography>
-
             {/* Display user's posts */}
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={4}></Grid>
+                {posts.length > 0 ? (
+                    posts.map((post) => (
+                        <Grid item xs={12} sm={4} md={4} key={post.id}>
+                            <Post
+                                username={post.username}
+                                content={post.content}
+                                likes={post.like_count}
+                                comments={post.comment_count}
+                                imageUrl={post.image_url}
+                                avatarUrl={post.profile_picture}
+                                timeAgo={post.timeAgo}
+                                postId={post.id}
+                                userId={post.user_id}
+                                fetchPosts={fetchUserPosts}
+                                hasUserLikedPost={post.liked_by_current_user}
+                                initialComments={post.comments}
+                            />
+                        </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12}>
+                        <div>No posts available.</div>
+                    </Grid>
+                )}
             </Grid>
         </Container>
     );
