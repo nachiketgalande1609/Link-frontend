@@ -6,6 +6,8 @@ import {
     GET_PROFILE_ENDPOINT,
     LIKE_POST_ENDPOINT,
     ADD_POST_COMMENT_ENDPOINT,
+    FOLLOW_ENDPOINT,
+    SEARCH_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -75,9 +77,11 @@ export const getPosts = async (userId: string) => {
     }
 };
 
-export const getProfile = async (userId: string) => {
+export const getProfile = async (userId: string, currentUserId: string) => {
+    console.log(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
+
     try {
-        const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}`);
+        const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -156,5 +160,34 @@ export const addComment = async (userId: string, postId: string, comment: string
             console.error("Unknown error while adding the comment");
         }
         throw error; // Re-throws the error to be handled by the caller
+    }
+};
+
+export const followUser = async (followerId: string, followingId: string) => {
+    try {
+        const response = await api.post(FOLLOW_ENDPOINT, { followerId, followingId });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to send follow request:", error.message);
+        } else {
+            console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const getSearchResults = async (searchQuery: string) => {
+    try {
+        const response = await api.get(`${SEARCH_ENDPOINT}?searchString=${searchQuery}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
     }
 };

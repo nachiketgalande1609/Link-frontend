@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog } from "@mui/material";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button } from "@mui/material";
 import ProfilePagePost from "../component/post/ProfilePagePost";
 import ModalPost from "../component/post/ModalPost";
-import { getProfile, getUserPosts } from "../services/api";
-import { useUser } from "../context/userContext";
+import { getProfile, getUserPosts, followUser } from "../services/api";
 import { useParams } from "react-router-dom";
 
 interface Profile {
@@ -17,17 +16,21 @@ interface Profile {
 }
 
 const ProfilePage = () => {
-    const { userId } = useParams(); // Extract userId from URL
+    const { userId } = useParams();
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
     const [profileData, setProfileData] = useState<Profile | null>(null);
     const [posts, setPosts] = useState<any[]>([]);
     const [selectedPost, setSelectedPost] = useState<any | null>(null);
+    const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
     async function fetchProfile() {
         try {
-            if (userId) {
-                const res = await getProfile(userId);
+            if (userId && currentUser?.id) {
+                const res = await getProfile(userId, currentUser?.id);
                 setProfileData(res.data);
+                setIsFollowing(res.data.is_following);
             }
         } catch (error) {
             console.log(error);
@@ -58,8 +61,21 @@ const ProfilePage = () => {
         setSelectedPost(null);
     };
 
+    const handleFollow = async () => {
+        if (currentUser?.id && userId) {
+            try {
+                const res = await followUser(currentUser.id.toString(), userId);
+                if (res?.success) {
+                    fetchProfile();
+                }
+            } catch (error) {
+                console.error("Failed to follow the user:", error);
+            }
+        }
+    };
+
     return (
-        <Container>
+        <Container sx={{ padding: "10px" }}>
             <Paper
                 sx={{
                     padding: { xs: 2, sm: 3 },
@@ -110,6 +126,19 @@ const ProfilePage = () => {
                             >
                                 {profileData?.bio}
                             </Typography>
+                        )}
+
+                        {/* Conditionally render the follow button */}
+                        {userId != currentUser?.id && !isFollowing && (
+                            <Button onClick={handleFollow} variant="outlined" sx={{ mt: 2 }}>
+                                Follow
+                            </Button>
+                        )}
+
+                        {userId != currentUser?.id && isFollowing && (
+                            <Button disabled variant="outlined" sx={{ mt: 2 }}>
+                                Following
+                            </Button>
                         )}
 
                         <Grid

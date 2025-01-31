@@ -23,7 +23,7 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" sx={{ padding: "10px" }}>
             {/* Display posts dynamically */}
             <Grid container spacing={3}>
                 {posts.length > 0 ? (

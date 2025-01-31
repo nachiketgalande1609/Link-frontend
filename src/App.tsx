@@ -11,6 +11,8 @@ import {
     SearchOutlined as Search,
     Menu as MenuIcon,
     Add as AddIcon,
+    ChatBubbleOutlineOutlined as MessageOutlined,
+    ChatBubble as Message,
 } from "@mui/icons-material";
 
 import CreatePostModal from "./component/post/CreatePostModal";
@@ -27,7 +29,7 @@ import { extendTheme } from "@mui/material/styles";
 import logo from "./static/logo.png";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import { json } from "stream/consumers";
+import Messages from "./pages/Messages";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
@@ -43,7 +45,7 @@ const demoTheme = extendTheme({
     },
 });
 
-const currentUser = JSON.parse(localStorage.getItem("user") || "");
+const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
 const NAVIGATION = [
     { kind: "header", title: "Link" },
@@ -58,6 +60,12 @@ const NAVIGATION = [
         title: "Profile",
         icon: <ProfileOutlined sx={{ fontSize: "2rem" }} />,
         filledIcon: <ProfileFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+    },
+    {
+        segment: `messages`,
+        title: "Messages",
+        icon: <MessageOutlined sx={{ fontSize: "2rem" }} />,
+        filledIcon: <Message sx={{ fontSize: "2rem", color: "#000000" }} />,
     },
 
     {
@@ -214,7 +222,7 @@ const AppContent = () => {
                 </Drawer>
             )}
             {/* Main content */}
-            <Box component="main" sx={{ flexGrow: 1, padding: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0 }}>
                 <Routes>
                     <Route
                         path="/"
@@ -229,6 +237,14 @@ const AppContent = () => {
                         element={
                             <PrivateRoute>
                                 <ProfilePage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/messages"
+                        element={
+                            <PrivateRoute>
+                                <Messages />
                             </PrivateRoute>
                         }
                     />

@@ -107,7 +107,7 @@ const Post: React.FC<PostProps> = ({
                         parent_comment_id: null,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString(),
-                        commenter_username: username,
+                        commenter_username: currentUser.username,
                         commenter_profile_picture: currentUser.profile_picture_url,
                         timeAgo: "Just now",
                     };
