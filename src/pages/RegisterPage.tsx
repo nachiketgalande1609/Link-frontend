@@ -11,7 +11,8 @@ const RegisterPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    const handleRegister = async () => {
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
         setError(null);
         setSuccess(null);
 
@@ -50,36 +51,38 @@ const RegisterPage: React.FC = () => {
                 {error && <Alert severity="error">{error}</Alert>}
                 {success && <Alert severity="success">{success}</Alert>}
 
-                <TextField fullWidth label="Email" variant="outlined" margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <TextField
-                    fullWidth
-                    label="Username"
-                    variant="outlined"
-                    margin="normal"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <TextField
-                    fullWidth
-                    label="Password"
-                    type="password"
-                    variant="outlined"
-                    margin="normal"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <TextField
-                    fullWidth
-                    label="Confirm Password"
-                    type="password"
-                    variant="outlined"
-                    margin="normal"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                <Button variant="contained" color="primary" fullWidth onClick={handleRegister} sx={{ mt: 2 }}>
-                    Register
-                </Button>
+                <form onSubmit={handleRegister}>
+                    <TextField fullWidth label="Email" variant="outlined" margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <TextField
+                        fullWidth
+                        label="Username"
+                        variant="outlined"
+                        margin="normal"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        variant="outlined"
+                        margin="normal"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Confirm Password"
+                        type="password"
+                        variant="outlined"
+                        margin="normal"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <Button variant="contained" color="primary" fullWidth onClick={handleRegister} sx={{ mt: 2 }}>
+                        Register
+                    </Button>
+                </form>
                 <Typography sx={{ mt: 4 }}>
                     Already have an account?{" "}
                     <Link href="/login" sx={{ textDecoration: "none", fontWeight: "bold" }}>

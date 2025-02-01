@@ -18,7 +18,7 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment } from "../../services/api";
 
 interface PostProps {
@@ -51,7 +51,7 @@ interface PostProps {
 const ModalPost: React.FC<PostProps> = ({
     username,
     content,
-    likes,
+    likes: initialLikes,
     comments,
     avatarUrl,
     imageUrl,
@@ -69,6 +69,7 @@ const ModalPost: React.FC<PostProps> = ({
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
+    const [likes, setLikes] = useState(initialLikes);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -88,6 +89,7 @@ const ModalPost: React.FC<PostProps> = ({
         try {
             await likePost(currentUser.id, postId);
             setIsLiked(!isLiked);
+            setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
             fetchPosts();
         } catch (error) {
             console.log(error);
@@ -230,7 +232,11 @@ const ModalPost: React.FC<PostProps> = ({
                                 >
                                     <Box>
                                         <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
-                                            <Favorite sx={{ fontSize: "30px", mr: 1 }} />
+                                            {isLiked ? (
+                                                <Favorite sx={{ fontSize: "30px", mr: 1 }} />
+                                            ) : (
+                                                <FavoriteBorder sx={{ fontSize: "30px", mr: 1 }} />
+                                            )}
                                         </IconButton>
                                         <Typography variant="body2" component="span" sx={{ mr: 2 }}>
                                             {likes}

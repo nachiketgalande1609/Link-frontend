@@ -3,7 +3,7 @@ import { Container, Typography, Avatar, Grid, Paper, Dialog, Button } from "@mui
 import ProfilePagePost from "../component/post/ProfilePagePost";
 import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../services/api";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 interface Profile {
     username: string;
@@ -17,6 +17,7 @@ interface Profile {
 
 const ProfilePage = () => {
     const { userId } = useParams();
+    const navigate = useNavigate();
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -74,6 +75,10 @@ const ProfilePage = () => {
         }
     };
 
+    const handleSendMessage = () => {
+        navigate(`/messages/${userId}`);
+    };
+
     return (
         <Container sx={{ padding: "10px" }}>
             <Paper
@@ -128,16 +133,15 @@ const ProfilePage = () => {
                             </Typography>
                         )}
 
-                        {/* Conditionally render the follow button */}
-                        {userId != currentUser?.id && !isFollowing && (
-                            <Button onClick={handleFollow} variant="outlined" sx={{ mt: 2 }}>
-                                Follow
+                        {userId != currentUser?.id && (
+                            <Button onClick={isFollowing ? () => {} : handleFollow} disabled={isFollowing} variant="outlined" sx={{ mt: 2 }}>
+                                {isFollowing ? "Following" : "Follow"}
                             </Button>
                         )}
 
-                        {userId != currentUser?.id && isFollowing && (
-                            <Button disabled variant="outlined" sx={{ mt: 2 }}>
-                                Following
+                        {userId != currentUser?.id && (
+                            <Button onClick={handleSendMessage} variant="contained" sx={{ mt: 2, ml: 2 }}>
+                                Send Message
                             </Button>
                         )}
 

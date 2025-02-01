@@ -8,6 +8,8 @@ import {
     ADD_POST_COMMENT_ENDPOINT,
     FOLLOW_ENDPOINT,
     SEARCH_ENDPOINT,
+    CHAT_USER_DETAILS_ENDPOINT,
+    GET_NOTIFICATIONS_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -180,6 +182,36 @@ export const followUser = async (followerId: string, followingId: string) => {
 export const getSearchResults = async (searchQuery: string) => {
     try {
         const response = await api.get(`${SEARCH_ENDPOINT}?searchString=${searchQuery}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getUserMessageDetails = async (userId: string) => {
+    try {
+        const response = await api.get(`${CHAT_USER_DETAILS_ENDPOINT}/${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getNotifications = async (userId: string) => {
+    try {
+        const response = await api.get(`${GET_NOTIFICATIONS_ENDPOINT}/${userId}`);
 
         return response.data;
     } catch (error: unknown) {

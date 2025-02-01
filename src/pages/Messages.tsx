@@ -1,23 +1,13 @@
-import { useState } from "react";
-import { Container, Grid, List, ListItem, ListItemAvatar, Avatar, Typography, Box, TextField, IconButton } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Container, Grid, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import { useParams } from "react-router-dom";
+import { getUserMessageDetails } from "../services/api";
 
-const users = [
-    {
-        id: 1,
-        username: "Alice",
-        last_message: "Hey Alice! I'm doing great, how about you?",
-        last_message_sender: "You",
-        avatar: "https://via.placeholder.com/40",
-    },
-    {
-        id: 2,
-        username: "Bob",
-        last_message: "Yeah! That was an intense match.",
-        last_message_sender: "You",
-        avatar: "https://via.placeholder.com/40",
-    },
-    { id: 3, username: "Charlie", last_message: "Absolutely! Can't wait.", last_message_sender: "You", avatar: "https://via.placeholder.com/40" },
+const initialUsers = [
+    { id: 1, username: "Alice", avatar: "https://via.placeholder.com/40" },
+    { id: 2, username: "Bob", avatar: "https://via.placeholder.com/40" },
+    { id: 3, username: "Charlie", avatar: "https://via.placeholder.com/40" },
 ];
 
 type Message = { sender: string; text: string };
@@ -42,28 +32,57 @@ const initialMessages: MessagesType = {
 };
 
 const Messages = () => {
-    const [selectedUser, setSelectedUser] = useState<number | null>(null);
+    const [users, setUsers] = useState(initialUsers);
+    const [selectedUser, setSelectedUser] = useState<any | null>(null);
     const [messages, setMessages] = useState<MessagesType>(initialMessages);
     const [inputMessage, setInputMessage] = useState("");
 
+    const { userId } = useParams();
+
+    useEffect(() => {
+        if (userId) {
+            const userIdNum = parseInt(userId, 10);
+            fetchUserDetails(userIdNum);
+        }
+    }, [userId]);
+
+    const fetchUserDetails = async (userId: number) => {
+        try {
+            const res = await getUserMessageDetails(userId.toString());
+            const newUser = res.data;
+
+            // Check if the user already exists in the list and add them only if they are not there
+            setUsers((prevUsers) => {
+                if (!prevUsers.find((user) => user.id === newUser.id)) {
+                    return [{ ...newUser, avatar: newUser.profile_picture || "https://via.placeholder.com/40" }, ...prevUsers];
+                }
+                return prevUsers; // Return the previous state if user already exists
+            });
+
+            setSelectedUser(newUser); // Select the new user
+        } catch (error) {
+            console.error("Failed to fetch user details:", error);
+        }
+    };
+
     const handleUserClick = (userId: number) => {
-        setSelectedUser(userId);
+        setSelectedUser(users.find((user) => user.id === userId));
     };
 
     const handleSendMessage = () => {
-        if (!inputMessage.trim() || selectedUser === null) return;
+        if (!inputMessage.trim() || !selectedUser) return;
 
         setMessages((prev) => ({
             ...prev,
-            [selectedUser]: [...(prev[selectedUser] || []), { sender: "me", text: inputMessage }],
+            [selectedUser.id]: [...(prev[selectedUser.id] || []), { sender: "me", text: inputMessage }],
         }));
 
         setInputMessage("");
     };
 
     return (
-        <Container sx={{ width: "100vw", height: "calc(100vh)", padding: "0px !important", margin: 0 }}>
-            <Grid container sx={{ width: "calc(100vw - 240px)", height: "calc(100vh)", overflow: "hidden", margin: 0, padding: 0 }}>
+        <Container sx={{ width: "100%", height: "calc(100vh)", padding: "0px !important", margin: 0 }}>
+            <Grid container sx={{ width: "100%", height: "calc(100vh)", overflow: "hidden", margin: 0, padding: 0 }}>
                 <Grid item xs={6} sm={4} md={4} sx={{ backgroundColor: "#000000", color: "white", padding: 2, borderRight: "1px solid #333333" }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>
                         Messages
@@ -80,7 +99,7 @@ const Messages = () => {
                                     padding: "12px",
                                     borderRadius: "8px",
                                     mb: 1,
-                                    outline: selectedUser === user.id ? "2px solid #ffffff" : "none",
+                                    outline: selectedUser?.id === user.id ? "2px solid #ffffff" : "none",
                                     textAlign: "left",
                                     width: "100%",
                                 }}
@@ -88,12 +107,7 @@ const Messages = () => {
                                 <ListItemAvatar>
                                     <Avatar sx={{ width: "50px", height: "50px", mr: "12px" }} src={user.avatar} />
                                 </ListItemAvatar>
-                                <Box>
-                                    <Typography variant="body1">{user.username}</Typography>
-                                    <Typography variant="subtitle2" sx={{ color: "#999999" }}>
-                                        {user.last_message_sender}: {user.last_message}
-                                    </Typography>
-                                </Box>
+                                <ListItemText primary={user.username} />
                             </ListItem>
                         ))}
                     </List>
@@ -118,14 +132,14 @@ const Messages = () => {
                                 borderBottom: "1px solid #333333",
                             }}
                         >
-                            <Avatar sx={{ width: "40px", height: "40px", mr: 2 }} src={users.find((user) => user.id === selectedUser)?.avatar} />
-                            <Typography variant="h6">{users.find((user) => user.id === selectedUser)?.username}</Typography>
+                            <Avatar sx={{ width: "40px", height: "40px", mr: 2 }} src={selectedUser.profile_picture} />
+                            <Typography variant="h6">{selectedUser.username}</Typography>
                         </Box>
                     )}
 
                     <Box sx={{ flexGrow: 1, padding: 2, overflowY: "auto", display: "flex", flexDirection: "column" }}>
                         {selectedUser ? (
-                            messages[selectedUser]?.map((msg, index) => (
+                            messages[selectedUser.id]?.map((msg, index) => (
                                 <Box key={index} sx={{ display: "flex", justifyContent: msg.sender === "me" ? "flex-end" : "flex-start", mb: 1 }}>
                                     <Typography
                                         sx={{

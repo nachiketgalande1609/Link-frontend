@@ -13,7 +13,8 @@ const LoginPage: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
         setError(null);
 
         try {
@@ -42,19 +43,21 @@ const LoginPage: React.FC = () => {
 
                 {error && <Alert severity="error">{error}</Alert>}
 
-                <TextField fullWidth label="Email" variant="outlined" margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <TextField
-                    fullWidth
-                    label="Password"
-                    type="password"
-                    variant="outlined"
-                    margin="normal"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <Button variant="contained" color="primary" fullWidth onClick={handleLogin} sx={{ mt: 2 }}>
-                    Login
-                </Button>
+                <form onSubmit={handleLogin}>
+                    <TextField fullWidth label="Email" variant="outlined" margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        variant="outlined"
+                        margin="normal"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2 }}>
+                        Login
+                    </Button>
+                </form>
                 <Typography sx={{ mt: 4 }}>
                     Don't have an account?{" "}
                     <Link href="/register" sx={{ textDecoration: "none", fontWeight: "bold" }}>

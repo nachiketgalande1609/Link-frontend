@@ -4,8 +4,6 @@ import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, M
 import {
     HomeOutlined as HomeOutlined,
     Home as HomeFilled,
-    AccountCircleOutlined as ProfileOutlined,
-    AccountCircle as ProfileFilled,
     ExploreOutlined as CompassOutlined,
     Explore as CompassFilled,
     SearchOutlined as Search,
@@ -13,7 +11,11 @@ import {
     Add as AddIcon,
     ChatBubbleOutlineOutlined as MessageOutlined,
     ChatBubble as Message,
+    FavoriteBorder,
+    Favorite,
 } from "@mui/icons-material";
+
+import { useUser } from "./context/userContext";
 
 import CreatePostModal from "./component/post/CreatePostModal";
 
@@ -30,6 +32,7 @@ import logo from "./static/logo.png";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Messages from "./pages/Messages";
+import Notifications from "./pages/Notifications";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
@@ -46,41 +49,6 @@ const demoTheme = extendTheme({
 });
 
 const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-
-const NAVIGATION = [
-    { kind: "header", title: "Link" },
-    {
-        segment: "",
-        title: "Home",
-        icon: <HomeOutlined sx={{ fontSize: "2rem" }} />,
-        filledIcon: <HomeFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
-    },
-    {
-        segment: `profile/${currentUser.id}`,
-        title: "Profile",
-        icon: <ProfileOutlined sx={{ fontSize: "2rem" }} />,
-        filledIcon: <ProfileFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
-    },
-    {
-        segment: `messages`,
-        title: "Messages",
-        icon: <MessageOutlined sx={{ fontSize: "2rem" }} />,
-        filledIcon: <Message sx={{ fontSize: "2rem", color: "#000000" }} />,
-    },
-
-    {
-        segment: "explore",
-        title: "Explore",
-        icon: <CompassOutlined sx={{ fontSize: "2rem" }} />,
-        filledIcon: <CompassFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
-    },
-    {
-        segment: "search",
-        title: "Search",
-        icon: <Search sx={{ fontSize: "2rem" }} />,
-        filledIcon: <Search sx={{ fontSize: "2rem", color: "#000000" }} />,
-    },
-];
 
 const DrawerWidth = 240;
 
@@ -108,6 +76,74 @@ const AppContent = () => {
     const toggleDrawer = () => setOpen(!open);
 
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
+
+    const { user } = useUser();
+
+    const NAVIGATION = [
+        { kind: "header", title: "Link" },
+        {
+            segment: "",
+            title: "Home",
+            icon: <HomeOutlined sx={{ fontSize: "2rem" }} />,
+            filledIcon: <HomeFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+        },
+        {
+            segment: "search",
+            title: "Search",
+            icon: <Search sx={{ fontSize: "2rem" }} />,
+            filledIcon: <Search sx={{ fontSize: "2rem", color: "#000000" }} />,
+        },
+        {
+            segment: `messages`,
+            title: "Messages",
+            icon: <MessageOutlined sx={{ fontSize: "2rem" }} />,
+            filledIcon: <Message sx={{ fontSize: "2rem", color: "#000000" }} />,
+        },
+        {
+            segment: "notifications",
+            title: "Notifications",
+            icon: <FavoriteBorder sx={{ fontSize: "2rem" }} />,
+            filledIcon: <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />,
+        },
+        {
+            segment: "explore",
+            title: "Explore",
+            icon: <CompassOutlined sx={{ fontSize: "2rem" }} />,
+            filledIcon: <CompassFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+        },
+        {
+            segment: `profile/${currentUser.id}`,
+            title: "Profile",
+            icon: (
+                <img
+                    src={user?.profile_picture_url || "default-profile-pic.jpg"}
+                    alt="Profile"
+                    style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        outline: "2px solid #ffffff",
+                    }}
+                />
+            ),
+            filledIcon: (
+                <img
+                    src={user?.profile_picture_url || "default-profile-pic.jpg"}
+                    alt="Profile"
+                    style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                        outline: "2px solid #000000",
+                    }}
+                />
+            ),
+        },
+    ];
+
+    console.log(user);
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -163,6 +199,7 @@ const AppContent = () => {
                                     sx={{
                                         backgroundColor: isActive ? "#ffffff" : "transparent",
                                         "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#222222" },
+                                        maxHeight: "62px",
                                     }}
                                 >
                                     <ListItemIcon>{isActive ? item.filledIcon : item.icon}</ListItemIcon>
@@ -241,10 +278,18 @@ const AppContent = () => {
                         }
                     />
                     <Route
-                        path="/messages"
+                        path="/messages/:userId?"
                         element={
                             <PrivateRoute>
                                 <Messages />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/notifications"
+                        element={
+                            <PrivateRoute>
+                                <Notifications />
                             </PrivateRoute>
                         }
                     />

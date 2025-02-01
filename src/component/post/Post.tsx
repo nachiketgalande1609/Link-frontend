@@ -18,7 +18,7 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment } from "../../services/api";
 
 interface PostProps {
@@ -217,7 +217,7 @@ const Post: React.FC<PostProps> = ({
             <CardActions sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px" }}>
                 <Box>
                     <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white" }}>
-                        <Favorite sx={{ fontSize: "30px" }} />
+                        {isLiked ? <Favorite sx={{ fontSize: "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {likes}

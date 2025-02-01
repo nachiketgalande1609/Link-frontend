@@ -6,3 +6,5 @@ export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
 export const ADD_POST_COMMENT_ENDPOINT: string = "/api/posts/comment";
 export const FOLLOW_ENDPOINT: string = "/api/users/follow";
 export const SEARCH_ENDPOINT: string = "/api/users/search";
+export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
+export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";
