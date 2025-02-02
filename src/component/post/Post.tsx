@@ -19,7 +19,7 @@ import {
     Button,
 } from "@mui/material";
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
-import { deletePost, likePost, addComment } from "../../services/api";
+import { deletePost, likePost, addComment, updatePost } from "../../services/api"; // Assuming you have an updatePost function in your API
 
 interface PostProps {
     username: string;
@@ -69,6 +69,8 @@ const Post: React.FC<PostProps> = ({
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(content);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -140,15 +142,30 @@ const Post: React.FC<PostProps> = ({
         setAnchorEl(null);
     };
 
-    // Open the confirmation dialog
     const handleDeleteClick = () => {
         setDialogOpen(true);
-        handleMenuClose(); // Close the menu
+        handleMenuClose();
     };
 
-    // Close the confirmation dialog without deleting
     const handleCancel = () => {
         setDialogOpen(false);
+    };
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+        handleMenuClose();
+    };
+
+    const handleSaveEdit = async () => {
+        try {
+            const response = await updatePost(postId, editedContent);
+            if (response?.success) {
+                setIsEditing(false);
+                fetchPosts();
+            }
+        } catch (error) {
+            console.error("Error updating post:", error);
+        }
     };
 
     return (
@@ -165,28 +182,32 @@ const Post: React.FC<PostProps> = ({
                                 {timeAgo}
                             </Typography>
                         </Grid>
-                        <Grid item>
-                            <IconButton onClick={handleMenuOpen}>
-                                <MoreVert />
-                            </IconButton>
-                            <Menu
-                                anchorEl={anchorEl}
-                                open={Boolean(anchorEl)}
-                                onClose={handleMenuClose}
-                                sx={{
-                                    "& .MuiPaper-root": {
-                                        width: "150px",
-                                        padding: "3px 10px",
-                                        borderRadius: "20px",
-                                    },
-                                }}
-                            >
-                                <MenuItem sx={{ height: "40px", borderRadius: "15px" }}>Edit</MenuItem>
-                                <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
-                                    Delete
-                                </MenuItem>
-                            </Menu>
-                        </Grid>
+                        {currentUser?.id === userId && (
+                            <Grid item>
+                                <IconButton onClick={handleMenuOpen}>
+                                    <MoreVert />
+                                </IconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleMenuClose}
+                                    sx={{
+                                        "& .MuiPaper-root": {
+                                            width: "150px",
+                                            padding: "3px 10px",
+                                            borderRadius: "20px",
+                                        },
+                                    }}
+                                >
+                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleEditClick}>
+                                        Edit
+                                    </MenuItem>
+                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
+                                        Delete
+                                    </MenuItem>
+                                </Menu>
+                            </Grid>
+                        )}
                     </Grid>
                 </Box>
 
@@ -208,10 +229,25 @@ const Post: React.FC<PostProps> = ({
                     </Box>
                 )}
 
-                <Typography variant="body1" sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
-                    <span style={{ fontWeight: "bold", marginRight: "8px" }}>{username}</span>
-                    {content}
-                </Typography>
+                {isEditing ? (
+                    <Box sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
+                        <TextField fullWidth multiline value={editedContent} onChange={(e) => setEditedContent(e.target.value)} sx={{ mb: 2 }} />
+                        {/* Buttons aligned to the right */}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+                            <Button onClick={() => setIsEditing(false)} variant="outlined" size="small">
+                                Cancel
+                            </Button>
+                            <Button onClick={handleSaveEdit} variant="contained" size="small" color="primary">
+                                Save
+                            </Button>
+                        </Box>
+                    </Box>
+                ) : (
+                    <Typography variant="body1" sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
+                        <span style={{ fontWeight: "bold", marginRight: "8px" }}>{username}</span>
+                        {content}
+                    </Typography>
+                )}
             </CardContent>
 
             <CardActions sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px" }}>

@@ -10,6 +10,8 @@ import {
     SEARCH_ENDPOINT,
     CHAT_USER_DETAILS_ENDPOINT,
     GET_NOTIFICATIONS_ENDPOINT,
+    UPDATE_POST_ENDPOINT,
+    GOOGLE_LOGIN_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -62,6 +64,19 @@ export const loginUser = async (userData: UserLoginData) => {
     }
 };
 
+export const googleLogin = async (data: { token: string }) => {
+    try {
+        const response = await api.post(`${GOOGLE_LOGIN_ENDPOINT}`, data);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Google login failed:", error.message);
+        } else {
+            console.error("Google login failed: Unknown error");
+        }
+        throw error;
+    }
+};
 // Post APIs
 
 export const getPosts = async (userId: string) => {
@@ -112,6 +127,20 @@ export const getUserPosts = async (userId: string) => {
 export const createPost = async (postData: PostData) => {
     try {
         const response = await api.post(POSTS_ENDPOINT, postData);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const updatePost = async (postId: string, editContent: string) => {
+    try {
+        const response = await api.post(`${UPDATE_POST_ENDPOINT}/${postId}`, { content: editContent });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {

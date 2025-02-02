@@ -33,6 +33,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
+import SettingsPage from "./pages/SettingsPage";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
@@ -48,7 +49,7 @@ const demoTheme = extendTheme({
     },
 });
 
-const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
 const DrawerWidth = 240;
 
@@ -116,7 +117,7 @@ const AppContent = () => {
             title: "Profile",
             icon: (
                 <img
-                    src={user?.profile_picture_url || "default-profile-pic.jpg"}
+                    src={user?.profile_picture_url}
                     alt="Profile"
                     style={{
                         width: "40px",
@@ -143,8 +144,6 @@ const AppContent = () => {
         },
     ];
 
-    console.log(user);
-
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -155,6 +154,8 @@ const AppContent = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
         setAnchorEl(null);
         navigate("/login");
     };
@@ -255,6 +256,12 @@ const AppContent = () => {
                         <MenuItem onClick={handleLogout} sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}>
                             Logout
                         </MenuItem>
+                        <MenuItem
+                            onClick={() => navigate("/settings")}
+                            sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}
+                        >
+                            Settings
+                        </MenuItem>
                     </Menu>
                 </Drawer>
             )}
@@ -323,6 +330,14 @@ const AppContent = () => {
                             <PublicRoute>
                                 <RegisterPage />
                             </PublicRoute>
+                        }
+                    />
+                    <Route
+                        path="/settings"
+                        element={
+                            <PrivateRoute>
+                                <SettingsPage />
+                            </PrivateRoute>
                         }
                     />
                     <Route path="*" element={<NotFoundPage />} />

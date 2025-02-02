@@ -188,7 +188,7 @@ const ProfilePage = () => {
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <Grid item xs={12} sm={6} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
-                            <ProfilePagePost imageUrl={post.image_url} />
+                            <ProfilePagePost imageUrl={post.image_url} like_count={post.like_count} comment_count={post.comment_count} />
                         </Grid>
                     ))
                 ) : (

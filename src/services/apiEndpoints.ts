@@ -1,7 +1,9 @@
 export const REGISTER_ENDPOINT: string = "/api/users/register";
 export const LOGIN_ENDPOINT: string = "/api/users/login";
+export const GOOGLE_LOGIN_ENDPOINT: string = "/api/users/google-login";
 export const GET_PROFILE_ENDPOINT: string = "/api/users/profile";
 export const POSTS_ENDPOINT: string = "/api/posts";
+export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
 export const ADD_POST_COMMENT_ENDPOINT: string = "/api/posts/comment";
 export const FOLLOW_ENDPOINT: string = "/api/users/follow";
