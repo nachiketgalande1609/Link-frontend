@@ -12,6 +12,7 @@ import {
     GET_NOTIFICATIONS_ENDPOINT,
     UPDATE_POST_ENDPOINT,
     GOOGLE_LOGIN_ENDPOINT,
+    GET_NOTIFICATIONS_COUNT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -241,6 +242,21 @@ export const getUserMessageDetails = async (userId: string) => {
 export const getNotifications = async (userId: string) => {
     try {
         const response = await api.get(`${GET_NOTIFICATIONS_ENDPOINT}/${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getNotificationsCount = async (userId: string) => {
+    try {
+        const response = await api.get(`${GET_NOTIFICATIONS_COUNT}/${userId}`);
 
         return response.data;
     } catch (error: unknown) {

@@ -88,8 +88,10 @@ const ModalPost: React.FC<PostProps> = ({
     const handleLike = async () => {
         try {
             await likePost(currentUser.id, postId);
-            setIsLiked(!isLiked);
-            setLikes((prevLikes) => (isLiked ? prevLikes - 1 : prevLikes + 1));
+            setIsLiked((prevIsLiked) => {
+                setLikes((prevLikes) => (prevIsLiked ? prevLikes - 1 : prevLikes + 1));
+                return !prevIsLiked;
+            });
             fetchPosts();
         } catch (error) {
             console.log(error);

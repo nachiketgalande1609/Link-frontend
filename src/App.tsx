@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, Menu, MenuItem } from "@mui/material";
+import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, Menu, MenuItem, Badge } from "@mui/material";
 import {
     HomeOutlined as HomeOutlined,
     Home as HomeFilled,
@@ -34,6 +34,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import SettingsPage from "./pages/SettingsPage";
+import { getNotificationsCount } from "./services/api";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
@@ -49,7 +50,7 @@ const demoTheme = extendTheme({
     },
 });
 
-const currentUser = JSON.parse(localStorage.getItem("user") || "");
+const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
 const DrawerWidth = 240;
 
@@ -64,8 +65,31 @@ const App = () => {
 };
 
 const AppContent = () => {
+    const { user, unreadNotificationsCount, setUnreadNotificationsCount } = useUser();
+
     const [open, setOpen] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+    useEffect(() => {
+        if (!user) return;
+
+        const fetchNotificationCount = async () => {
+            try {
+                const response = await getNotificationsCount(user.id);
+                if (response?.success) {
+                    setUnreadNotificationsCount(response?.data);
+                }
+            } catch (error) {
+                console.error("Error fetching notification count:", error);
+            }
+        };
+
+        fetchNotificationCount(); // Initial fetch
+        const interval = setInterval(fetchNotificationCount, 10000); // Fetch every 10 secs
+
+        return () => clearInterval(interval); // Cleanup on unmount
+    }, [user]);
+
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -77,8 +101,6 @@ const AppContent = () => {
     const toggleDrawer = () => setOpen(!open);
 
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
-
-    const { user } = useUser();
 
     const NAVIGATION = [
         { kind: "header", title: "Link" },
@@ -103,8 +125,16 @@ const AppContent = () => {
         {
             segment: "notifications",
             title: "Notifications",
-            icon: <FavoriteBorder sx={{ fontSize: "2rem" }} />,
-            filledIcon: <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />,
+            icon: (
+                <Badge badgeContent={unreadNotificationsCount} color="error">
+                    <FavoriteBorder sx={{ fontSize: "2rem" }} />
+                </Badge>
+            ),
+            filledIcon: (
+                <Badge badgeContent={unreadNotificationsCount} color="error">
+                    <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />
+                </Badge>
+            ),
         },
         {
             segment: "explore",

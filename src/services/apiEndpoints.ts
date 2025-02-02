@@ -10,3 +10,4 @@ export const FOLLOW_ENDPOINT: string = "/api/users/follow";
 export const SEARCH_ENDPOINT: string = "/api/users/search";
 export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
 export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";
+export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/count";

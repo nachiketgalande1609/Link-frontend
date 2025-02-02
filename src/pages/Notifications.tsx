@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, List, ListItem, ListItemText, CircularProgress, ListItemAvatar, Avatar, Typography, Paper, Button, Box } from "@mui/material";
 import { followUser, getNotifications } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/userContext";
 
 interface Notification {
     id: number;
@@ -23,13 +24,15 @@ const NotificationsPage = () => {
     const navigate = useNavigate();
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
+    const { resetNotificationsCount } = useUser();
+
     async function fetchNotifications() {
         if (!currentUser?.id) return;
 
         try {
             setLoading(true);
             const res = await getNotifications(currentUser.id);
-            setNotifications(res.data); // Assuming res.data is the array of notifications
+            setNotifications(res.data);
         } catch (error) {
             console.error("Error fetching notifications:", error);
         } finally {
@@ -39,6 +42,7 @@ const NotificationsPage = () => {
 
     useEffect(() => {
         fetchNotifications();
+        resetNotificationsCount();
     }, [currentUser?.id]);
 
     const handleFollowBack = async (userId: string) => {
