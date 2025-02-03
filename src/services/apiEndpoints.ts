@@ -20,5 +20,5 @@ export const ADD_POST_COMMENT_ENDPOINT: string = "/api/posts/comment";
 export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";
 export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/count";
 
-export const SEARCH_ENDPOINT: string = "/api/users/search";
+export const SEARCH_ENDPOINT: string = "/api/search";
 export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
