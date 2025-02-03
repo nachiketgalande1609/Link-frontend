@@ -208,9 +208,9 @@ export const followUser = async (followerId: string, followingId: string) => {
     }
 };
 
-export const respondToFollowRequest = async (currentUserId: number, notificationId: number, followerId: number, status: string) => {
+export const respondToFollowRequest = async (requestId: number, status: string) => {
     try {
-        const res = await api.post(FOLLOW_RESPONSE_ENDPOINT, { currentUserId, notificationId, followerId, status });
+        const res = await api.post(FOLLOW_RESPONSE_ENDPOINT, { requestId, status });
         return res.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
