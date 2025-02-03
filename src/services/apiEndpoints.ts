@@ -1,13 +1,24 @@
-export const REGISTER_ENDPOINT: string = "/api/users/register";
-export const LOGIN_ENDPOINT: string = "/api/users/login";
-export const GOOGLE_LOGIN_ENDPOINT: string = "/api/users/google-login";
+// Auth Endpoints
+export const REGISTER_ENDPOINT: string = "/api/auth/register";
+export const LOGIN_ENDPOINT: string = "/api/auth/login";
+export const GOOGLE_LOGIN_ENDPOINT: string = "/api/auth/google-login";
+
+// User Endpoints
 export const GET_PROFILE_ENDPOINT: string = "/api/users/profile";
+
+// Follow Endpoints
+export const FOLLOW_ENDPOINT: string = "/api/follow";
+export const FOLLOW_RESPONSE_ENDPOINT: string = "/api/follow/response";
+
+// Post Endpoints
 export const POSTS_ENDPOINT: string = "/api/posts";
 export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
 export const ADD_POST_COMMENT_ENDPOINT: string = "/api/posts/comment";
-export const FOLLOW_ENDPOINT: string = "/api/users/follow";
-export const SEARCH_ENDPOINT: string = "/api/users/search";
-export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
+
+// Notifications Endpoints
 export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";
 export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/count";
+
+export const SEARCH_ENDPOINT: string = "/api/users/search";
+export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";

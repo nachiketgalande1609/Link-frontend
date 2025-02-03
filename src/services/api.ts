@@ -13,6 +13,7 @@ import {
     UPDATE_POST_ENDPOINT,
     GOOGLE_LOGIN_ENDPOINT,
     GET_NOTIFICATIONS_COUNT,
+    FOLLOW_RESPONSE_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -96,8 +97,6 @@ export const getPosts = async (userId: string) => {
 };
 
 export const getProfile = async (userId: string, currentUserId: string) => {
-    console.log(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
-
     try {
         const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
         return response.data;
@@ -199,6 +198,20 @@ export const followUser = async (followerId: string, followingId: string) => {
     try {
         const response = await api.post(FOLLOW_ENDPOINT, { followerId, followingId });
         return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to send follow request:", error.message);
+        } else {
+            console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const respondToFollowRequest = async (currentUserId: number, notificationId: number, followerId: number, status: string) => {
+    try {
+        const res = await api.post(FOLLOW_RESPONSE_ENDPOINT, { currentUserId, notificationId, followerId, status });
+        return res.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error("Failed to send follow request:", error.message);

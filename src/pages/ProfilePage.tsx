@@ -13,6 +13,8 @@ interface Profile {
     followers_count: number;
     following_count: number;
     posts_count: number;
+    is_request_active: boolean;
+    follow_status: string;
 }
 
 const ProfilePage = () => {
@@ -134,8 +136,21 @@ const ProfilePage = () => {
                         )}
 
                         {userId != currentUser?.id && (
-                            <Button onClick={isFollowing ? () => {} : handleFollow} disabled={isFollowing} variant="outlined" sx={{ mt: 2 }}>
-                                {isFollowing ? "Following" : "Follow"}
+                            <Button
+                                onClick={
+                                    (isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active
+                                        ? () => {}
+                                        : handleFollow
+                                }
+                                disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
+                                variant="outlined"
+                                sx={{ mt: 2 }}
+                            >
+                                {profileData?.is_request_active
+                                    ? "Request Pending"
+                                    : isFollowing && profileData?.follow_status === "accepted"
+                                    ? "Following"
+                                    : "Follow"}
                             </Button>
                         )}
 

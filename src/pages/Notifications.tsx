@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Container, List, ListItem, ListItemText, CircularProgress, ListItemAvatar, Avatar, Typography, Paper, Button, Box } from "@mui/material";
-import { followUser, getNotifications } from "../services/api";
+import { followUser, getNotifications, respondToFollowRequest } from "../services/api"; // Assuming you have an API to handle follow request responses
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
 
@@ -14,7 +14,8 @@ interface Notification {
     username: string;
     profile_picture: string;
     is_following: boolean;
-    image_url?: string; // Add image_url field for post images
+    image_url?: string;
+    follower_id?: number;
 }
 
 const NotificationsPage = () => {
@@ -60,6 +61,17 @@ const NotificationsPage = () => {
 
     const handleNotificationClick = (notification: Notification) => {
         navigate(`/profile/${notification.sender_id}`);
+    };
+
+    const handleFollowRequestResponse = async (notificationId: number, follower_id: number, response: "accepted" | "rejected") => {
+        try {
+            const res = await respondToFollowRequest(currentUser?.id, notificationId, follower_id, response); // Assuming you have this API function
+            if (res?.success) {
+                fetchNotifications(); // Refresh the notifications after responding
+            }
+        } catch (error) {
+            console.error(`Failed to ${response} the follow request:`, error);
+        }
     };
 
     return (
@@ -124,6 +136,41 @@ const NotificationsPage = () => {
                                         {notification.is_following ? "Following" : "Follow Back"}
                                     </Button>
                                 )}
+                                {notification.type === "follow_request" && notification.follower_id !== undefined && (
+                                    <Box sx={{ display: "flex", gap: 1 }}>
+                                        {notification.is_following == null ? (
+                                            <>
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleFollowRequestResponse(notification.id, notification.follower_id as number, "accepted");
+                                                    }}
+                                                >
+                                                    Accept
+                                                </Button>
+                                                <Button
+                                                    variant="outlined"
+                                                    size="small"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleFollowRequestResponse(notification.id, notification.follower_id as number, "rejected");
+                                                    }}
+                                                >
+                                                    Reject
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <Box sx={{ display: "flex", gap: 1 }}>
+                                                <Button variant="outlined" size="small" disabled sx={{ ml: 2 }}>
+                                                    {notification.is_following ? "Accepted" : "Rejected"}
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </Box>
+                                )}
+
                                 {(notification.type === "like" || notification.type === "comment") && notification.image_url && (
                                     <Box sx={{ ml: 2, display: "flex", justifyContent: "flex-end", width: "80px" }}>
                                         <img
