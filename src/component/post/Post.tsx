@@ -231,13 +231,24 @@ const Post: React.FC<PostProps> = ({
 
                 {isEditing ? (
                     <Box sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
-                        <TextField fullWidth multiline value={editedContent} onChange={(e) => setEditedContent(e.target.value)} sx={{ mb: 2 }} />
+                        <TextField
+                            fullWidth
+                            multiline
+                            value={editedContent}
+                            onChange={(e) => setEditedContent(e.target.value)}
+                            sx={{
+                                mb: 2,
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "20px",
+                                },
+                            }}
+                        />
                         {/* Buttons aligned to the right */}
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-                            <Button onClick={() => setIsEditing(false)} variant="outlined" size="small">
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                            <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "20px" }}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleSaveEdit} variant="contained" size="small" color="primary">
+                            <Button onClick={handleSaveEdit} variant="contained" color="primary" sx={{ borderRadius: "20px" }}>
                                 Save
                             </Button>
                         </Box>
@@ -278,7 +289,7 @@ const Post: React.FC<PostProps> = ({
                     sx={{
                         mb: "16px",
                         "& .MuiOutlinedInput-root": {
-                            borderRadius: "8px",
+                            borderRadius: "20px",
                         },
                     }}
                     inputRef={commentInputRef}

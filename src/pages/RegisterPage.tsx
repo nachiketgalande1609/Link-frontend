@@ -52,7 +52,19 @@ const RegisterPage: React.FC = () => {
                 {success && <Alert severity="success">{success}</Alert>}
 
                 <form onSubmit={handleRegister}>
-                    <TextField fullWidth label="Email" variant="outlined" margin="normal" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <TextField
+                        fullWidth
+                        label="Email"
+                        variant="outlined"
+                        margin="normal"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
+                    />
                     <TextField
                         fullWidth
                         label="Username"
@@ -60,6 +72,11 @@ const RegisterPage: React.FC = () => {
                         margin="normal"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -69,6 +86,11 @@ const RegisterPage: React.FC = () => {
                         margin="normal"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -78,8 +100,13 @@ const RegisterPage: React.FC = () => {
                         margin="normal"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
-                    <Button variant="contained" color="primary" fullWidth onClick={handleRegister} sx={{ mt: 2 }}>
+                    <Button variant="contained" color="primary" fullWidth onClick={handleRegister} sx={{ mt: 2, borderRadius: "20px" }}>
                         Register
                     </Button>
                 </form>

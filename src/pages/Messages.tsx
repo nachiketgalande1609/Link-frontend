@@ -171,7 +171,7 @@ const Messages = () => {
                                 sx={{
                                     input: { color: "white" },
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: "8px",
+                                        borderRadius: "20px",
                                     },
                                 }}
                             />

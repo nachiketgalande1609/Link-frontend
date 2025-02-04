@@ -138,7 +138,7 @@ const NotificationsPage = () => {
                                                   }
                                         }
                                         disabled={notification.request_status === "pending"}
-                                        sx={{ ml: 2 }}
+                                        sx={{ ml: 2, borderRadius: "20px" }}
                                     >
                                         {notification.request_status === "accepted" ? "Following" : "Follow Back"}
                                     </Button>
@@ -154,6 +154,7 @@ const NotificationsPage = () => {
                                                         e.stopPropagation();
                                                         handleFollowRequestResponse(notification.request_id, "accepted");
                                                     }}
+                                                    sx={{ borderRadius: "20px" }}
                                                 >
                                                     Accept
                                                 </Button>
@@ -164,12 +165,13 @@ const NotificationsPage = () => {
                                                         e.stopPropagation();
                                                         handleFollowRequestResponse(notification.request_id, "rejected");
                                                     }}
+                                                    sx={{ borderRadius: "20px" }}
                                                 >
                                                     Reject
                                                 </Button>
                                             </>
                                         ) : (
-                                            <Button variant="outlined" size="small" disabled sx={{ ml: 2 }}>
+                                            <Button variant="outlined" size="small" disabled sx={{ ml: 2, borderRadius: "20px" }}>
                                                 {notification.request_status === "accepted"
                                                     ? "Accepted"
                                                     : notification.request_status === "rejected"

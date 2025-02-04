@@ -78,6 +78,11 @@ const LoginPage: React.FC = () => {
                             margin="normal"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "20px",
+                                },
+                            }}
                         />
                         <TextField
                             fullWidth
@@ -87,8 +92,13 @@ const LoginPage: React.FC = () => {
                             margin="normal"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "20px",
+                                },
+                            }}
                         />
-                        <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2 }}>
+                        <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2, borderRadius: "20px" }}>
                             Login
                         </Button>
                     </form>

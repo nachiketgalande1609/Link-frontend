@@ -178,7 +178,7 @@ const ProfilePage = () => {
                                 }
                                 disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
                                 variant="outlined"
-                                sx={{ mt: 2 }}
+                                sx={{ mt: 2, borderRadius: "20px" }}
                             >
                                 {profileData?.is_request_active
                                     ? "Request Pending"
@@ -189,7 +189,7 @@ const ProfilePage = () => {
                         )}
 
                         {userId != currentUser?.id && (
-                            <Button onClick={handleSendMessage} variant="contained" sx={{ mt: 2, ml: 2 }}>
+                            <Button onClick={handleSendMessage} variant="contained" sx={{ mt: 2, ml: 2, borderRadius: "20px" }}>
                                 Send Message
                             </Button>
                         )}
@@ -236,7 +236,7 @@ const ProfilePage = () => {
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <Grid item xs={12} sm={6} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
-                            <ProfilePagePost imageUrl={post.image_url} like_count={post.like_count} comment_count={post.comment_count} />
+                            <ProfilePagePost imageUrl={post.image_url} />
                         </Grid>
                     ))
                 ) : (

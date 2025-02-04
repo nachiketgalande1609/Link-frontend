@@ -87,7 +87,7 @@ const SettingsPage = () => {
                                 src={user?.profile_picture_url || ""}
                                 sx={{ width: 120, height: 120, marginBottom: 2, border: "4px solid #00aaff" }}
                             />
-                            <Button component="label" sx={{ marginTop: 1 }} variant="contained" color="primary">
+                            <Button component="label" sx={{ marginTop: 1, borderRadius: "20px" }} variant="contained" color="primary">
                                 Change Profile Picture
                                 <input type="file" hidden onChange={handleProfilePicChange} />
                             </Button>
@@ -101,7 +101,9 @@ const SettingsPage = () => {
                             onChange={handleUsernameChange}
                             sx={{
                                 marginBottom: 3,
-                                "& .MuiOutlinedInput-root": { borderRadius: "10px" },
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "20px",
+                                },
                             }}
                         />
                         <Button
@@ -111,7 +113,7 @@ const SettingsPage = () => {
                             fullWidth
                             sx={{
                                 padding: "12px 0",
-                                borderRadius: "25px",
+                                borderRadius: "20px",
                                 textTransform: "uppercase",
                                 fontWeight: "bold",
                                 "&:hover": { backgroundColor: "#007bb5" },

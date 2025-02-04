@@ -66,7 +66,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         label="What's on your mind?"
                         value={postContent}
                         onChange={(e) => setPostContent(e.target.value)}
-                        sx={{ marginBottom: 2 }}
+                        sx={{
+                            marginBottom: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -74,7 +79,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         label="Image URL"
                         value={imageUrl}
                         onChange={(e) => setImageUrl(e.target.value)}
-                        sx={{ marginBottom: 2 }}
+                        sx={{
+                            marginBottom: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -82,7 +92,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         label="Video URL"
                         value={videoUrl}
                         onChange={(e) => setVideoUrl(e.target.value)}
-                        sx={{ marginBottom: 2 }}
+                        sx={{
+                            marginBottom: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -90,7 +105,12 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         label="Location"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        sx={{ marginBottom: 2 }}
+                        sx={{
+                            marginBottom: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
                     <TextField
                         fullWidth
@@ -98,9 +118,21 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         label="Tags (comma separated)"
                         value={tags}
                         onChange={(e) => setTags(e.target.value)}
-                        sx={{ marginBottom: 2 }}
+                        sx={{
+                            marginBottom: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
                     />
-                    <Button variant="contained" color="primary" fullWidth onClick={handleSubmit} disabled={!postContent.trim()}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        onClick={handleSubmit}
+                        disabled={!postContent.trim()}
+                        sx={{ borderRadius: "20px" }}
+                    >
                         Post
                     </Button>
                 </Box>

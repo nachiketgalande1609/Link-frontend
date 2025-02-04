@@ -19,7 +19,7 @@ import {
     Button,
 } from "@mui/material";
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
-import { deletePost, likePost, addComment } from "../../services/api";
+import { deletePost, likePost, addComment, updatePost } from "../../services/api";
 
 interface PostProps {
     username: string;
@@ -70,6 +70,9 @@ const ModalPost: React.FC<PostProps> = ({
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
     const [likes, setLikes] = useState(initialLikes);
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(content);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -149,8 +152,25 @@ const ModalPost: React.FC<PostProps> = ({
         handleMenuClose();
     };
 
+    const handleEditClick = () => {
+        setIsEditing(true);
+        handleMenuClose();
+    };
+
     const handleCancel = () => {
         setDialogOpen(false);
+    };
+
+    const handleSaveEdit = async () => {
+        try {
+            const response = await updatePost(postId, editedContent);
+            if (response?.success) {
+                setIsEditing(false);
+                fetchPosts();
+            }
+        } catch (error) {
+            console.error("Error updating post:", error);
+        }
     };
 
     return (
@@ -215,15 +235,42 @@ const ModalPost: React.FC<PostProps> = ({
                                         },
                                     }}
                                 >
-                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }}>Edit</MenuItem>
+                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleEditClick}>
+                                        Edit
+                                    </MenuItem>
                                     <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
                                         Delete
                                     </MenuItem>
                                 </Menu>
 
-                                <Typography variant="body1" sx={{ mt: 2 }}>
-                                    {content}
-                                </Typography>
+                                {isEditing ? (
+                                    <Box sx={{ mt: 2 }}>
+                                        <TextField
+                                            fullWidth
+                                            multiline
+                                            value={editedContent}
+                                            onChange={(e) => setEditedContent(e.target.value)}
+                                            sx={{
+                                                mb: 2,
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: "20px",
+                                                },
+                                            }}
+                                        />
+                                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                                            <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "20px" }}>
+                                                Cancel
+                                            </Button>
+                                            <Button onClick={handleSaveEdit} variant="contained" color="primary" sx={{ borderRadius: "20px" }}>
+                                                Save
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                ) : (
+                                    <Typography variant="body1" sx={{ mt: 2 }}>
+                                        {content}
+                                    </Typography>
+                                )}
 
                                 <CardActions
                                     sx={{
@@ -263,7 +310,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         sx={{
                                             mb: "16px",
                                             "& .MuiOutlinedInput-root": {
-                                                borderRadius: "8px",
+                                                borderRadius: "20px",
                                             },
                                         }}
                                         inputRef={commentInputRef}

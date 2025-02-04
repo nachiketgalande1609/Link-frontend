@@ -90,7 +90,17 @@ export default function SearchPage() {
 
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
-            <TextField fullWidth label="Search Users" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+            <TextField
+                sx={{
+                    "& .MuiOutlinedInput-root": {
+                        borderRadius: "20px",
+                    },
+                }}
+                fullWidth
+                label="Search Users"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+            />
             {loading && <CircularProgress sx={{ display: "block", mx: "auto" }} />}
             {/* Search Results */}
             {results.length > 0 && (
