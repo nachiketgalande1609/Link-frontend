@@ -5,6 +5,7 @@ export const GOOGLE_LOGIN_ENDPOINT: string = "/api/auth/google-login";
 
 // User Endpoints
 export const GET_PROFILE_ENDPOINT: string = "/api/users/profile";
+export const UPLOAD_PROFILE_PICTURE_ENDPOINT: string = "/api/users/profile/picture";
 
 // Follow Endpoints
 export const FOLLOW_ENDPOINT: string = "/api/follow";

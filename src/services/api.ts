@@ -15,6 +15,7 @@ import {
     GET_NOTIFICATIONS_COUNT,
     FOLLOW_RESPONSE_ENDPOINT,
     SEARCH_HISTORY_ENDPOINT,
+    UPLOAD_PROFILE_PICTURE_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -135,6 +136,29 @@ export const createPost = async (postData: PostData) => {
         }
 
         const response = await api.post(POSTS_ENDPOINT, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown error occurred");
+        }
+        throw error;
+    }
+};
+
+export const uploadProfilePicture = async (userId: string, profilePic: File) => {
+    try {
+        const formData = new FormData();
+        formData.append("user_id", userId);
+        formData.append("profile_pic", profilePic);
+
+        const response = await api.post(UPLOAD_PROFILE_PICTURE_ENDPOINT, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
