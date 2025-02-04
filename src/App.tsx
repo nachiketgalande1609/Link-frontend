@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, Menu, MenuItem, Badge } from "@mui/material";
+import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, Menu, MenuItem, Badge, IconButton } from "@mui/material";
 import {
     HomeOutlined as HomeOutlined,
     Home as HomeFilled,
@@ -13,6 +13,8 @@ import {
     ChatBubble as Message,
     FavoriteBorder,
     Favorite,
+    ChevronLeft,
+    ChevronRight,
 } from "@mui/icons-material";
 
 import { useUser } from "./context/userContext";
@@ -53,6 +55,7 @@ const demoTheme = extendTheme({
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
 const DrawerWidth = 240;
+const CollapsedDrawerWidth = 72;
 
 const App = () => {
     return (
@@ -195,15 +198,17 @@ const AppContent = () => {
             {!hideDrawer && (
                 <Drawer
                     sx={{
-                        width: DrawerWidth,
+                        width: open ? DrawerWidth : CollapsedDrawerWidth,
                         flexShrink: 0,
                         "& .MuiDrawer-paper": {
-                            width: DrawerWidth,
+                            width: open ? DrawerWidth : CollapsedDrawerWidth,
                             boxSizing: "border-box",
                             backgroundColor: "black",
+                            transition: "width 0.3s ease-in-out",
+                            overflowX: "hidden",
                         },
                     }}
-                    variant="persistent"
+                    variant="permanent"
                     anchor="left"
                     open={open}
                 >
@@ -211,8 +216,39 @@ const AppContent = () => {
                         {NAVIGATION.map((item, index) => {
                             if (item.kind === "header") {
                                 return (
-                                    <ListItem key={index} sx={{ padding: 3, mb: 3 }}>
-                                        <img src={logo} alt="Logo" style={{ width: "100px", height: "auto" }} />
+                                    <ListItem
+                                        key={index}
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            padding: 2,
+                                            mb: 3,
+                                        }}
+                                    >
+                                        <img
+                                            src={logo}
+                                            alt="Logo"
+                                            style={{
+                                                width: "100px",
+                                                height: "auto",
+                                                visibility: open ? "visible" : "hidden",
+                                            }}
+                                        />
+                                        <IconButton
+                                            onClick={toggleDrawer}
+                                            sx={{
+                                                color: "white",
+                                                transition: "transform 0.3s",
+                                                position: "absolute",
+                                                right: open ? 0 : 8,
+                                                top: 13,
+                                                borderRadius: "50%",
+                                                "&:hover": { backgroundColor: "#000000" },
+                                            }}
+                                        >
+                                            {open ? <ChevronLeft /> : <ChevronRight />}
+                                        </IconButton>
                                     </ListItem>
                                 );
                             }
@@ -222,19 +258,25 @@ const AppContent = () => {
                                     key={item.segment}
                                     component={Link}
                                     to={`/${item.segment}`}
-                                    style={{
-                                        textDecoration: "none",
-                                        padding: "15px",
-                                        borderRadius: "20px",
-                                    }}
                                     sx={{
+                                        textDecoration: "none",
+                                        padding: "12px 15px",
+                                        borderRadius: "20px",
                                         backgroundColor: isActive ? "#ffffff" : "transparent",
                                         "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#222222" },
                                         maxHeight: "62px",
+                                        justifyContent: open ? "flex-start" : "center",
+                                        margin: "5px 0",
                                     }}
                                 >
-                                    <ListItemIcon>{isActive ? item.filledIcon : item.icon}</ListItemIcon>
-                                    <Typography sx={{ fontSize: "1rem", color: isActive ? "#000000" : "white", fontWeight: "444444" }}>
+                                    <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>{isActive ? item.filledIcon : item.icon}</ListItemIcon>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "1rem",
+                                            color: isActive ? "#000000" : "white",
+                                            display: open ? "block" : "none",
+                                        }}
+                                    >
                                         {item.title}
                                     </Typography>
                                 </ListItem>
@@ -242,29 +284,55 @@ const AppContent = () => {
                         })}
                         <ListItem
                             onClick={handleOpen}
-                            key={"create post"}
-                            style={{ textDecoration: "none", padding: "15px", cursor: "pointer", borderRadius: "20px" }}
                             sx={{
+                                textDecoration: "none",
+                                padding: "12px 15px",
+                                cursor: "pointer",
+                                borderRadius: "20px",
                                 "&:hover": { backgroundColor: "#222" },
+                                justifyContent: open ? "flex-start" : "center",
+                                margin: "5px 0",
                             }}
                         >
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
                                 <AddIcon sx={{ fontSize: "2rem" }} />
                             </ListItemIcon>
-                            <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: "333" }}>Create Post</Typography>
+                            <Typography
+                                sx={{
+                                    fontSize: "1rem",
+                                    color: "white",
+                                    display: open ? "block" : "none",
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                Create Post
+                            </Typography>
                         </ListItem>
                         <Box sx={{ flexGrow: 1 }} />
                         <ListItem
                             onClick={handleMenuClick}
-                            style={{ textDecoration: "none", padding: "15px", cursor: "pointer", borderRadius: "20px" }}
                             sx={{
+                                textDecoration: "none",
+                                padding: "12px 15px",
+                                cursor: "pointer",
+                                borderRadius: "20px",
                                 "&:hover": { backgroundColor: "#222" },
+                                justifyContent: open ? "flex-start" : "center",
+                                margin: "5px 0",
                             }}
                         >
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
                                 <MenuIcon sx={{ fontSize: "2rem" }} />
                             </ListItemIcon>
-                            <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: "333" }}>More</Typography>
+                            <Typography
+                                sx={{
+                                    fontSize: "1rem",
+                                    color: "white",
+                                    display: open ? "block" : "none",
+                                }}
+                            >
+                                More
+                            </Typography>
                         </ListItem>
                     </List>
 
