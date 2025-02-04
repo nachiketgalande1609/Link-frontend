@@ -14,6 +14,7 @@ import {
     GOOGLE_LOGIN_ENDPOINT,
     GET_NOTIFICATIONS_COUNT,
     FOLLOW_RESPONSE_ENDPOINT,
+    SEARCH_HISTORY_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -225,6 +226,53 @@ export const respondToFollowRequest = async (requestId: number, status: string) 
 export const getSearchResults = async (searchQuery: string) => {
     try {
         const response = await api.get(`${SEARCH_ENDPOINT}?searchString=${searchQuery}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getSearchHistory = async (userId: number) => {
+    try {
+        const response = await api.get(`${SEARCH_HISTORY_ENDPOINT}?userId=${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const addToSearchHistory = async (currentUserId: number, targetUserId: number) => {
+    try {
+        const response = await api.post(SEARCH_HISTORY_ENDPOINT, { userId: currentUserId, target_user_id: targetUserId });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const deleteSearchHistoryItem = async (currentUserId: number, historyId: number) => {
+    try {
+        const response = await api.delete(SEARCH_HISTORY_ENDPOINT, {
+            params: { userId: currentUserId, historyId: historyId },
+        });
 
         return response.data;
     } catch (error: unknown) {
