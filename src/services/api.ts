@@ -16,6 +16,7 @@ import {
     FOLLOW_RESPONSE_ENDPOINT,
     SEARCH_HISTORY_ENDPOINT,
     UPLOAD_PROFILE_PICTURE_ENDPOINT,
+    UPDATE_PROFILE_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -34,6 +35,11 @@ interface PostData {
     content: string;
     image?: File;
     location: string;
+}
+
+interface ProfileData {
+    username: string;
+    profile_picture_url?: string;
 }
 
 // User APIs
@@ -240,6 +246,20 @@ export const followUser = async (followerId: string, followingId: string) => {
             console.error("Failed to send follow request:", error.message);
         } else {
             console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const updateProfileDetails = async (userId: string, updatedProfile: ProfileData) => {
+    try {
+        const response = await api.put(UPDATE_PROFILE_ENDPOINT, { userId, updatedProfile });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to update profile:", error.message);
+        } else {
+            console.error("Failed to update profile: Unknown error");
         }
         throw error;
     }

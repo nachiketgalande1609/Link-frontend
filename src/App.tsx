@@ -351,14 +351,14 @@ const AppContent = () => {
                             },
                         }}
                     >
-                        <MenuItem onClick={handleLogout} sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}>
-                            Logout
-                        </MenuItem>
                         <MenuItem
                             onClick={() => navigate("/settings")}
                             sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}
                         >
                             Settings
+                        </MenuItem>
+                        <MenuItem onClick={handleLogout} sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}>
+                            Logout
                         </MenuItem>
                     </Menu>
                 </Drawer>
