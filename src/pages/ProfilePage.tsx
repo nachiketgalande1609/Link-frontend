@@ -97,7 +97,7 @@ const ProfilePage = () => {
     };
 
     return (
-        <Container sx={{ padding: "10px" }}>
+        <Container sx={{ padding: "10px", marginBottom: "50px" }}>
             <Paper
                 sx={{
                     padding: { xs: 2, sm: 3 },
@@ -208,24 +208,24 @@ const ProfilePage = () => {
                                 <Typography variant="body2" sx={{ fontSize: "20px", mb: 1 }}>
                                     {profileData?.posts_count}
                                 </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                                    Posts
+                                <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
+                                    POSTS
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <Typography variant="body2" sx={{ fontSize: "20px", mb: 1 }}>
                                     {profileData?.followers_count}
                                 </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                                    Followers
+                                <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
+                                    FOLLOWERS
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
                                 <Typography variant="body2" sx={{ fontSize: "20px", mb: 1 }}>
                                     {profileData?.following_count}
                                 </Typography>
-                                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                                    Following
+                                <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
+                                    FOLLOWING
                                 </Typography>
                             </Grid>
                         </Grid>

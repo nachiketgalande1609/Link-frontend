@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton } from "@mui/material";
+import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton, CircularProgress } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import { createPost } from "../../services/api";
@@ -14,6 +14,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     const [postContent, setPostContent] = useState<string>("");
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [location, setLocation] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     const { user } = useUser();
 
@@ -30,6 +31,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     });
 
     const handleSubmit = async () => {
+        setLoading(true);
+
         if (postContent.trim() && user) {
             const res = await createPost({
                 user_id: user.id,
@@ -37,6 +40,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                 image: imageFile || undefined,
                 location,
             });
+
+            setLoading(false);
             if (res?.success) {
                 setPostContent("");
                 setImageFile(null);
@@ -128,7 +133,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         disabled={!postContent.trim()}
                         sx={{ borderRadius: "20px" }}
                     >
-                        Post
+                        {loading ? <CircularProgress size={24} color="inherit" /> : "Post"}
                     </Button>
                 </Box>
             </Fade>
