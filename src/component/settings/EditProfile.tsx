@@ -11,9 +11,10 @@ interface EditProfileProps {
     newUsername: string;
     setNewUsername: React.Dispatch<React.SetStateAction<string>>;
     handleSaveUsername: () => void;
+    usernameUpdating: boolean;
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, handleSaveUsername }) => {
+const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, handleSaveUsername, usernameUpdating }) => {
     const { user, setUser } = useUser();
     const [openDialog, setOpenDialog] = useState(false);
     const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
@@ -136,7 +137,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, 
                         "&:hover": { backgroundColor: "#007bb5" },
                     }}
                 >
-                    Save Changes
+                    {usernameUpdating ? <CircularProgress size={24} color="inherit" sx={{ marginRight: 2 }} /> : "Save Changes"}
                 </Button>
             </Box>
 

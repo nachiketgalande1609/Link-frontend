@@ -9,6 +9,7 @@ const menuItems = ["Edit Profile", "Notifications", "Account Privacy", "Blocked"
 
 const SettingsPage = () => {
     const { setUser } = useUser();
+    const [usernameUpdating, setUsernameUpdating] = useState(false);
 
     const user = JSON.parse(localStorage.getItem("user") || "");
 
@@ -28,15 +29,18 @@ const SettingsPage = () => {
             console.error("User ID is missing.");
             return;
         }
-
+        setUsernameUpdating(true);
         try {
             await updateProfileDetails(user.id, { username: newUsername });
             const updatedUser = { ...user, username: newUsername };
             setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));
-            // Call your API here to update the username
         } catch (error) {
             console.error("Failed to update username:", error);
+        } finally {
+            setTimeout(() => {
+                setUsernameUpdating(false);
+            }, 4000);
         }
     };
 
@@ -81,7 +85,12 @@ const SettingsPage = () => {
 
             <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
                 {currentSetting === "editprofile" && (
-                    <EditProfile newUsername={newUsername} setNewUsername={setNewUsername} handleSaveUsername={handleSaveUsername} />
+                    <EditProfile
+                        newUsername={newUsername}
+                        setNewUsername={setNewUsername}
+                        handleSaveUsername={handleSaveUsername}
+                        usernameUpdating={usernameUpdating}
+                    />
                 )}
             </Box>
         </Box>
