@@ -31,10 +31,8 @@ interface UserLoginData {
 interface PostData {
     user_id: string;
     content: string;
-    image_url: string;
-    video_url: string;
+    image?: File;
     location: string;
-    tags: string;
 }
 
 // User APIs
@@ -127,13 +125,27 @@ export const getUserPosts = async (userId: string) => {
 
 export const createPost = async (postData: PostData) => {
     try {
-        const response = await api.post(POSTS_ENDPOINT, postData);
+        const formData = new FormData();
+        formData.append("user_id", postData.user_id);
+        formData.append("content", postData.content);
+        formData.append("location", postData.location);
+
+        if (postData.image) {
+            formData.append("image", postData.image);
+        }
+
+        const response = await api.post(POSTS_ENDPOINT, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(error.message);
         } else {
-            console.error("unknown Error");
+            console.error("Unknown error occurred");
         }
         throw error;
     }

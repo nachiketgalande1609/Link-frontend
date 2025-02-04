@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Box, Button, Modal, TextField, Typography, Backdrop, Fade } from "@mui/material";
+import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import { useDropzone } from "react-dropzone";
 import { createPost } from "../../services/api";
 import { useUser } from "../../context/userContext";
 
-// Define prop types
 interface CreatePostModalProps {
     open: boolean;
     handleClose: () => void;
@@ -11,29 +12,35 @@ interface CreatePostModalProps {
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) => {
     const [postContent, setPostContent] = useState<string>("");
-    const [imageUrl, setImageUrl] = useState<string>("");
-    const [videoUrl, setVideoUrl] = useState<string>("");
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [location, setLocation] = useState<string>("");
-    const [tags, setTags] = useState<string>("");
 
     const { user } = useUser();
+
+    const onDrop = (acceptedFiles: File[]) => {
+        if (acceptedFiles.length > 0) {
+            setImageFile(acceptedFiles[0]);
+        }
+    };
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop,
+        accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif"] },
+        multiple: false,
+    });
 
     const handleSubmit = async () => {
         if (postContent.trim() && user) {
             const res = await createPost({
                 user_id: user.id,
                 content: postContent,
-                image_url: imageUrl,
-                video_url: videoUrl,
+                image: imageFile || undefined,
                 location,
-                tags,
             });
             if (res?.success) {
                 setPostContent("");
-                setImageUrl("");
-                setVideoUrl("");
+                setImageFile(null);
                 setLocation("");
-                setTags("");
                 handleClose();
             }
         }
@@ -44,60 +51,66 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
             <Fade in={open}>
                 <Box
                     sx={{
-                        position: "absolute",
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        width: 400,
                         bgcolor: "background.paper",
                         boxShadow: 24,
-                        p: 4,
-                        borderRadius: 2,
+                        p: "60px 20px 20px 20px",
+                        borderRadius: "20px",
+                        width: "80%",
+                        maxWidth: "600px",
+                        position: "relative",
                     }}
                 >
-                    <Typography variant="h6" gutterBottom>
-                        Create a Post
-                    </Typography>
+                    {/* Close Button */}
+                    <IconButton
+                        onClick={handleClose}
+                        sx={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            color: "grey.600",
+                        }}
+                    >
+                        <Close />
+                    </IconButton>
+
+                    <Box
+                        {...getRootProps()}
+                        sx={{
+                            border: "2px dashed gray",
+                            borderRadius: "20px",
+                            padding: 0,
+                            textAlign: "center",
+                            cursor: "pointer",
+                            marginBottom: 2,
+                            height: "500px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <input {...getInputProps()} />
+                        {imageFile ? (
+                            <img
+                                src={URL.createObjectURL(imageFile)}
+                                alt="Preview"
+                                style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "20px" }}
+                            />
+                        ) : (
+                            <Typography>Drag & drop an image, or click to select one</Typography>
+                        )}
+                    </Box>
                     <TextField
                         fullWidth
                         multiline
-                        rows={2}
+                        rows={3}
                         variant="outlined"
-                        label="What's on your mind?"
+                        label="Write a caption"
                         value={postContent}
                         onChange={(e) => setPostContent(e.target.value)}
-                        sx={{
-                            marginBottom: 2,
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: "20px",
-                            },
-                        }}
-                    />
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Image URL"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
-                        sx={{
-                            marginBottom: 2,
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: "20px",
-                            },
-                        }}
-                    />
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Video URL"
-                        value={videoUrl}
-                        onChange={(e) => setVideoUrl(e.target.value)}
-                        sx={{
-                            marginBottom: 2,
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: "20px",
-                            },
-                        }}
+                        sx={{ marginBottom: 2, "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
                     />
                     <TextField
                         fullWidth
@@ -105,25 +118,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         label="Location"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        sx={{
-                            marginBottom: 2,
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: "20px",
-                            },
-                        }}
-                    />
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Tags (comma separated)"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
-                        sx={{
-                            marginBottom: 2,
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: "20px",
-                            },
-                        }}
+                        sx={{ marginBottom: 2, "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
                     />
                     <Button
                         variant="contained"
