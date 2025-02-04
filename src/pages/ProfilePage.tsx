@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import ProfilePagePost from "../component/post/ProfilePagePost";
 import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../services/api";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useParams, useNavigate } from "react-router-dom";
 
 interface Profile {
@@ -27,6 +28,7 @@ const ProfilePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const [selectedPost, setSelectedPost] = useState<any | null>(null);
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
     async function fetchProfile() {
         try {
@@ -81,6 +83,19 @@ const ProfilePage = () => {
         navigate(`/messages/${userId}`);
     };
 
+    const handleMoreOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
+
+    const handleEditProfile = () => {
+        navigate("/settings?setting=editprofile");
+        handleCloseMenu();
+    };
+
     return (
         <Container sx={{ padding: "10px" }}>
             <Paper
@@ -92,7 +107,26 @@ const ProfilePage = () => {
                     background: "linear-gradient(0deg,rgb(71, 71, 71),rgb(0, 0, 0))",
                 }}
             >
-                <Grid container spacing={3} alignItems="start">
+                <Grid container spacing={3} alignItems="start" sx={{ position: "relative" }}>
+                    <IconButton aria-label="more options" onClick={handleMoreOptionsClick} sx={{ position: "absolute", right: 0, top: 15 }}>
+                        <MoreHorizIcon />
+                    </IconButton>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleCloseMenu}
+                        sx={{
+                            "& .MuiPaper-root": {
+                                width: "150px",
+                                padding: "1px 8px",
+                                borderRadius: "20px",
+                            },
+                        }}
+                    >
+                        <MenuItem onClick={handleEditProfile} sx={{ width: "100%", textAlign: "center", height: "40px", borderRadius: "15px" }}>
+                            Edit Profile
+                        </MenuItem>
+                    </Menu>
                     <Grid item xs={12} sm={12} md={3} lg={2} sx={{ display: "flex", justifyContent: "center" }}>
                         <Avatar
                             src={profileData?.profile_picture}
@@ -198,7 +232,6 @@ const ProfilePage = () => {
                     </Grid>
                 </Grid>
             </Paper>
-
             <Grid container spacing={2}>
                 {posts.length > 0 ? (
                     posts.map((post) => (
