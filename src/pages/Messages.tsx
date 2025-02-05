@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Container, Grid, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
+import { Container, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
 
@@ -26,10 +26,27 @@ const Messages = () => {
     const [inputMessage, setInputMessage] = useState("");
 
     const { userId } = useParams();
+    const navigate = useNavigate();
+    const location = useLocation(); // Use to track the current route
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        // If the route is `/messages`, reset selectedUser to null
+        if (location.pathname === "/messages") {
+            setSelectedUser(null);
+        }
+    }, [location.pathname]);
+
+    useEffect(() => {
+        // If userId is in the URL, select that user
+        if (userId) {
+            const user = users.find((user) => user.id === parseInt(userId));
+            setSelectedUser(user || null);
+        }
+    }, [userId, users]);
 
     const fetchData = async () => {
         try {
@@ -43,6 +60,7 @@ const Messages = () => {
 
     const handleUserClick = (userId: number) => {
         setSelectedUser(users.find((user) => user.id === userId) || null);
+        navigate(`/messages/${userId}`); // Update the URL to reflect the selected user
     };
 
     const handleSendMessage = async () => {
@@ -65,13 +83,13 @@ const Messages = () => {
                             key={user.id}
                             onClick={() => handleUserClick(user.id)}
                             sx={{
-                                backgroundColor: "black",
+                                backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "#1E1E1E",
                                 padding: "12px",
                                 borderRadius: "8px",
                                 mb: 1,
-                                outline: selectedUser?.id === user.id ? "2px solid #ffffff" : "none",
                                 textAlign: "left",
                                 width: "100%",
+                                border: "none",
                             }}
                         >
                             <ListItemAvatar>
@@ -80,7 +98,7 @@ const Messages = () => {
                                     src={user.profile_picture || "https://via.placeholder.com/40"}
                                 />
                             </ListItemAvatar>
-                            <ListItemText primary={user.username} />
+                            <ListItemText sx={{ color: selectedUser?.id === user.id ? "#000000" : "#ffffff" }} primary={user.username} />
                         </ListItem>
                     ))}
                 </List>
