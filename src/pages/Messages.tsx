@@ -138,7 +138,7 @@ const Messages = () => {
                             key={user.id}
                             onClick={() => handleUserClick(user.id)}
                             sx={{
-                                backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "#1E1E1E",
+                                backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "transparent",
                                 padding: "12px",
                                 borderRadius: "8px",
                                 mb: 1,
@@ -163,10 +163,22 @@ const Messages = () => {
             <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white" }}>
                 {selectedUser && (
                     <Box
-                        sx={{ backgroundColor: "#000000", padding: "15px", display: "flex", alignItems: "center", borderBottom: "1px solid #333333" }}
+                        sx={{
+                            backgroundColor: "#000000",
+                            padding: "15px",
+                            display: "flex",
+                            alignItems: "center",
+                            borderBottom: "1px solid #333333",
+                        }}
                     >
-                        <Avatar sx={{ width: "40px", height: "40px", mr: 2 }} src={selectedUser.profile_picture} />
-                        <Typography variant="h6">{selectedUser.username}</Typography>
+                        <Avatar
+                            sx={{ width: "40px", height: "40px", mr: 2, cursor: "pointer" }}
+                            src={selectedUser.profile_picture}
+                            onClick={() => navigate(`/profile/${selectedUser?.id}`)}
+                        />
+                        <Typography sx={{ cursor: "pointer" }} variant="h6" onClick={() => navigate(`/profile/${selectedUser?.id}`)}>
+                            {selectedUser.username}
+                        </Typography>
                     </Box>
                 )}
 
