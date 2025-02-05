@@ -22,3 +22,9 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #555;
 }
+
+.londrina-shadow-regular {
+    font-family: "Londrina Shadow", serif !important;
+    font-weight: 400;
+    font-style: normal;
+}

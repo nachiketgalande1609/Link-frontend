@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Drawer, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
-import EditProfile from "../component/settings/EditProfile"; // Import the new EditProfile component
+import ProfileDetails from "../component/settings/ProfileDetails"; // Import the new ProfileDetails component
 import { updateProfileDetails } from "../services/api";
+import AccountPrivacy from "../component/settings/AccountPrivacy";
 
-const menuItems = ["Edit Profile", "Notifications", "Account Privacy", "Blocked", "Comments"];
+const menuItems = ["Profile Details", "Account Privacy", "Notifications", "Blocked", "Comments"];
 
 const SettingsPage = () => {
     const { setUser } = useUser();
@@ -71,7 +72,7 @@ const SettingsPage = () => {
                                     padding: "8px 15px",
                                     borderRadius: "20px",
                                     backgroundColor: settingKey === currentSetting ? "#ffffff" : "transparent",
-                                    "&:hover": settingKey === currentSetting ? { backgroundColor: "#ffffff" } : { backgroundColor: "#222222" },
+                                    "&:hover": settingKey === currentSetting ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
                                     maxHeight: "62px",
                                     margin: "10px 0",
                                 }}
@@ -84,13 +85,19 @@ const SettingsPage = () => {
             </Drawer>
 
             <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                {currentSetting === "editprofile" && (
-                    <EditProfile
+                {currentSetting === "profiledetails" ? (
+                    <ProfileDetails
                         newUsername={newUsername}
                         setNewUsername={setNewUsername}
                         handleSaveUsername={handleSaveUsername}
                         usernameUpdating={usernameUpdating}
                     />
+                ) : currentSetting === "accountprivacy" ? (
+                    <AccountPrivacy />
+                ) : (
+                    <Typography variant="h6" color="textSecondary">
+                        Please Select a settings category
+                    </Typography>
                 )}
             </Box>
         </Box>

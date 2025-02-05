@@ -30,7 +30,6 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ExplorePage from "./pages/ExplorePage";
 import SearchPage from "./pages/SearchPage";
 import { extendTheme } from "@mui/material/styles";
-import logo from "./static/logo.png";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Messages from "./pages/Messages";
@@ -55,7 +54,7 @@ const demoTheme = extendTheme({
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
 const DrawerWidth = 240;
-const CollapsedDrawerWidth = 72;
+const CollapsedDrawerWidth = 72.67;
 
 const App = () => {
     return (
@@ -223,18 +222,15 @@ const AppContent = () => {
                                             justifyContent: "space-between",
                                             alignItems: "center",
                                             padding: 2,
-                                            mb: 3,
                                         }}
                                     >
-                                        <img
-                                            src={logo}
-                                            alt="Logo"
-                                            style={{
-                                                width: "100px",
-                                                height: "auto",
-                                                visibility: open ? "visible" : "hidden",
-                                            }}
-                                        />
+                                        <Typography
+                                            style={{ visibility: open ? "visible" : "hidden" }}
+                                            variant="h2"
+                                            className="londrina-shadow-regular"
+                                        >
+                                            Link
+                                        </Typography>
                                         <IconButton
                                             onClick={toggleDrawer}
                                             sx={{
@@ -263,7 +259,7 @@ const AppContent = () => {
                                         padding: "12px 15px",
                                         borderRadius: "20px",
                                         backgroundColor: isActive ? "#ffffff" : "transparent",
-                                        "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#222222" },
+                                        "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
                                         maxHeight: "62px",
                                         justifyContent: open ? "flex-start" : "center",
                                         margin: "5px 0",
@@ -289,7 +285,7 @@ const AppContent = () => {
                                 padding: "12px 15px",
                                 cursor: "pointer",
                                 borderRadius: "20px",
-                                "&:hover": { backgroundColor: "#222" },
+                                "&:hover": { backgroundColor: "#1E1E1E" },
                                 justifyContent: open ? "flex-start" : "center",
                                 margin: "5px 0",
                             }}
@@ -316,7 +312,7 @@ const AppContent = () => {
                                 padding: "12px 15px",
                                 cursor: "pointer",
                                 borderRadius: "20px",
-                                "&:hover": { backgroundColor: "#222" },
+                                "&:hover": { backgroundColor: "#1E1E1E" },
                                 justifyContent: open ? "flex-start" : "center",
                                 margin: "5px 0",
                             }}
@@ -352,7 +348,7 @@ const AppContent = () => {
                         }}
                     >
                         <MenuItem
-                            onClick={() => navigate("/settings")}
+                            onClick={() => navigate("/settings?setting=profiledetails")}
                             sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}
                         >
                             Settings

@@ -17,6 +17,7 @@ import {
     SEARCH_HISTORY_ENDPOINT,
     UPLOAD_PROFILE_PICTURE_ENDPOINT,
     UPDATE_PROFILE_ENDPOINT,
+    SETTINGS_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -116,9 +117,9 @@ export const getProfile = async (userId: string, currentUserId: string) => {
     }
 };
 
-export const getUserPosts = async (userId: string) => {
+export const getUserPosts = async (currentUserId: string, userId: string) => {
     try {
-        const response = await api.get(`${POSTS_ENDPOINT}/${userId}`);
+        const response = await api.post(`${POSTS_ENDPOINT}/${userId}`, { currentUserId });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -381,6 +382,20 @@ export const getNotificationsCount = async (userId: string) => {
             console.error(error.message);
         } else {
             console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
+    try {
+        const response = await api.patch(`${SETTINGS_ENDPOINT}/privacy`, { userId, isPrivate });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("unknown Error");
         }
         throw error;
     }

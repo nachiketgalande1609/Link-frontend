@@ -25,3 +25,5 @@ export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/count";
 export const SEARCH_ENDPOINT: string = "/api/search";
 export const SEARCH_HISTORY_ENDPOINT: string = "/api/search/history";
 export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
+
+export const SETTINGS_ENDPOINT: string = "/api/settings";

@@ -5,6 +5,7 @@ import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../services/api";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useParams, useNavigate } from "react-router-dom";
+import LockIcon from "@mui/icons-material/Lock";
 
 interface Profile {
     username: string;
@@ -16,6 +17,8 @@ interface Profile {
     posts_count: number;
     is_request_active: boolean;
     follow_status: string;
+    is_following: boolean;
+    is_private: boolean;
 }
 
 const ProfilePage = () => {
@@ -45,7 +48,7 @@ const ProfilePage = () => {
     async function fetchUserPosts() {
         try {
             if (userId) {
-                const res = await getUserPosts(userId);
+                const res = await getUserPosts(currentUser?.id, userId);
                 setPosts(res.data);
             }
         } catch (error) {
@@ -55,8 +58,15 @@ const ProfilePage = () => {
 
     useEffect(() => {
         fetchProfile();
-        fetchUserPosts();
     }, [userId]);
+
+    useEffect(() => {
+        if (!profileData) return;
+
+        if (currentUser?.id == userId || !profileData.is_private || profileData.is_following) {
+            fetchUserPosts();
+        }
+    }, [profileData, userId, currentUser?.id]);
 
     const handleOpenModal = (post: any) => {
         setSelectedPost(post);
@@ -92,7 +102,7 @@ const ProfilePage = () => {
     };
 
     const handleEditProfile = () => {
-        navigate("/settings?setting=editprofile");
+        navigate("/settings?setting=profiledetails");
         handleCloseMenu();
     };
 
@@ -232,21 +242,30 @@ const ProfilePage = () => {
                     </Grid>
                 </Grid>
             </Paper>
-            <Grid container spacing={2}>
-                {posts.length > 0 ? (
-                    posts.map((post) => (
-                        <Grid item xs={12} sm={6} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
-                            <ProfilePagePost imageUrl={post.image_url} />
+            {profileData?.is_private && !profileData?.is_following && currentUser?.id != userId ? (
+                <Grid item xs={12} sx={{ textAlign: "center", mt: 5 }}>
+                    <LockIcon sx={{ fontSize: 60, color: "#888888" }} /> {/* Lock Icon */}
+                    <Typography variant="body1" sx={{ fontSize: "18px", color: "#888888", mt: 1 }}>
+                        This account is private. Follow to see their posts.
+                    </Typography>
+                </Grid>
+            ) : (
+                <Grid container spacing={2}>
+                    {posts.length > 0 ? (
+                        posts.map((post) => (
+                            <Grid item xs={12} sm={6} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
+                                <ProfilePagePost imageUrl={post.image_url} />
+                            </Grid>
+                        ))
+                    ) : (
+                        <Grid item xs={12}>
+                            <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
+                                No posts available.
+                            </Typography>
                         </Grid>
-                    ))
-                ) : (
-                    <Grid item xs={12}>
-                        <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
-                            No posts available.
-                        </Typography>
-                    </Grid>
-                )}
-            </Grid>
+                    )}
+                </Grid>
+            )}
 
             <Dialog
                 open={!!selectedPost}

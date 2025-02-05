@@ -7,14 +7,14 @@ import { useDropzone } from "react-dropzone";
 import { uploadProfilePicture } from "../../services/api";
 import { useUser } from "../../context/userContext";
 
-interface EditProfileProps {
+interface ProfileDetailsProps {
     newUsername: string;
     setNewUsername: React.Dispatch<React.SetStateAction<string>>;
     handleSaveUsername: () => void;
     usernameUpdating: boolean;
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, handleSaveUsername, usernameUpdating }) => {
+const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUsername, handleSaveUsername, usernameUpdating }) => {
     const { user, setUser } = useUser();
     const [openDialog, setOpenDialog] = useState(false);
     const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
@@ -74,15 +74,20 @@ const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, 
     return (
         <Box
             sx={{
+                boxSizing: "border-box",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 height: "100vh",
                 width: "100%",
-                p: 2,
-                justifyContent: "center",
+                p: 4,
             }}
         >
+            <Box sx={{ maxWidth: "800px", width: "80%" }}>
+                <Typography variant="h6" sx={{ mb: "20px" }}>
+                    Account Privacy
+                </Typography>
+            </Box>
             <Box
                 sx={{
                     display: "flex",
@@ -90,9 +95,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, 
                     justifyContent: "center",
                     alignItems: "center",
                     maxWidth: "800px",
-                    width: "100%",
+                    width: "80%",
                     padding: 3,
                     borderRadius: 2,
+                    backgroundColor: "#1E1E1E",
                 }}
             >
                 <Box sx={{ position: "relative", mb: 3 }}>
@@ -124,24 +130,23 @@ const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, 
                         },
                     }}
                 />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSaveUsername}
-                    fullWidth
-                    sx={{
-                        padding: "12px 0",
-                        borderRadius: "20px",
-                        textTransform: "uppercase",
-                        fontWeight: "bold",
-                        "&:hover": { backgroundColor: "#007bb5" },
-                    }}
-                >
-                    {usernameUpdating ? <CircularProgress size={24} color="inherit" sx={{ marginRight: 2 }} /> : "Save Changes"}
-                </Button>
+                <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSaveUsername}
+                        sx={{
+                            borderRadius: "20px",
+                            textTransform: "uppercase",
+                            fontWeight: "bold",
+                            "&:hover": { backgroundColor: "#007bb5" },
+                            width: "150px",
+                        }}
+                    >
+                        {usernameUpdating ? <CircularProgress size={24} color="inherit" /> : "Save Changes"}
+                    </Button>
+                </Box>
             </Box>
-
-            {/* Dialog for image cropping and uploading */}
             <Dialog
                 open={openDialog}
                 onClose={() => setOpenDialog(false)}
@@ -216,4 +221,4 @@ const EditProfile: React.FC<EditProfileProps> = ({ newUsername, setNewUsername, 
     );
 };
 
-export default EditProfile;
+export default ProfileDetails;
