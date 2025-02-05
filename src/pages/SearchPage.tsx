@@ -86,8 +86,6 @@ export default function SearchPage() {
         search();
     }, [debouncedQuery]);
 
-    console.log(history);
-
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
             <TextField

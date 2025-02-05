@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 
 import { useUser } from "./context/userContext";
+import socket from "./services/socket";
 
 import CreatePostModal from "./component/post/CreatePostModal";
 
@@ -53,6 +54,10 @@ const demoTheme = extendTheme({
 
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
+if (currentUser) {
+    socket.emit("registerUser", currentUser.id);
+}
+
 const DrawerWidth = 240;
 const CollapsedDrawerWidth = 72.67;
 
@@ -68,42 +73,16 @@ const App = () => {
 
 const AppContent = () => {
     const { user, unreadNotificationsCount, setUnreadNotificationsCount } = useUser();
-
     const [open, setOpen] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-    useEffect(() => {
-        if (!user) return;
-
-        const fetchNotificationCount = async () => {
-            try {
-                const response = await getNotificationsCount(user.id);
-                if (response?.success) {
-                    setUnreadNotificationsCount(response?.data);
-                }
-            } catch (error) {
-                console.error("Error fetching notification count:", error);
-            }
-        };
-
-        fetchNotificationCount(); // Initial fetch
-        const interval = setInterval(fetchNotificationCount, 10000); // Fetch every 10 secs
-
-        return () => clearInterval(interval); // Cleanup on unmount
-    }, [user]);
-
     const location = useLocation();
     const navigate = useNavigate();
-
     const [modalOpen, setModalOpen] = useState(false);
-
     const handleOpen = () => setModalOpen(true);
     const handleClose = () => setModalOpen(false);
-
     const toggleDrawer = () => setOpen(!open);
-
+    const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
-
     const NAVIGATION = [
         { kind: "header", title: "Link" },
         {
@@ -175,6 +154,79 @@ const AppContent = () => {
             ),
         },
     ];
+
+    // Windows Notifications Permission
+    useEffect(() => {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    console.log("Notification permission granted.");
+                } else {
+                    console.log("Notification permission denied.");
+                }
+            });
+        }
+    }, []);
+
+    // useEffect(() => {
+    //     if (unreadNotificationsCount > 0) {
+    //         // Send a notification if there are unread notifications
+    //
+    //     }
+    // }, [unreadNotificationsCount]);
+
+    useEffect(() => {
+        if (!user) return;
+
+        const fetchNotificationCount = async () => {
+            try {
+                const response = await getNotificationsCount(user.id);
+                if (response?.success) {
+                    setUnreadNotificationsCount(response?.data);
+                }
+            } catch (error) {
+                console.error("Error fetching notification count:", error);
+            }
+        };
+
+        fetchNotificationCount();
+    }, [user]);
+
+    useEffect(() => {
+        if (!user) return;
+
+        const handleUnreadCountResponse = (data: { targetUserId: string; unreadCount: number }) => {
+            const { targetUserId, unreadCount } = data;
+            if (targetUserId === user.id) {
+                setUnreadNotificationsCount(unreadCount);
+            }
+        };
+
+        socket.on("unreadCountResponse", handleUnreadCountResponse);
+
+        return () => {
+            socket.off("unreadCountResponse", handleUnreadCountResponse);
+        };
+    }, [user, setUnreadNotificationsCount]);
+
+    useEffect(() => {
+        if (!user) return;
+
+        const handleNotificationAlertResponse = (data: { targetUserId: string; notificationMessage: string }) => {
+            if (Notification.permission === "granted") {
+                new Notification("Link", {
+                    body: data.notificationMessage,
+                    icon: "https://t4.ftcdn.net/jpg/01/33/48/03/360_F_133480376_PWlsZ1Bdr2SVnTRpb8jCtY59CyEBdoUt.jpg", // Optional icon URL
+                });
+            }
+        };
+
+        socket.on("notificationAlert", handleNotificationAlertResponse);
+
+        return () => {
+            socket.off("notificationAlert", handleNotificationAlertResponse);
+        };
+    }, [user, setNotificationAlert]);
 
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);

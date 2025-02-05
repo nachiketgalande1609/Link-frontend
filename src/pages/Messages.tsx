@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Container, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
+import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import socket from "../services/socket"; // Assuming you already have a socket.js file for socket initialization
+import socket from "../services/socket";
 import api from "../services/config";
 
 type Message = { sender_id: number; message_text: string; timestamp: string };
@@ -19,7 +19,6 @@ const Messages = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const navigatedUser = location.state || {};
-    console.log(navigatedUser);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -51,10 +50,6 @@ const Messages = () => {
     }, [location.pathname, userId, users, navigatedUser]);
 
     useEffect(() => {
-        if (currentUser) {
-            socket.emit("registerUser", currentUser.id);
-        }
-
         socket.on("receiveMessage", (data) => {
             setMessages((prevMessages) => {
                 const newMessages = { ...prevMessages };

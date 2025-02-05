@@ -5,6 +5,7 @@ import { loginUser, googleLogin } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import logo from "../static/logo.png";
 import { useUser } from "../context/userContext";
+import socket from "../services/socket";
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ const LoginPage: React.FC = () => {
 
             if (response.success) {
                 const { token, user } = response.data;
-
+                socket.emit("registerUser", user.id);
                 localStorage.setItem("token", token);
                 localStorage.setItem("user", JSON.stringify(user));
                 setUser(user);
