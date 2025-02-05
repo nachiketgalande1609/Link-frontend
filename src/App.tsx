@@ -1,6 +1,22 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import { Box, Drawer, List, ListItem, ListItemIcon, Typography, ThemeProvider, Menu, MenuItem, Badge, IconButton } from "@mui/material";
+import {
+    Box,
+    Drawer,
+    List,
+    ListItem,
+    ListItemIcon,
+    Typography,
+    ThemeProvider,
+    Menu,
+    MenuItem,
+    Badge,
+    IconButton,
+    useMediaQuery,
+    useTheme,
+    BottomNavigation,
+    BottomNavigationAction,
+} from "@mui/material";
 import {
     HomeOutlined as HomeOutlined,
     Home as HomeFilled,
@@ -83,6 +99,8 @@ const AppContent = () => {
     const toggleDrawer = () => setOpen(!open);
     const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const NAVIGATION = [
         { kind: "header", title: "Link" },
         {
@@ -246,171 +264,199 @@ const AppContent = () => {
 
     return (
         <Box sx={{ display: "flex" }}>
-            {!hideDrawer && (
-                <Drawer
-                    sx={{
-                        width: open ? DrawerWidth : CollapsedDrawerWidth,
-                        flexShrink: 0,
-                        "& .MuiDrawer-paper": {
-                            width: open ? DrawerWidth : CollapsedDrawerWidth,
-                            boxSizing: "border-box",
-                            backgroundColor: "black",
-                            transition: "width 0.3s ease-in-out",
-                            overflowX: "hidden",
-                        },
-                    }}
-                    variant="permanent"
-                    anchor="left"
-                    open={open}
-                >
-                    <List sx={{ padding: 1, display: "flex", flexDirection: "column", height: "100%" }}>
-                        {NAVIGATION.map((item, index) => {
-                            if (item.kind === "header") {
-                                return (
-                                    <ListItem
-                                        key={index}
-                                        sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            padding: 2,
-                                        }}
-                                    >
-                                        <Typography
-                                            style={{ visibility: open ? "visible" : "hidden" }}
-                                            variant="h2"
-                                            className="londrina-shadow-regular"
-                                        >
-                                            Link
-                                        </Typography>
-                                        <IconButton
-                                            onClick={toggleDrawer}
-                                            sx={{
-                                                color: "white",
-                                                transition: "transform 0.3s",
-                                                position: "absolute",
-                                                right: open ? 0 : 8,
-                                                top: 13,
-                                                borderRadius: "50%",
-                                                "&:hover": { backgroundColor: "#000000" },
-                                            }}
-                                        >
-                                            {open ? <ChevronLeft /> : <ChevronRight />}
-                                        </IconButton>
-                                    </ListItem>
-                                );
-                            }
-                            const isActive = location.pathname === `/${item.segment}`;
-                            return (
-                                <ListItem
-                                    key={item.segment}
-                                    component={Link}
-                                    to={`/${item.segment}`}
-                                    sx={{
-                                        textDecoration: "none",
-                                        padding: "12px 15px",
-                                        borderRadius: "20px",
-                                        backgroundColor: isActive ? "#ffffff" : "transparent",
-                                        "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
-                                        maxHeight: "62px",
-                                        justifyContent: open ? "flex-start" : "center",
-                                        margin: "5px 0",
-                                    }}
-                                >
-                                    <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>{isActive ? item.filledIcon : item.icon}</ListItemIcon>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "1rem",
-                                            color: isActive ? "#000000" : "white",
-                                            display: open ? "block" : "none",
-                                        }}
-                                    >
-                                        {item.title}
-                                    </Typography>
-                                </ListItem>
-                            );
-                        })}
-                        <ListItem
-                            onClick={handleOpen}
-                            sx={{
-                                textDecoration: "none",
-                                padding: "12px 15px",
-                                cursor: "pointer",
-                                borderRadius: "20px",
-                                "&:hover": { backgroundColor: "#1E1E1E" },
-                                justifyContent: open ? "flex-start" : "center",
-                                margin: "5px 0",
-                            }}
-                        >
-                            <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
-                                <AddIcon sx={{ fontSize: "2rem" }} />
-                            </ListItemIcon>
-                            <Typography
-                                sx={{
-                                    fontSize: "1rem",
-                                    color: "white",
-                                    display: open ? "block" : "none",
-                                    whiteSpace: "nowrap",
-                                }}
-                            >
-                                Create Post
-                            </Typography>
-                        </ListItem>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <ListItem
-                            onClick={handleMenuClick}
-                            sx={{
-                                textDecoration: "none",
-                                padding: "12px 15px",
-                                cursor: "pointer",
-                                borderRadius: "20px",
-                                "&:hover": { backgroundColor: "#1E1E1E" },
-                                justifyContent: open ? "flex-start" : "center",
-                                margin: "5px 0",
-                            }}
-                        >
-                            <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
-                                <MenuIcon sx={{ fontSize: "2rem" }} />
-                            </ListItemIcon>
-                            <Typography
-                                sx={{
-                                    fontSize: "1rem",
-                                    color: "white",
-                                    display: open ? "block" : "none",
-                                }}
-                            >
-                                More
-                            </Typography>
-                        </ListItem>
-                    </List>
-
-                    {/* Dropdown Menu */}
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{ vertical: "top", horizontal: "left" }}
-                        transformOrigin={{ vertical: "bottom", horizontal: "left" }}
+            {!hideDrawer ? (
+                !isMobile ? (
+                    <Drawer
                         sx={{
-                            "& .MuiPaper-root": {
-                                width: "250px",
-                                padding: "3px 10px",
-                                borderRadius: "20px",
+                            width: open ? DrawerWidth : CollapsedDrawerWidth,
+                            flexShrink: 0,
+                            "& .MuiDrawer-paper": {
+                                width: open ? DrawerWidth : CollapsedDrawerWidth,
+                                boxSizing: "border-box",
+                                backgroundColor: "black",
+                                transition: "width 0.3s ease-in-out",
+                                overflowX: "hidden",
                             },
                         }}
+                        variant="permanent"
+                        anchor="left"
+                        open={open}
                     >
-                        <MenuItem
-                            onClick={() => navigate("/settings?setting=profiledetails")}
-                            sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}
+                        <List sx={{ padding: 1, display: "flex", flexDirection: "column", height: "100%" }}>
+                            {NAVIGATION.map((item, index) => {
+                                if (item.kind === "header") {
+                                    return (
+                                        <ListItem
+                                            key={index}
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                padding: 2,
+                                            }}
+                                        >
+                                            <Typography
+                                                style={{ visibility: open ? "visible" : "hidden" }}
+                                                variant="h2"
+                                                className="londrina-shadow-regular"
+                                            >
+                                                Link
+                                            </Typography>
+                                            <IconButton
+                                                onClick={toggleDrawer}
+                                                sx={{
+                                                    color: "white",
+                                                    transition: "transform 0.3s",
+                                                    position: "absolute",
+                                                    right: open ? 0 : 8,
+                                                    top: 13,
+                                                    borderRadius: "50%",
+                                                    "&:hover": { backgroundColor: "#000000" },
+                                                }}
+                                            >
+                                                {open ? <ChevronLeft /> : <ChevronRight />}
+                                            </IconButton>
+                                        </ListItem>
+                                    );
+                                }
+                                const isActive = location.pathname === `/${item.segment}`;
+                                return (
+                                    <ListItem
+                                        key={item.segment}
+                                        component={Link}
+                                        to={`/${item.segment}`}
+                                        sx={{
+                                            textDecoration: "none",
+                                            padding: "12px 15px",
+                                            borderRadius: "20px",
+                                            backgroundColor: isActive ? "#ffffff" : "transparent",
+                                            "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
+                                            maxHeight: "62px",
+                                            justifyContent: open ? "flex-start" : "center",
+                                            margin: "5px 0",
+                                        }}
+                                    >
+                                        <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>{isActive ? item.filledIcon : item.icon}</ListItemIcon>
+                                        <Typography
+                                            sx={{
+                                                fontSize: "1rem",
+                                                color: isActive ? "#000000" : "white",
+                                                display: open ? "block" : "none",
+                                            }}
+                                        >
+                                            {item.title}
+                                        </Typography>
+                                    </ListItem>
+                                );
+                            })}
+                            <ListItem
+                                onClick={handleOpen}
+                                sx={{
+                                    textDecoration: "none",
+                                    padding: "12px 15px",
+                                    cursor: "pointer",
+                                    borderRadius: "20px",
+                                    "&:hover": { backgroundColor: "#1E1E1E" },
+                                    justifyContent: open ? "flex-start" : "center",
+                                    margin: "5px 0",
+                                }}
+                            >
+                                <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
+                                    <AddIcon sx={{ fontSize: "2rem" }} />
+                                </ListItemIcon>
+                                <Typography
+                                    sx={{
+                                        fontSize: "1rem",
+                                        color: "white",
+                                        display: open ? "block" : "none",
+                                        whiteSpace: "nowrap",
+                                    }}
+                                >
+                                    Create Post
+                                </Typography>
+                            </ListItem>
+                            <Box sx={{ flexGrow: 1 }} />
+                            <ListItem
+                                onClick={handleMenuClick}
+                                sx={{
+                                    textDecoration: "none",
+                                    padding: "12px 15px",
+                                    cursor: "pointer",
+                                    borderRadius: "20px",
+                                    "&:hover": { backgroundColor: "#1E1E1E" },
+                                    justifyContent: open ? "flex-start" : "center",
+                                    margin: "5px 0",
+                                }}
+                            >
+                                <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
+                                    <MenuIcon sx={{ fontSize: "2rem" }} />
+                                </ListItemIcon>
+                                <Typography
+                                    sx={{
+                                        fontSize: "1rem",
+                                        color: "white",
+                                        display: open ? "block" : "none",
+                                    }}
+                                >
+                                    More
+                                </Typography>
+                            </ListItem>
+                        </List>
+
+                        {/* Dropdown Menu */}
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleMenuClose}
+                            anchorOrigin={{ vertical: "top", horizontal: "left" }}
+                            transformOrigin={{ vertical: "bottom", horizontal: "left" }}
+                            sx={{
+                                "& .MuiPaper-root": {
+                                    width: "250px",
+                                    padding: "3px 10px",
+                                    borderRadius: "20px",
+                                },
+                            }}
                         >
-                            Settings
-                        </MenuItem>
-                        <MenuItem onClick={handleLogout} sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}>
-                            Logout
-                        </MenuItem>
-                    </Menu>
-                </Drawer>
-            )}
+                            <MenuItem
+                                onClick={() => navigate("/settings?setting=profiledetails")}
+                                sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}
+                            >
+                                Settings
+                            </MenuItem>
+                            <MenuItem onClick={handleLogout} sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}>
+                                Logout
+                            </MenuItem>
+                        </Menu>
+                    </Drawer>
+                ) : (
+                    // Mobile Bottom Navigation
+                    <BottomNavigation
+                        showLabels
+                        sx={{
+                            position: "fixed",
+                            bottom: -1,
+                            width: "100%",
+                            backgroundColor: "black",
+                            zIndex: 1000,
+                            height: "60px",
+                        }}
+                    >
+                        {NAVIGATION.map((item, index) => (
+                            <BottomNavigationAction
+                                key={index}
+                                icon={item.icon}
+                                component={Link}
+                                to={`/${item.segment}`}
+                                sx={{
+                                    color: "white",
+                                    "&.Mui-selected": { color: "yellow" },
+                                }}
+                            />
+                        ))}
+                    </BottomNavigation>
+                )
+            ) : null}
             {/* Main content */}
             <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, width: "100%" }}>
                 <Routes>
