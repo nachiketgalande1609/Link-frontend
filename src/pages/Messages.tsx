@@ -192,7 +192,16 @@ const Messages = () => {
                             placeholder="Type a message..."
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault(); // Prevents the default Enter key behavior (like adding a new line)
+                                    if (inputMessage.trim()) {
+                                        handleSendMessage();
+                                    }
+                                }
+                            }}
                         />
+
                         <IconButton onClick={handleSendMessage} color="primary">
                             <SendIcon />
                         </IconButton>
