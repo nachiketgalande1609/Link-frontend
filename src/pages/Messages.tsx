@@ -9,8 +9,6 @@ type Message = { sender_id: number; message_text: string; timestamp: string };
 type MessagesType = { [key: number]: Message[] };
 type User = { id: number; username: string; profile_picture: string };
 
-const currentUser = JSON.parse(localStorage.getItem("user") || "");
-
 const Messages = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -20,23 +18,37 @@ const Messages = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const navigatedUser = location.state || {};
+    console.log(navigatedUser);
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
     useEffect(() => {
+        // Fetch data when the component mounts
         fetchData();
     }, []);
 
     useEffect(() => {
+        // Reset selected user when pathname is "/messages"
         if (location.pathname === "/messages") {
             setSelectedUser(null);
         }
-    }, [location.pathname]);
 
-    useEffect(() => {
+        // Update selected user if userId changes
         if (userId) {
             const user = users.find((user) => user.id === parseInt(userId));
             setSelectedUser(user || null);
         }
-    }, [userId, users]);
+
+        // If navigatedUser is present and doesn't already exist in the users list, add it
+        if (navigatedUser && navigatedUser.id) {
+            const userExists = users.some((user) => user.id === navigatedUser.id);
+            if (!userExists) {
+                setUsers((prevUsers) => [...prevUsers, navigatedUser]);
+            }
+            setSelectedUser(navigatedUser);
+        }
+    }, [location.pathname, userId, users, navigatedUser]);
 
     useEffect(() => {
         if (currentUser) {

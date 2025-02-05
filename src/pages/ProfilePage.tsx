@@ -90,9 +90,8 @@ const ProfilePage = () => {
     };
 
     const handleSendMessage = () => {
-        navigate(`/messages/${userId}`);
+        navigate(`/messages/${userId}`, { state: profileData });
     };
-
     const handleMoreOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
