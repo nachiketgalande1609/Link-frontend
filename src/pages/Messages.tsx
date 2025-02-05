@@ -2,20 +2,12 @@ import { useState, useEffect } from "react";
 import { Container, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import socket from "../services/socket";
+import socket from "../services/socket"; // Assuming you already have a socket.js file for socket initialization
 import api from "../services/config";
 
 type Message = { sender_id: number; message_text: string; timestamp: string };
-
-type MessagesType = {
-    [key: number]: Message[];
-};
-
-type User = {
-    id: number;
-    username: string;
-    profile_picture: string;
-};
+type MessagesType = { [key: number]: Message[] };
+type User = { id: number; username: string; profile_picture: string };
 
 const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -27,26 +19,52 @@ const Messages = () => {
 
     const { userId } = useParams();
     const navigate = useNavigate();
-    const location = useLocation(); // Use to track the current route
+    const location = useLocation();
 
     useEffect(() => {
         fetchData();
     }, []);
 
     useEffect(() => {
-        // If the route is `/messages`, reset selectedUser to null
         if (location.pathname === "/messages") {
             setSelectedUser(null);
         }
     }, [location.pathname]);
 
     useEffect(() => {
-        // If userId is in the URL, select that user
         if (userId) {
             const user = users.find((user) => user.id === parseInt(userId));
             setSelectedUser(user || null);
         }
     }, [userId, users]);
+
+    useEffect(() => {
+        if (currentUser) {
+            socket.emit("registerUser", currentUser.id);
+        }
+
+        socket.on("receiveMessage", (data) => {
+            setMessages((prevMessages) => {
+                const newMessages = { ...prevMessages };
+                const senderId = data.senderId;
+
+                if (!newMessages[senderId]) {
+                    newMessages[senderId] = [];
+                }
+                newMessages[senderId].push({
+                    sender_id: data.senderId,
+                    message_text: data.message_text,
+                    timestamp: new Date().toISOString(),
+                });
+
+                return newMessages;
+            });
+        });
+
+        return () => {
+            socket.off("receiveMessage");
+        };
+    }, [currentUser]);
 
     const fetchData = async () => {
         try {
@@ -60,13 +78,38 @@ const Messages = () => {
 
     const handleUserClick = (userId: number) => {
         setSelectedUser(users.find((user) => user.id === userId) || null);
-        navigate(`/messages/${userId}`); // Update the URL to reflect the selected user
+        navigate(`/messages/${userId}`);
     };
 
-    const handleSendMessage = async () => {
+    const handleSendMessage = () => {
         if (!inputMessage.trim() || !selectedUser) return;
 
-        socket.emit("sendMessage", { text: inputMessage, sender: "User1" });
+        // Prepare the message data
+        const newMessage = {
+            sender_id: currentUser.id,
+            message_text: inputMessage,
+            timestamp: new Date().toISOString(),
+        };
+
+        // Update the local messages immediately
+        setMessages((prevMessages) => {
+            const newMessages = { ...prevMessages };
+            if (!newMessages[selectedUser.id]) {
+                newMessages[selectedUser.id] = [];
+            }
+            newMessages[selectedUser.id].push(newMessage);
+            return newMessages;
+        });
+
+        // Emit the message through the socket
+        socket.emit("sendMessage", {
+            senderId: currentUser.id,
+            receiverId: selectedUser.id,
+            text: inputMessage,
+        });
+
+        // Clear the input field after sending the message
+        setInputMessage("");
     };
 
     return (
@@ -108,13 +151,7 @@ const Messages = () => {
             <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white" }}>
                 {selectedUser && (
                     <Box
-                        sx={{
-                            backgroundColor: "#000000",
-                            padding: "15px",
-                            display: "flex",
-                            alignItems: "center",
-                            borderBottom: "1px solid #333333",
-                        }}
+                        sx={{ backgroundColor: "#000000", padding: "15px", display: "flex", alignItems: "center", borderBottom: "1px solid #333333" }}
                     >
                         <Avatar sx={{ width: "40px", height: "40px", mr: 2 }} src={selectedUser.profile_picture} />
                         <Typography variant="h6">{selectedUser.username}</Typography>
@@ -149,7 +186,13 @@ const Messages = () => {
 
                 {selectedUser && (
                     <Box sx={{ display: "flex", padding: 2 }}>
-                        <TextField fullWidth placeholder="Type a message..." value={inputMessage} onChange={(e) => setInputMessage(e.target.value)} />
+                        <TextField
+                            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
+                            fullWidth
+                            placeholder="Type a message..."
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                        />
                         <IconButton onClick={handleSendMessage} color="primary">
                             <SendIcon />
                         </IconButton>
