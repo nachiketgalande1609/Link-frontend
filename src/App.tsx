@@ -360,7 +360,7 @@ const AppContent = () => {
                 </Drawer>
             )}
             {/* Main content */}
-            <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0 }}>
+            <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, width: "100%" }}>
                 <Routes>
                     <Route
                         path="/"
