@@ -149,8 +149,8 @@ const AppContent = () => {
                     src={user?.profile_picture_url}
                     alt="Profile"
                     style={{
-                        width: "40px",
-                        height: "40px",
+                        width: "33px",
+                        height: "33px",
                         borderRadius: "50%",
                         objectFit: "cover",
                         outline: "2px solid #ffffff",
@@ -185,13 +185,6 @@ const AppContent = () => {
             });
         }
     }, []);
-
-    // useEffect(() => {
-    //     if (unreadNotificationsCount > 0) {
-    //         // Send a notification if there are unread notifications
-    //
-    //     }
-    // }, [unreadNotificationsCount]);
 
     useEffect(() => {
         if (!user) return;
@@ -269,12 +262,15 @@ const AppContent = () => {
                     <Drawer
                         sx={{
                             width: open ? DrawerWidth : CollapsedDrawerWidth,
+                            minWidth: open ? DrawerWidth : CollapsedDrawerWidth,
                             flexShrink: 0,
+                            transition: "width 0.3s ease-in-out, min-width 0.3s ease-in-out",
                             "& .MuiDrawer-paper": {
                                 width: open ? DrawerWidth : CollapsedDrawerWidth,
+                                minWidth: open ? DrawerWidth : CollapsedDrawerWidth,
+                                transition: "width 0.3s ease-in-out, min-width 0.3s ease-in-out, padding 0.3s ease-in-out",
                                 boxSizing: "border-box",
                                 backgroundColor: "black",
-                                transition: "width 0.3s ease-in-out",
                                 overflowX: "hidden",
                             },
                         }}
@@ -301,6 +297,10 @@ const AppContent = () => {
                                                     backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
                                                     WebkitBackgroundClip: "text",
                                                     WebkitTextFillColor: "transparent",
+                                                }}
+                                                sx={{
+                                                    transition: "opacity 0.3s ease-in-out, visibility 0.9s ease-in-out",
+                                                    opacity: open ? 1 : 0,
                                                 }}
                                                 variant="h3"
                                                 className="lily-script-one-regular"
@@ -332,12 +332,13 @@ const AppContent = () => {
                                         to={`/${item.segment}`}
                                         sx={{
                                             textDecoration: "none",
-                                            padding: "12px 15px",
+                                            padding: "12px 12px",
                                             borderRadius: "20px",
                                             backgroundColor: isActive ? "#ffffff" : "transparent",
                                             "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
                                             maxHeight: "62px",
-                                            justifyContent: open ? "flex-start" : "center",
+                                            justifyContent: "flex-start",
+                                            alignItems: "center",
                                             margin: "5px 0",
                                         }}
                                     >
@@ -346,7 +347,10 @@ const AppContent = () => {
                                             sx={{
                                                 fontSize: "1rem",
                                                 color: isActive ? "#000000" : "white",
-                                                display: open ? "block" : "none",
+                                                visibility: open ? "visible" : "hidden",
+                                                transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
+                                                opacity: open ? 1 : 0,
+                                                transform: open ? "translateX(0)" : "translateX(-20px)",
                                             }}
                                         >
                                             {item.title}
@@ -358,12 +362,13 @@ const AppContent = () => {
                                 onClick={handleOpen}
                                 sx={{
                                     textDecoration: "none",
-                                    padding: "12px 15px",
+                                    padding: "12px 12px",
                                     cursor: "pointer",
                                     borderRadius: "20px",
                                     "&:hover": { backgroundColor: "#1E1E1E" },
-                                    justifyContent: open ? "flex-start" : "center",
                                     margin: "5px 0",
+                                    justifyContent: "flex-start",
+                                    alignItems: "center",
                                 }}
                             >
                                 <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
@@ -373,7 +378,10 @@ const AppContent = () => {
                                     sx={{
                                         fontSize: "1rem",
                                         color: "white",
-                                        display: open ? "block" : "none",
+                                        visibility: open ? "visible" : "hidden",
+                                        transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
+                                        opacity: open ? 1 : 0,
+                                        transform: open ? "translateX(0)" : "translateX(-20px)",
                                         whiteSpace: "nowrap",
                                     }}
                                 >
@@ -385,12 +393,13 @@ const AppContent = () => {
                                 onClick={handleMenuClick}
                                 sx={{
                                     textDecoration: "none",
-                                    padding: "12px 15px",
+                                    padding: "12px 12px",
                                     cursor: "pointer",
                                     borderRadius: "20px",
                                     "&:hover": { backgroundColor: "#1E1E1E" },
-                                    justifyContent: open ? "flex-start" : "center",
                                     margin: "5px 0",
+                                    justifyContent: "flex-start",
+                                    alignItems: "center",
                                 }}
                             >
                                 <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
@@ -400,7 +409,10 @@ const AppContent = () => {
                                     sx={{
                                         fontSize: "1rem",
                                         color: "white",
-                                        display: open ? "block" : "none",
+                                        visibility: open ? "visible" : "hidden",
+                                        transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
+                                        opacity: open ? 1 : 0,
+                                        transform: open ? "translateX(0)" : "translateX(-20px)",
                                     }}
                                 >
                                     More

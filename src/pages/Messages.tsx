@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
-import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, TextField, IconButton } from "@mui/material";
+import {
+    List,
+    ListItem,
+    ListItemAvatar,
+    Avatar,
+    ListItemText,
+    Typography,
+    Box,
+    TextField,
+    IconButton,
+    useMediaQuery,
+    useTheme,
+    Drawer,
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
@@ -19,6 +34,11 @@ const Messages = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const navigatedUser = location.state || {};
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -122,37 +142,79 @@ const Messages = () => {
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
             {/* Users List */}
-            <Box sx={{ width: "300px", backgroundColor: "#000000", color: "white", padding: 2, borderRight: "1px solid #333333" }}>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                    Messages
-                </Typography>
-                <List>
-                    {users?.map((user) => (
-                        <ListItem
-                            component="button"
-                            key={user.id}
-                            onClick={() => handleUserClick(user.id)}
-                            sx={{
-                                backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "transparent",
-                                padding: "12px",
-                                borderRadius: "8px",
-                                mb: 1,
-                                textAlign: "left",
-                                width: "100%",
-                                border: "none",
-                            }}
-                        >
-                            <ListItemAvatar>
-                                <Avatar
-                                    sx={{ width: "50px", height: "50px", mr: "12px" }}
-                                    src={user.profile_picture || "https://via.placeholder.com/40"}
-                                />
-                            </ListItemAvatar>
-                            <ListItemText sx={{ color: selectedUser?.id === user.id ? "#000000" : "#ffffff" }} primary={user.username} />
-                        </ListItem>
-                    ))}
-                </List>
-            </Box>
+            {isMobile ? (
+                <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+                    <Box sx={{ width: 300, backgroundColor: "#111111", color: "white", padding: 2, height: "100%" }}>
+                        <IconButton sx={{ position: "absolute", right: 5, top: 15 }} onClick={() => setDrawerOpen(false)}>
+                            <ChevronLeftIcon sx={{ color: "white" }} />
+                        </IconButton>
+                        <Typography variant="h6" sx={{ mt: "5px", mb: "15px" }}>
+                            Messages
+                        </Typography>
+                        <List>
+                            {users.map((user) => (
+                                <ListItem
+                                    sx={{
+                                        backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "transparent",
+                                        padding: "12px",
+                                        borderRadius: "8px",
+                                        mb: 1,
+                                        textAlign: "left",
+                                        width: "100%",
+                                        border: "none",
+                                    }}
+                                    component="button"
+                                    key={user.id}
+                                    onClick={() => handleUserClick(user.id)}
+                                >
+                                    <ListItemAvatar>
+                                        <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
+                                    </ListItemAvatar>
+                                    <ListItemText sx={{ color: selectedUser?.id === user.id ? "#000000" : "#ffffff" }} primary={user.username} />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </Drawer>
+            ) : (
+                <Box sx={{ width: "300px", backgroundColor: "#000000", color: "white", padding: 2, borderRight: "1px solid #333333" }}>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                        Messages
+                    </Typography>
+                    <List>
+                        {users?.map((user) => (
+                            <ListItem
+                                component="button"
+                                key={user.id}
+                                onClick={() => handleUserClick(user.id)}
+                                sx={{
+                                    backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "transparent",
+                                    padding: "12px",
+                                    borderRadius: "8px",
+                                    mb: 1,
+                                    textAlign: "left",
+                                    width: "100%",
+                                    border: "none",
+                                }}
+                            >
+                                <ListItemAvatar>
+                                    <Avatar
+                                        sx={{ width: "50px", height: "50px", mr: "12px" }}
+                                        src={user.profile_picture || "https://via.placeholder.com/40"}
+                                    />
+                                </ListItemAvatar>
+                                <ListItemText sx={{ color: selectedUser?.id === user.id ? "#000000" : "#ffffff" }} primary={user.username} />
+                            </ListItem>
+                        ))}
+                    </List>
+                </Box>
+            )}
+
+            {isMobile && (
+                <IconButton sx={{ position: "absolute", left: 5, top: 15 }} onClick={() => setDrawerOpen(true)}>
+                    <ChevronRightIcon sx={{ color: "white" }} />
+                </IconButton>
+            )}
 
             {/* Messages Panel */}
             <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white" }}>
@@ -167,7 +229,7 @@ const Messages = () => {
                         }}
                     >
                         <Avatar
-                            sx={{ width: "40px", height: "40px", mr: 2, cursor: "pointer" }}
+                            sx={{ width: "40px", height: "40px", mr: 2, cursor: "pointer", ml: isMobile ? "40px" : null }}
                             src={selectedUser.profile_picture}
                             onClick={() => navigate(`/profile/${selectedUser?.id}`)}
                         />
@@ -204,7 +266,7 @@ const Messages = () => {
                 </Box>
 
                 {selectedUser && (
-                    <Box sx={{ display: "flex", padding: 2 }}>
+                    <Box sx={{ display: "flex", padding: 2, mb: isMobile ? "60px" : null }}>
                         <TextField
                             sx={{ "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
                             fullWidth
