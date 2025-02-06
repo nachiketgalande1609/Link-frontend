@@ -175,16 +175,18 @@ const Post: React.FC<PostProps> = ({
     return (
         <Card sx={{ borderRadius: isMobile ? 0 : borderRadius, backgroundColor: isMobile ? "#000000" : "#101114" }}>
             <CardContent sx={{ padding: 0 }}>
-                <Box sx={{ padding: "16px" }}>
+                <Box sx={{ padding: isMobile ? "14px" : "16px" }}>
                     <Grid container spacing={2}>
                         <Grid item>
-                            <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 52, height: 52 }} />
+                            <Avatar
+                                src={avatarUrl || "https://via.placeholder.com/40"}
+                                alt={username}
+                                sx={{ width: isMobile ? 42 : 52, height: isMobile ? 42 : 52 }}
+                            />
                         </Grid>
                         <Grid item xs>
-                            <Typography sx={{ fontSize: "16px", fontWeight: "bold" }}>{username}</Typography>
-                            <Typography variant="caption" sx={{ color: "#666666" }}>
-                                {timeAgo}
-                            </Typography>
+                            <Typography sx={{ fontSize: "1rem" }}>{username}</Typography>
+                            <Typography sx={{ fontSize: "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
                         </Grid>
                         {currentUser?.id === userId && (
                             <Grid item>
@@ -250,6 +252,7 @@ const Post: React.FC<PostProps> = ({
                     </Typography>
                 </Box>
             </CardActions>
+
             {isEditing ? (
                 <Box sx={{ mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
                     <TextField
@@ -275,8 +278,8 @@ const Post: React.FC<PostProps> = ({
                     </Box>
                 </Box>
             ) : (
-                <Typography variant="body1" sx={{ mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
-                    <span style={{ fontWeight: "bold", marginRight: "8px" }}>{username}</span>
+                <Typography sx={{ fontSize: "1rem", mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
+                    <span style={{ fontSize: "1rem", fontWeight: "bold", marginRight: "8px" }}>{username}</span>
                     {content}
                 </Typography>
             )}
@@ -322,8 +325,12 @@ const Post: React.FC<PostProps> = ({
                         visibleComments.map((comment) => (
                             <Box key={comment.id} sx={{ mb: 2 }}>
                                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                                    <Avatar src={comment.commenter_profile_picture} alt={comment.commenter_username} sx={{ width: 40, height: 40 }} />
-                                    <Box sx={{ ml: 2, display: "flex", justifyContent: "space-between", width: "100%" }}>
+                                    <Avatar
+                                        src={comment.commenter_profile_picture}
+                                        alt={comment.commenter_username}
+                                        sx={{ width: isMobile ? 35 : 40, height: isMobile ? 35 : 40 }}
+                                    />
+                                    <Box sx={{ ml: isMobile ? "10px" : "16px", display: "flex", justifyContent: "space-between", width: "100%" }}>
                                         <Typography variant="body2" color="text.primary">
                                             <strong style={{ fontWeight: "bold", marginRight: "4px" }}>{comment.commenter_username}</strong>
                                             {comment.content}

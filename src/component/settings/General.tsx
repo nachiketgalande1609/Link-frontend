@@ -1,35 +1,23 @@
 import { useState } from "react";
 import { Box, FormControlLabel, Switch, Typography } from "@mui/material";
-import { updatePrivacy } from "../../services/api";
 import { useNotifications } from "@toolpad/core/useNotifications";
 
-const AccountPrivacy = () => {
+const General = () => {
     const notifications = useNotifications();
-    const [loading, setLoading] = useState(false);
-    const currentUser = JSON.parse(localStorage.getItem("user") || "");
-    const [isPrivate, setIsPrivate] = useState(currentUser.is_private);
+    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const [themeMode, setThemeMode] = useState(currentUser.theme || "light");
 
     const handleToggle = async () => {
-        const newPrivacyStatus = !isPrivate;
-        setIsPrivate(newPrivacyStatus);
-        setLoading(true);
+        const newTheme = themeMode === "light" ? "dark" : "light";
+        setThemeMode(newTheme);
 
-        try {
-            const res = await updatePrivacy(currentUser?.id, newPrivacyStatus);
-            if (res.success) {
-                currentUser.is_private = newPrivacyStatus;
-                localStorage.setItem("user", JSON.stringify(currentUser));
-                notifications.show(`Account privacy changed to ${newPrivacyStatus ? "Private" : "Public"}`, {
-                    severity: "success",
-                    autoHideDuration: 3000,
-                });
-            }
-        } catch (error) {
-            console.error("Error updating privacy setting:", error);
-            setIsPrivate(!newPrivacyStatus); // Revert on failure
-        } finally {
-            setLoading(false);
-        }
+        // Update theme in localStorage
+        const updatedUser = { ...currentUser, theme: newTheme };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        notifications.show(`Theme changed to ${newTheme}`, {
+            severity: "success",
+            autoHideDuration: 3000,
+        });
     };
 
     return (
@@ -70,16 +58,10 @@ const AccountPrivacy = () => {
                         width: "100%",
                     }}
                 >
-                    <Typography>Privacy</Typography>
+                    <Typography>Theme</Typography>
                     <FormControlLabel
-                        control={
-                            <Switch
-                                checked={isPrivate}
-                                onChange={handleToggle}
-                                disabled={loading} // Disable while updating
-                            />
-                        }
-                        label={isPrivate ? "Private" : "Public"}
+                        control={<Switch checked={themeMode === "dark"} onChange={handleToggle} />}
+                        label={themeMode === "dark" ? "dark" : "light"}
                         labelPlacement="start"
                         sx={{
                             marginLeft: 2,
@@ -91,4 +73,4 @@ const AccountPrivacy = () => {
     );
 };
 
-export default AccountPrivacy;
+export default General;

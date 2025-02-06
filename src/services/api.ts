@@ -39,8 +39,9 @@ interface PostData {
 }
 
 interface ProfileData {
-    username: string;
+    username?: string;
     profile_picture_url?: string;
+    bio?: string;
 }
 
 // User APIs

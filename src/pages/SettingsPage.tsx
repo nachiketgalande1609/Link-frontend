@@ -1,20 +1,12 @@
-import { useState } from "react";
 import { Box, Drawer, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useUser } from "../context/userContext";
 import ProfileDetails from "../component/settings/ProfileDetails"; // Import the new ProfileDetails component
-import { updateProfileDetails } from "../services/api";
 import AccountPrivacy from "../component/settings/AccountPrivacy";
+import General from "../component/settings/General";
 
-const menuItems = ["Profile Details", "Account Privacy", "Notifications", "Blocked", "Comments"];
+const menuItems = ["Profile Details", "General", "Account Privacy", "Notifications", "Blocked", "Comments"];
 
 const SettingsPage = () => {
-    const { setUser } = useUser();
-    const [usernameUpdating, setUsernameUpdating] = useState(false);
-
-    const user = JSON.parse(localStorage.getItem("user") || "");
-
-    const [newUsername, setNewUsername] = useState(user?.username || "");
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -23,26 +15,6 @@ const SettingsPage = () => {
 
     const handleMenuItemClick = (setting: string) => {
         navigate(`/settings?setting=${setting}`);
-    };
-
-    const handleSaveUsername = async () => {
-        if (!user?.id) {
-            console.error("User ID is missing.");
-            return;
-        }
-        setUsernameUpdating(true);
-        try {
-            await updateProfileDetails(user.id, { username: newUsername });
-            const updatedUser = { ...user, username: newUsername };
-            setUser(updatedUser);
-            localStorage.setItem("user", JSON.stringify(updatedUser));
-        } catch (error) {
-            console.error("Failed to update username:", error);
-        } finally {
-            setTimeout(() => {
-                setUsernameUpdating(false);
-            }, 4000);
-        }
     };
 
     return (
@@ -86,14 +58,11 @@ const SettingsPage = () => {
 
             <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
                 {currentSetting === "profiledetails" ? (
-                    <ProfileDetails
-                        newUsername={newUsername}
-                        setNewUsername={setNewUsername}
-                        handleSaveUsername={handleSaveUsername}
-                        usernameUpdating={usernameUpdating}
-                    />
+                    <ProfileDetails />
                 ) : currentSetting === "accountprivacy" ? (
                     <AccountPrivacy />
+                ) : currentSetting === "general" ? (
+                    <General />
                 ) : (
                     <Typography variant="h6" color="textSecondary">
                         Please Select a settings category

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, Button, Box, TextField, IconButton, CircularProgress, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import Cropper from "react-cropper";
@@ -6,20 +6,48 @@ import "cropperjs/dist/cropper.css";
 import { useDropzone } from "react-dropzone";
 import { uploadProfilePicture } from "../../services/api";
 import { useUser } from "../../context/userContext";
+import { updateProfileDetails } from "../../services/api";
+import { getProfile } from "../../services/api";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
-interface ProfileDetailsProps {
-    newUsername: string;
-    setNewUsername: React.Dispatch<React.SetStateAction<string>>;
-    handleSaveUsername: () => void;
-    usernameUpdating: boolean;
+interface Profile {
+    username: string;
+    email: string;
+    bio?: string;
+    profile_picture?: string;
+    followers_count: number;
+    following_count: number;
+    posts_count: number;
+    is_request_active: boolean;
+    follow_status: string;
+    is_following: boolean;
+    is_private: boolean;
+    isMobile: boolean;
 }
 
-const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUsername, handleSaveUsername, usernameUpdating }) => {
-    const { user, setUser } = useUser();
+const ProfileDetails = () => {
+    const { setUser } = useUser();
+    const notifications = useNotifications();
+
+    const user = JSON.parse(localStorage.getItem("user") || "");
+    const [profileData, setProfileData] = useState<Profile | null>(null);
+
     const [openDialog, setOpenDialog] = useState(false);
     const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
+    const [newUsername, setNewUsername] = useState("");
+    const [newBio, setNewBio] = useState("");
+    const [profileUpdating, setProfileUpdating] = useState(false);
+
     const [cropper, setCropper] = useState<any>(null);
     const [uploading, setUploading] = useState(false);
+
+    const [isModified, setIsModified] = useState(false);
+
+    useEffect(() => {
+        if (profileData) {
+            setIsModified(newUsername !== profileData.username || newBio !== profileData.bio);
+        }
+    }, [newUsername, newBio, profileData]);
 
     const { getRootProps, open } = useDropzone({
         onDrop: (acceptedFiles) => {
@@ -39,6 +67,23 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUser
         noClick: true,
     });
 
+    async function fetchProfile() {
+        try {
+            if (user?.id) {
+                const res = await getProfile(user?.id, user?.id);
+                setProfileData(res.data);
+                setNewUsername(res.data.username);
+                setNewBio(res.data.bio);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        fetchProfile();
+    }, [user?.id]);
+
     const handleUploadProfilePic = () => {
         if (cropper && user?.id) {
             setUploading(true);
@@ -49,6 +94,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUser
                     const updatedUser = { ...user, profile_picture_url: response.imageUrl };
                     setUser(updatedUser);
                     localStorage.setItem("user", JSON.stringify(updatedUser));
+                    notifications.show("Profile picture updated successfully!", {
+                        severity: "success",
+                        autoHideDuration: 3000,
+                    });
                     setOpenDialog(false);
                 })
                 .catch((error) => {
@@ -56,6 +105,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUser
                 })
                 .finally(() => {
                     setUploading(false);
+                    setNewProfilePic(null);
                 });
         }
     };
@@ -69,6 +119,28 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUser
         }
         const blob = new Blob([ab], { type: "image/jpeg" });
         return new File([blob], "profile_picture.jpg", { type: "image/jpeg", lastModified: Date.now() });
+    };
+
+    const handleUpdateProfile = async () => {
+        if (!user?.id) {
+            console.error("User ID is missing.");
+            return;
+        }
+        setProfileUpdating(true);
+        try {
+            await updateProfileDetails(user.id, { username: newUsername, bio: newBio });
+            const updatedUser = { ...user, username: newUsername };
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            notifications.show("Profile details updated successfully!", {
+                severity: "success",
+                autoHideDuration: 3000,
+            });
+        } catch (error) {
+            console.error("Failed to update username:", error);
+        } finally {
+            setProfileUpdating(false);
+        }
     };
 
     return (
@@ -130,11 +202,25 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUser
                         },
                     }}
                 />
+                <TextField
+                    label="Bio"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={3}
+                    value={newBio}
+                    onChange={(e) => setNewBio(e.target.value)}
+                    sx={{
+                        marginBottom: 3,
+                        "& .MuiOutlinedInput-root": { borderRadius: "20px" },
+                    }}
+                />
                 <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={handleSaveUsername}
+                        onClick={handleUpdateProfile}
+                        disabled={!isModified || profileUpdating}
                         sx={{
                             borderRadius: "20px",
                             textTransform: "uppercase",
@@ -143,7 +229,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ newUsername, setNewUser
                             width: "150px",
                         }}
                     >
-                        {usernameUpdating ? <CircularProgress size={24} color="inherit" /> : "Save Changes"}
+                        {profileUpdating ? <CircularProgress size={24} color="inherit" /> : "Save Changes"}
                     </Button>
                 </Box>
             </Box>

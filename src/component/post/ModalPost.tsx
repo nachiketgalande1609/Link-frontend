@@ -215,7 +215,7 @@ const ModalPost: React.FC<PostProps> = ({
                                     <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 52, height: 52 }} />
                                     <Box sx={{ ml: 2 }}>
                                         <Typography sx={{ fontSize: "1rem" }}>{username}</Typography>
-                                        <Typography sx={{ fontSize: "0.7rem" }} color="text.secondary">
+                                        <Typography sx={{ fontSize: "0.8rem" }} color="text.secondary">
                                             {timeAgo}
                                         </Typography>
                                     </Box>
