@@ -162,8 +162,8 @@ const AppContent = () => {
                     src={user?.profile_picture_url || "default-profile-pic.jpg"}
                     alt="Profile"
                     style={{
-                        width: "40px",
-                        height: "40px",
+                        width: "33px",
+                        height: "33px",
                         borderRadius: "50%",
                         objectFit: "cover",
                         outline: "2px solid #000000",
@@ -314,7 +314,7 @@ const AppContent = () => {
                                                     transition: "transform 0.3s",
                                                     position: "absolute",
                                                     right: open ? 0 : 8,
-                                                    top: 13,
+                                                    top: 24,
                                                     borderRadius: "50%",
                                                     "&:hover": { backgroundColor: "#000000" },
                                                 }}
@@ -335,7 +335,7 @@ const AppContent = () => {
                                             padding: "12px 12px",
                                             borderRadius: "20px",
                                             backgroundColor: isActive ? "#ffffff" : "transparent",
-                                            "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
+                                            "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#202327" },
                                             maxHeight: "62px",
                                             justifyContent: "flex-start",
                                             alignItems: "center",
@@ -365,7 +365,7 @@ const AppContent = () => {
                                     padding: "12px 12px",
                                     cursor: "pointer",
                                     borderRadius: "20px",
-                                    "&:hover": { backgroundColor: "#1E1E1E" },
+                                    "&:hover": { backgroundColor: "#202327" },
                                     margin: "5px 0",
                                     justifyContent: "flex-start",
                                     alignItems: "center",
@@ -396,7 +396,7 @@ const AppContent = () => {
                                     padding: "12px 12px",
                                     cursor: "pointer",
                                     borderRadius: "20px",
-                                    "&:hover": { backgroundColor: "#1E1E1E" },
+                                    "&:hover": { backgroundColor: "#202327" },
                                     margin: "5px 0",
                                     justifyContent: "flex-start",
                                     alignItems: "center",
@@ -432,6 +432,7 @@ const AppContent = () => {
                                     width: "250px",
                                     padding: "3px 10px",
                                     borderRadius: "20px",
+                                    backgroundColor: "#202327",
                                 },
                             }}
                         >

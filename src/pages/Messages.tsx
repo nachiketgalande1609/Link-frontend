@@ -144,68 +144,114 @@ const Messages = () => {
             {/* Users List */}
             {isMobile ? (
                 <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                    <Box sx={{ width: 300, backgroundColor: "#111111", color: "white", padding: 2, height: "100%" }}>
+                    <Box sx={{ width: 300, backgroundColor: "#111111", color: "white", height: "100%" }}>
                         <IconButton sx={{ position: "absolute", right: 5, top: 15 }} onClick={() => setDrawerOpen(false)}>
                             <ChevronLeftIcon sx={{ color: "white" }} />
                         </IconButton>
-                        <Typography variant="h6" sx={{ mt: "5px", mb: "15px" }}>
+                        <Typography variant="h6" sx={{ p: "20px" }}>
                             Messages
                         </Typography>
                         <List>
-                            {users.map((user) => (
-                                <ListItem
-                                    sx={{
-                                        backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "transparent",
-                                        padding: "12px",
-                                        borderRadius: "8px",
-                                        mb: 1,
-                                        textAlign: "left",
-                                        width: "100%",
-                                        border: "none",
-                                    }}
-                                    component="button"
-                                    key={user.id}
-                                    onClick={() => handleUserClick(user.id)}
-                                >
-                                    <ListItemAvatar>
-                                        <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
-                                    </ListItemAvatar>
-                                    <ListItemText sx={{ color: selectedUser?.id === user.id ? "#000000" : "#ffffff" }} primary={user.username} />
-                                </ListItem>
-                            ))}
+                            {users.map((user) => {
+                                const userMessages = messages[user.id] || [];
+                                const lastMessage = userMessages[userMessages.length - 1];
+                                const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
+                                return (
+                                    <ListItem
+                                        sx={{
+                                            backgroundColor: selectedUser?.id === user.id ? "#202327" : "transparent",
+                                            padding: "12px",
+                                            mb: 1,
+                                            textAlign: "left",
+                                            width: "100%",
+                                            border: "none",
+                                            position: "relative",
+                                        }}
+                                        component="button"
+                                        key={user.id}
+                                        onClick={() => handleUserClick(user.id)}
+                                    >
+                                        <ListItemAvatar>
+                                            <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={user.username}
+                                            secondary={
+                                                <Typography variant="body2" sx={{ color: "#aaa" }}>
+                                                    {lastMessageText}
+                                                </Typography>
+                                            }
+                                        />
+                                        <div
+                                            style={{
+                                                position: "absolute",
+                                                right: 0,
+                                                top: "0",
+                                                bottom: "0",
+                                                width: "3px",
+                                                backgroundColor: "#1976D2",
+                                                visibility: selectedUser?.id === user.id ? "visible" : "hidden",
+                                            }}
+                                        />
+                                    </ListItem>
+                                );
+                            })}
                         </List>
                     </Box>
                 </Drawer>
             ) : (
-                <Box sx={{ width: "300px", backgroundColor: "#000000", color: "white", padding: 2, borderRight: "1px solid #333333" }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
+                <Box sx={{ width: "350px", backgroundColor: "#000000", color: "white", borderRight: "1px solid #202327" }}>
+                    <Typography variant="h6" sx={{ p: 3 }}>
                         Messages
                     </Typography>
                     <List>
-                        {users?.map((user) => (
-                            <ListItem
-                                component="button"
-                                key={user.id}
-                                onClick={() => handleUserClick(user.id)}
-                                sx={{
-                                    backgroundColor: selectedUser?.id === user.id ? "#ffffff" : "transparent",
-                                    padding: "12px",
-                                    borderRadius: "8px",
-                                    mb: 1,
-                                    textAlign: "left",
-                                    width: "100%",
-                                    border: "none",
-                                }}
-                            >
-                                <ListItemAvatar>
-                                    <Avatar
-                                        sx={{ width: "50px", height: "50px", mr: "12px" }}
-                                        src={user.profile_picture || "https://via.placeholder.com/40"}
+                        {users?.map((user) => {
+                            const userMessages = messages[user.id] || [];
+                            const lastMessage = userMessages[userMessages.length - 1];
+                            const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
+                            return (
+                                <ListItem
+                                    component="button"
+                                    key={user.id}
+                                    onClick={() => handleUserClick(user.id)}
+                                    sx={{
+                                        backgroundColor: selectedUser?.id === user.id ? "#202327" : "transparent",
+                                        padding: "12px",
+                                        mb: 1,
+                                        textAlign: "left",
+                                        width: "100%",
+                                        border: "none",
+                                        position: "relative",
+                                    }}
+                                >
+                                    <ListItemAvatar>
+                                        <Avatar
+                                            sx={{ width: "50px", height: "50px", mr: "12px" }}
+                                            src={user.profile_picture || "https://via.placeholder.com/40"}
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={user.username}
+                                        secondary={
+                                            <Typography variant="body2" sx={{ color: "#aaa" }}>
+                                                {lastMessageText}
+                                            </Typography>
+                                        }
                                     />
-                                </ListItemAvatar>
-                                <ListItemText sx={{ color: selectedUser?.id === user.id ? "#000000" : "#ffffff" }} primary={user.username} />
-                            </ListItem>
-                        ))}
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            right: 0,
+                                            top: "0",
+                                            bottom: "0",
+                                            width: "3px",
+                                            backgroundColor: "#1976D2",
+                                            visibility: selectedUser?.id === user.id ? "visible" : "hidden",
+                                        }}
+                                    />
+                                </ListItem>
+                            );
+                        })}
                     </List>
                 </Box>
             )}
@@ -225,7 +271,7 @@ const Messages = () => {
                             padding: "15px",
                             display: "flex",
                             alignItems: "center",
-                            borderBottom: "1px solid #333333",
+                            borderBottom: "1px solid #202327",
                         }}
                     >
                         <Avatar

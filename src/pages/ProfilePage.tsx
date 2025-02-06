@@ -19,6 +19,7 @@ interface Profile {
     follow_status: string;
     is_following: boolean;
     is_private: boolean;
+    isMobile: boolean;
 }
 
 const ProfilePage = () => {
@@ -115,7 +116,7 @@ const ProfilePage = () => {
                     mb: isMobile ? 2 : 3,
                     borderRadius: "20px",
                     boxShadow: 3,
-                    background: "linear-gradient(0deg,rgb(71, 71, 71),rgb(0, 0, 0))",
+                    background: "linear-gradient(0deg, hsl(214, 10%, 20%),rgb(0, 0, 0))",
                 }}
             >
                 <Grid container spacing={3} alignItems="start" sx={{ position: "relative" }}>
@@ -131,6 +132,7 @@ const ProfilePage = () => {
                                 width: "150px",
                                 padding: "1px 8px",
                                 borderRadius: "20px",
+                                backgroundColor: "#202327",
                             },
                         }}
                     >
@@ -276,6 +278,7 @@ const ProfilePage = () => {
                 sx={{
                     "& .MuiDialog-paper": {
                         border: "1px solid #444",
+                        borderRadius: "20px",
                     },
                 }}
             >
@@ -293,7 +296,8 @@ const ProfilePage = () => {
                         fetchPosts={fetchUserPosts}
                         hasUserLikedPost={selectedPost.liked_by_current_user}
                         initialComments={selectedPost.comments}
-                        borderRadius="0px"
+                        borderRadius="20px"
+                        isMobile={isMobile}
                     />
                 )}
             </Dialog>

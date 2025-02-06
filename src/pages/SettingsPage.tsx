@@ -72,7 +72,7 @@ const SettingsPage = () => {
                                     padding: "8px 15px",
                                     borderRadius: "20px",
                                     backgroundColor: settingKey === currentSetting ? "#ffffff" : "transparent",
-                                    "&:hover": settingKey === currentSetting ? { backgroundColor: "#ffffff" } : { backgroundColor: "#1E1E1E" },
+                                    "&:hover": settingKey === currentSetting ? { backgroundColor: "#ffffff" } : { backgroundColor: "#202327" },
                                     maxHeight: "62px",
                                     margin: "10px 0",
                                 }}

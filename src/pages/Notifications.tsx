@@ -103,6 +103,8 @@ const NotificationsPage = () => {
                                     alignItems: "center",
                                     height: "90px",
                                     justifyContent: "space-between",
+                                    backgroundColor: "#202327",
+                                    borderRadius: "20px",
                                 }}
                             >
                                 <ListItemAvatar>
@@ -114,7 +116,7 @@ const NotificationsPage = () => {
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={
-                                        <Typography variant="body1">
+                                        <Typography>
                                             {notification.username} {notification.message}
                                         </Typography>
                                     }

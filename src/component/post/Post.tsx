@@ -173,7 +173,7 @@ const Post: React.FC<PostProps> = ({
     };
 
     return (
-        <Card sx={{ borderRadius: isMobile ? 0 : borderRadius, backgroundColor: isMobile ? "#000000" : "#111111" }}>
+        <Card sx={{ borderRadius: isMobile ? 0 : borderRadius, backgroundColor: isMobile ? "#000000" : "#101114" }}>
             <CardContent sx={{ padding: 0 }}>
                 <Box sx={{ padding: "16px" }}>
                     <Grid container spacing={2}>
@@ -232,37 +232,6 @@ const Post: React.FC<PostProps> = ({
                         />
                     </Box>
                 )}
-
-                {isEditing ? (
-                    <Box sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
-                        <TextField
-                            fullWidth
-                            multiline
-                            value={editedContent}
-                            onChange={(e) => setEditedContent(e.target.value)}
-                            sx={{
-                                mb: 2,
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "20px",
-                                },
-                            }}
-                        />
-                        {/* Buttons aligned to the right */}
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                            <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "20px" }}>
-                                Cancel
-                            </Button>
-                            <Button onClick={handleSaveEdit} variant="contained" color="primary" sx={{ borderRadius: "20px" }}>
-                                Save
-                            </Button>
-                        </Box>
-                    </Box>
-                ) : (
-                    <Typography variant="body1" sx={{ mt: 2, padding: "16px 16px 0 16px", margin: 0 }}>
-                        <span style={{ fontWeight: "bold", marginRight: "8px" }}>{username}</span>
-                        {content}
-                    </Typography>
-                )}
             </CardContent>
 
             <CardActions sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px" }}>
@@ -281,6 +250,36 @@ const Post: React.FC<PostProps> = ({
                     </Typography>
                 </Box>
             </CardActions>
+            {isEditing ? (
+                <Box sx={{ mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
+                    <TextField
+                        fullWidth
+                        multiline
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        sx={{
+                            mb: 2,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                            },
+                        }}
+                    />
+                    {/* Buttons aligned to the right */}
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                        <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "20px" }}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSaveEdit} variant="contained" color="primary" sx={{ borderRadius: "20px" }}>
+                            Save
+                        </Button>
+                    </Box>
+                </Box>
+            ) : (
+                <Typography variant="body1" sx={{ mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
+                    <span style={{ fontWeight: "bold", marginRight: "8px" }}>{username}</span>
+                    {content}
+                </Typography>
+            )}
 
             <Box sx={{ padding: "0 16px 16px 16px" }}>
                 <TextField
@@ -311,7 +310,7 @@ const Post: React.FC<PostProps> = ({
                             borderRadius: "10px",
                         },
                         "&::-webkit-scrollbar-track": {
-                            backgroundColor: "#1E1E1E",
+                            backgroundColor: "#202327",
                         },
                     }}
                 >

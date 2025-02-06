@@ -53,7 +53,7 @@ const AccountPrivacy = () => {
                     width: "80%",
                     padding: 3,
                     borderRadius: 2,
-                    backgroundColor: "#1E1E1E",
+                    backgroundColor: "#202327",
                 }}
             >
                 <Box

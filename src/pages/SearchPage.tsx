@@ -104,8 +104,11 @@ export default function SearchPage() {
             {results.length > 0 && (
                 <List sx={{ padding: 0 }}>
                     {results.map((user) => (
-                        <ListItem key={user.id} divider sx={{ padding: "10px 0" }}>
-                            <ListItemButton onClick={() => handleUserClick(user)} sx={{ padding: "4px 16px" }}>
+                        <ListItem key={user.id} sx={{ padding: "5px 0" }}>
+                            <ListItemButton
+                                onClick={() => handleUserClick(user)}
+                                sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}
+                            >
                                 <ListItemAvatar>
                                     <Avatar src={user.profile_picture} />
                                 </ListItemAvatar>
@@ -119,8 +122,8 @@ export default function SearchPage() {
             {!debouncedQuery && history?.length > 0 && (
                 <List sx={{ padding: 0 }}>
                     {history.map((item) => (
-                        <ListItem key={item.history_id} divider sx={{ padding: "10px 0" }}>
-                            <ListItemButton sx={{ padding: "4px 16px" }}>
+                        <ListItem key={item.history_id} sx={{ padding: "5px 0" }}>
+                            <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
                                 <ListItemAvatar>
                                     <Avatar src={item.profile_picture} />
                                 </ListItemAvatar>
@@ -131,6 +134,7 @@ export default function SearchPage() {
                                         e.stopPropagation();
                                         handleDeleteHistory(item.history_id);
                                     }}
+                                    sx={{ color: "hsl(226, 11%, 40%)", "&:hover": { backgroundColor: "transparent", color: "#ffffff" } }}
                                 >
                                     <CloseIcon fontSize="small" />
                                 </IconButton>

@@ -46,6 +46,7 @@ interface PostProps {
         timeAgo: string;
     }>;
     borderRadius: string;
+    isMobile: boolean;
 }
 
 const ModalPost: React.FC<PostProps> = ({
@@ -62,6 +63,7 @@ const ModalPost: React.FC<PostProps> = ({
     hasUserLikedPost,
     initialComments,
     borderRadius,
+    isMobile,
 }) => {
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
@@ -208,17 +210,17 @@ const ModalPost: React.FC<PostProps> = ({
 
                         {/* Right column for post details */}
                         <Grid item xs={12} sm={6}>
-                            <Box sx={{ padding: "20px" }}>
+                            <Box sx={{ padding: isMobile ? "0 10px 10px 10px" : "20px" }}>
                                 <Box sx={{ display: "flex", alignItems: "center" }}>
                                     <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 52, height: 52 }} />
                                     <Box sx={{ ml: 2 }}>
-                                        <Typography variant="h6">{username}</Typography>
-                                        <Typography variant="body2" color="text.secondary">
+                                        <Typography sx={{ fontSize: "1rem" }}>{username}</Typography>
+                                        <Typography sx={{ fontSize: "0.7rem" }} color="text.secondary">
                                             {timeAgo}
                                         </Typography>
                                     </Box>
                                     <IconButton onClick={handleMenuOpen} sx={{ ml: "auto" }}>
-                                        <MoreVert />
+                                        <MoreVert sx={{ fontSize: isMobile ? "1rem" : "1.2rem" }} />
                                     </IconButton>
                                 </Box>
 
@@ -241,6 +243,33 @@ const ModalPost: React.FC<PostProps> = ({
                                         Delete
                                     </MenuItem>
                                 </Menu>
+
+                                <CardActions
+                                    sx={{
+                                        justifyContent: "space-between",
+                                        marginTop: "16px",
+                                        padding: 0,
+                                    }}
+                                >
+                                    <Box>
+                                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
+                                            {isLiked ? (
+                                                <Favorite sx={{ fontSize: "30px", mr: 1 }} />
+                                            ) : (
+                                                <FavoriteBorder sx={{ fontSize: "30px", mr: 1 }} />
+                                            )}
+                                        </IconButton>
+                                        <Typography variant="body2" component="span" sx={{ mr: 2 }}>
+                                            {likes}
+                                        </Typography>
+                                        <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
+                                            <ChatBubbleOutline sx={{ fontSize: "30px", mr: 1 }} />
+                                        </IconButton>
+                                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
+                                            {commentCount}
+                                        </Typography>
+                                    </Box>
+                                </CardActions>
 
                                 {isEditing ? (
                                     <Box sx={{ mt: 2 }}>
@@ -271,33 +300,6 @@ const ModalPost: React.FC<PostProps> = ({
                                     </Typography>
                                 )}
 
-                                <CardActions
-                                    sx={{
-                                        justifyContent: "space-between",
-                                        marginTop: "16px",
-                                        padding: 0,
-                                    }}
-                                >
-                                    <Box>
-                                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
-                                            {isLiked ? (
-                                                <Favorite sx={{ fontSize: "30px", mr: 1 }} />
-                                            ) : (
-                                                <FavoriteBorder sx={{ fontSize: "30px", mr: 1 }} />
-                                            )}
-                                        </IconButton>
-                                        <Typography variant="body2" component="span" sx={{ mr: 2 }}>
-                                            {likes}
-                                        </Typography>
-                                        <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
-                                            <ChatBubbleOutline sx={{ fontSize: "30px", mr: 1 }} />
-                                        </IconButton>
-                                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                                            {commentCount}
-                                        </Typography>
-                                    </Box>
-                                </CardActions>
-
                                 <Box sx={{ mt: 2 }}>
                                     <TextField
                                         fullWidth
@@ -315,19 +317,21 @@ const ModalPost: React.FC<PostProps> = ({
                                         inputRef={commentInputRef}
                                     />
 
-                                    <Box
-                                        sx={{
-                                            maxHeight: "50vh",
-                                            overflowY: "auto",
-                                            paddingRight: 2,
-                                        }}
-                                    >
-                                        {visibleComments.length === 0 ? (
+                                    {visibleComments.length === 0 ? (
+                                        <Box sx={{ display: "flex", justifyContent: "center" }}>
                                             <Typography variant="body2" color="text.secondary">
                                                 No comments yet
                                             </Typography>
-                                        ) : (
-                                            visibleComments.map((comment) => (
+                                        </Box>
+                                    ) : (
+                                        <Box
+                                            sx={{
+                                                maxHeight: "50vh",
+                                                overflowY: "auto",
+                                                paddingRight: 2,
+                                            }}
+                                        >
+                                            {visibleComments.map((comment) => (
                                                 <Box key={comment.id} sx={{ mb: 2 }}>
                                                     <Box sx={{ display: "flex", alignItems: "center" }}>
                                                         <Avatar
@@ -348,9 +352,9 @@ const ModalPost: React.FC<PostProps> = ({
                                                         </Box>
                                                     </Box>
                                                 </Box>
-                                            ))
-                                        )}
-                                    </Box>
+                                            ))}
+                                        </Box>
+                                    )}
 
                                     {postComments.length > 3 && !showAllComments && (
                                         <Typography
