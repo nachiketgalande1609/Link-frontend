@@ -29,6 +29,8 @@ const Messages = () => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [messages, setMessages] = useState<MessagesType>({});
     const [inputMessage, setInputMessage] = useState("");
+    const [typingUser, setTypingUser] = useState<number | null>(null);
+    const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
 
     const { userId } = useParams();
     const navigate = useNavigate();
@@ -92,6 +94,49 @@ const Messages = () => {
             socket.off("receiveMessage");
         };
     }, [currentUser]);
+
+    const handleTyping = () => {
+        if (inputMessage.trim()) {
+            socket.emit("typing", {
+                senderId: currentUser.id,
+                receiverId: selectedUser?.id,
+            });
+
+            // Clear any previous timeout to reset typing detection
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+            }
+
+            // Set a new timeout to stop typing after a delay (e.g., 1 second)
+            const timeout = setTimeout(() => {
+                socket.emit("stopTyping", {
+                    senderId: currentUser.id,
+                    receiverId: selectedUser?.id,
+                });
+            }, 2000);
+
+            setTypingTimeout(timeout);
+        }
+    };
+
+    useEffect(() => {
+        socket.on("typing", (data) => {
+            if (data.receiverId === currentUser.id && selectedUser?.id === data.senderId) {
+                setTypingUser(data.senderId);
+            }
+        });
+
+        socket.on("stopTyping", (data) => {
+            if (data.receiverId === currentUser.id && selectedUser?.id === data.senderId) {
+                setTypingUser(null); // Clear the typing user
+            }
+        });
+
+        return () => {
+            socket.off("typing");
+            socket.off("stopTyping");
+        };
+    }, [currentUser, selectedUser]);
 
     const fetchData = async () => {
         try {
@@ -310,6 +355,7 @@ const Messages = () => {
                         </Typography>
                     )}
                 </Box>
+                {typingUser === selectedUser?.id && <div className="dot-elastic"></div>}
 
                 {selectedUser && (
                     <Box sx={{ display: "flex", padding: 2, mb: isMobile ? "60px" : null }}>
@@ -318,7 +364,10 @@ const Messages = () => {
                             fullWidth
                             placeholder="Type a message..."
                             value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
+                            onChange={(e) => {
+                                setInputMessage(e.target.value);
+                                handleTyping();
+                            }}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
                                     e.preventDefault(); // Prevents the default Enter key behavior (like adding a new line)
