@@ -113,7 +113,7 @@ const Messages = () => {
                     senderId: currentUser.id,
                     receiverId: selectedUser?.id,
                 });
-            }, 2000);
+            }, 3000);
 
             setTypingTimeout(timeout);
         }
@@ -339,7 +339,7 @@ const Messages = () => {
                             >
                                 <Typography
                                     sx={{
-                                        backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#444",
+                                        backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#202327",
                                         padding: "8px 12px",
                                         borderRadius: "12px",
                                         maxWidth: "70%",
@@ -355,7 +355,7 @@ const Messages = () => {
                         </Typography>
                     )}
                 </Box>
-                {typingUser === selectedUser?.id && <div className="dot-elastic"></div>}
+                {typingUser === selectedUser?.id && <div className="dot-falling"></div>}
 
                 {selectedUser && (
                     <Box sx={{ display: "flex", padding: 2, mb: isMobile ? "60px" : null }}>
