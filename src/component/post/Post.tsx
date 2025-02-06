@@ -17,6 +17,8 @@ import {
     DialogContent,
     DialogTitle,
     Button,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost } from "../../services/api"; // Assuming you have an updatePost function in your API
@@ -63,6 +65,8 @@ const Post: React.FC<PostProps> = ({
     initialComments,
     borderRadius,
 }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
     const [postComments, setPostComments] = useState(initialComments);
@@ -169,7 +173,7 @@ const Post: React.FC<PostProps> = ({
     };
 
     return (
-        <Card sx={{ borderRadius: borderRadius }}>
+        <Card sx={{ borderRadius: isMobile ? 0 : borderRadius, backgroundColor: isMobile ? "#000000" : "#111111" }}>
             <CardContent sx={{ padding: 0 }}>
                 <Box sx={{ padding: "16px" }}>
                     <Grid container spacing={2}>

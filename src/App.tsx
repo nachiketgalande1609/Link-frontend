@@ -296,11 +296,16 @@ const AppContent = () => {
                                             }}
                                         >
                                             <Typography
-                                                style={{ visibility: open ? "visible" : "hidden" }}
-                                                variant="h2"
-                                                className="londrina-shadow-regular"
+                                                style={{
+                                                    visibility: open ? "visible" : "hidden",
+                                                    backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
+                                                    WebkitBackgroundClip: "text",
+                                                    WebkitTextFillColor: "transparent",
+                                                }}
+                                                variant="h3"
+                                                className="lily-script-one-regular"
                                             >
-                                                Link
+                                                Ripple
                                             </Typography>
                                             <IconButton
                                                 onClick={toggleDrawer}
@@ -440,20 +445,30 @@ const AppContent = () => {
                             backgroundColor: "black",
                             zIndex: 1000,
                             height: "60px",
+                            borderRadius: "10px 10px 0 0",
                         }}
                     >
-                        {NAVIGATION.map((item, index) => (
-                            <BottomNavigationAction
-                                key={index}
-                                icon={item.icon}
-                                component={Link}
-                                to={`/${item.segment}`}
-                                sx={{
-                                    color: "white",
-                                    "&.Mui-selected": { color: "yellow" },
-                                }}
-                            />
-                        ))}
+                        {NAVIGATION.map((item, index) => {
+                            const isActive = location.pathname === `/${item.segment}`;
+                            if (item.kind != "header") {
+                                return (
+                                    <BottomNavigationAction
+                                        key={index}
+                                        icon={item.icon}
+                                        component={Link}
+                                        to={`/${item.segment}`}
+                                        sx={{
+                                            backgroundColor: isActive ? "#ffffff" : "transparent",
+                                            color: isActive ? "black" : "white",
+                                            "&.Mui-selected": { color: "yellow" },
+                                            minWidth: "auto",
+                                            padding: "0 8px",
+                                            borderRadius: "10px 10px 0 0",
+                                        }}
+                                    />
+                                );
+                            }
+                        })}
                     </BottomNavigation>
                 )
             ) : null}

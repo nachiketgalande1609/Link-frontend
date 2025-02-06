@@ -1,4 +1,4 @@
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme } from "@mui/material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
@@ -6,6 +6,8 @@ import { getPosts } from "../services/api";
 const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const user = JSON.parse(localStorage.getItem("user") || "");
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const fetchPosts = async () => {
         try {
@@ -23,7 +25,7 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: "10px" }}>
+        <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px" }}>
             {/* Display posts dynamically */}
             <Grid container spacing={3}>
                 {posts.length > 0 ? (

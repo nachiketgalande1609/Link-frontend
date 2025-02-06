@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, Menu, MenuItem, useMediaQuery, useTheme } from "@mui/material";
 import ProfilePagePost from "../component/post/ProfilePagePost";
 import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../services/api";
@@ -24,7 +24,9 @@ interface Profile {
 const ProfilePage = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
+    const theme = useTheme();
 
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
     const [profileData, setProfileData] = useState<Profile | null>(null);
@@ -106,11 +108,11 @@ const ProfilePage = () => {
     };
 
     return (
-        <Container sx={{ padding: "10px", marginBottom: "50px" }}>
+        <Container sx={{ padding: isMobile ? 0 : "10px", marginBottom: "50px" }}>
             <Paper
                 sx={{
                     padding: { xs: 2, sm: 3 },
-                    mb: 3,
+                    mb: isMobile ? 2 : 3,
                     borderRadius: "20px",
                     boxShadow: 3,
                     background: "linear-gradient(0deg,rgb(71, 71, 71),rgb(0, 0, 0))",
@@ -249,10 +251,10 @@ const ProfilePage = () => {
                     </Typography>
                 </Grid>
             ) : (
-                <Grid container spacing={2}>
+                <Grid container spacing={isMobile ? 1 : 2} sx={{ padding: isMobile ? "0 10px" : 0 }}>
                     {posts.length > 0 ? (
                         posts.map((post) => (
-                            <Grid item xs={12} sm={6} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
+                            <Grid item xs={4} sm={4} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
                                 <ProfilePagePost imageUrl={post.image_url} />
                             </Grid>
                         ))
