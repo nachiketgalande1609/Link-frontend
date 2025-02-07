@@ -36,9 +36,9 @@ body {
     margin-left: 32px;
     margin-bottom: 10px;
     left: -9999px;
-    width: 8px;
-    height: 8px;
-    border-radius: 5px;
+    width: 10px;
+    height: 60px;
+    border-radius: 50%;
     background-color: #8f97a3;
     color: #8f97a3;
     box-shadow: 9999px 0 0 0 #8f97a3;
@@ -55,9 +55,9 @@ body {
 }
 
 .dot-falling::before {
-    width: 8px;
-    height: 8px;
-    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     background-color: #8f97a3;
     color: #8f97a3;
     animation: dot-falling-before 1s infinite linear;
@@ -65,9 +65,9 @@ body {
 }
 
 .dot-falling::after {
-    width: 8px;
-    height: 8px;
-    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     background-color: #8f97a3;
     color: #8f97a3;
     animation: dot-falling-after 1s infinite linear;
