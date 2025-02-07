@@ -16,11 +16,14 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DoneIcon from "@mui/icons-material/Done";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
 
-type Message = { sender_id: number; message_text: string; timestamp: string };
+type Message = { sender_id: number; message_text: string; timestamp: string; delivered?: boolean; read?: boolean };
 type MessagesType = { [key: number]: Message[] };
 type User = { id: number; username: string; profile_picture: string };
 
@@ -367,7 +370,12 @@ const Messages = () => {
                         messages[selectedUser.id]?.map((msg, index) => (
                             <Box
                                 key={index}
-                                sx={{ display: "flex", justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start", mb: 1 }}
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
+                                    mb: 1,
+                                    alignItems: "center",
+                                }}
                             >
                                 <Typography
                                     sx={{
@@ -380,6 +388,14 @@ const Messages = () => {
                                 >
                                     {msg.message_text}
                                 </Typography>
+                                {msg.sender_id === currentUser.id &&
+                                    (msg.read ? (
+                                        <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} /> // Read (Blue double check)
+                                    ) : msg.delivered ? (
+                                        <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Delivered (Gray double check)
+                                    ) : (
+                                        <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Sent (Single check)
+                                    ))}
                             </Box>
                         ))
                     ) : (
