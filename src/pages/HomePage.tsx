@@ -1,10 +1,11 @@
-import { Container, Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box } from "@mui/material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
 
 const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     const user = JSON.parse(localStorage.getItem("user") || "");
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -17,6 +18,8 @@ const HomePage = () => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -26,9 +29,12 @@ const HomePage = () => {
 
     return (
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px" }}>
-            {/* Display posts dynamically */}
             <Grid container spacing={3}>
-                {posts.length > 0 ? (
+                {loading ? (
+                    <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="200px">
+                        <CircularProgress />
+                    </Box>
+                ) : posts.length > 0 ? (
                     posts.map((post) => (
                         <Grid item xs={12} sm={12} md={12} key={post.id}>
                             <Post

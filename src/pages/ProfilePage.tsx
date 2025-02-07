@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, Menu, MenuItem, useMediaQuery, useTheme } from "@mui/material";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, Menu, MenuItem, useMediaQuery, useTheme, Box } from "@mui/material";
 import ProfilePagePost from "../component/post/ProfilePagePost";
 import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../services/api";
@@ -35,6 +35,7 @@ const ProfilePage = () => {
     const [selectedPost, setSelectedPost] = useState<any | null>(null);
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const [mobileGridWidth, setMobileGridWidth] = useState(4);
 
     async function fetchProfile() {
         try {
@@ -108,6 +109,12 @@ const ProfilePage = () => {
         handleCloseMenu();
     };
 
+    const toggleMobileGridWidth = () => {
+        if (mobileGridWidth == 4) {
+            setMobileGridWidth(12);
+        } else setMobileGridWidth(4);
+    };
+
     return (
         <Container sx={{ padding: isMobile ? 0 : "10px", marginBottom: "50px" }}>
             <Paper
@@ -136,7 +143,16 @@ const ProfilePage = () => {
                             },
                         }}
                     >
-                        <MenuItem onClick={handleEditProfile} sx={{ width: "100%", textAlign: "center", height: "40px", borderRadius: "15px" }}>
+                        <MenuItem
+                            onClick={handleEditProfile}
+                            sx={{
+                                width: "100%",
+                                textAlign: "center",
+                                height: "40px",
+                                borderRadius: "15px",
+                                fontSize: isMobile ? "0.85rem" : "0.9rem",
+                            }}
+                        >
                             Edit Profile
                         </MenuItem>
                     </Menu>
@@ -156,16 +172,16 @@ const ProfilePage = () => {
 
                     <Grid item xs={12} md={9}>
                         <Typography
-                            variant="h5"
                             sx={{
                                 fontWeight: "bold",
                                 textAlign: { xs: "center", sm: "center", md: "left" },
+                                fontSize: isMobile ? "1.3rem" : "2rem",
                             }}
                         >
                             {profileData?.username}
                         </Typography>
 
-                        <Typography variant="subtitle2" sx={{ textAlign: { xs: "center", sm: "center", md: "left" } }}>
+                        <Typography sx={{ textAlign: { xs: "center", sm: "center", md: "left" }, fontSize: isMobile ? "0.85rem" : "1rem" }}>
                             {profileData?.email}
                         </Typography>
 
@@ -183,42 +199,41 @@ const ProfilePage = () => {
                         )}
 
                         {userId != currentUser?.id && (
-                            <Button
-                                onClick={
-                                    (isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active
-                                        ? () => {}
-                                        : handleFollow
-                                }
-                                disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
-                                variant="outlined"
-                                sx={{ mt: 2, borderRadius: "20px" }}
-                            >
-                                {profileData?.is_request_active
-                                    ? "Request Pending"
-                                    : isFollowing && profileData?.follow_status === "accepted"
-                                    ? "Following"
-                                    : "Follow"}
-                            </Button>
-                        )}
-
-                        {userId != currentUser?.id && (
-                            <Button onClick={handleSendMessage} variant="contained" sx={{ mt: 2, ml: 2, borderRadius: "20px" }}>
-                                Send Message
-                            </Button>
+                            <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end" }}>
+                                <Button
+                                    onClick={
+                                        (isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active
+                                            ? () => {}
+                                            : handleFollow
+                                    }
+                                    disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
+                                    variant="outlined"
+                                    sx={{ mt: 2, borderRadius: "20px" }}
+                                >
+                                    {profileData?.is_request_active
+                                        ? "Request Pending"
+                                        : isFollowing && profileData?.follow_status === "accepted"
+                                          ? "Following"
+                                          : "Follow"}
+                                </Button>
+                                <Button onClick={handleSendMessage} variant="outlined" sx={{ mt: 2, ml: 2, borderRadius: "20px" }}>
+                                    Message
+                                </Button>
+                            </Box>
                         )}
 
                         <Grid
                             container
                             spacing={2}
                             sx={{
-                                mt: 2,
+                                mt: 1,
                                 display: "flex",
                                 justifyContent: "space-between",
                                 textAlign: "center",
                             }}
                         >
                             <Grid item xs={4}>
-                                <Typography variant="body2" sx={{ fontSize: "20px", mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 1 }}>
                                     {profileData?.posts_count}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
@@ -226,7 +241,7 @@ const ProfilePage = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography variant="body2" sx={{ fontSize: "20px", mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 1 }}>
                                     {profileData?.followers_count}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
@@ -234,7 +249,7 @@ const ProfilePage = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography variant="body2" sx={{ fontSize: "20px", mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 1 }}>
                                     {profileData?.following_count}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
@@ -256,7 +271,17 @@ const ProfilePage = () => {
                 <Grid container spacing={isMobile ? 1 : 2} sx={{ padding: isMobile ? "0 10px" : 0 }}>
                     {posts.length > 0 ? (
                         posts.map((post) => (
-                            <Grid item xs={4} sm={4} md={4} key={post.id} onClick={() => handleOpenModal(post)} style={{ cursor: "pointer" }}>
+                            <Grid
+                                item
+                                xs={mobileGridWidth}
+                                sm={4}
+                                md={4}
+                                key={post.id}
+                                onClick={() => {
+                                    isMobile ? toggleMobileGridWidth() : handleOpenModal(post);
+                                }}
+                                style={{ cursor: "pointer" }}
+                            >
                                 <ProfilePagePost imageUrl={post.image_url} />
                             </Grid>
                         ))

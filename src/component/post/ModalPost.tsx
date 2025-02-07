@@ -212,10 +212,14 @@ const ModalPost: React.FC<PostProps> = ({
                         <Grid item xs={12} sm={6}>
                             <Box sx={{ padding: isMobile ? "0 10px 10px 10px" : "20px" }}>
                                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                                    <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 52, height: 52 }} />
+                                    <Avatar
+                                        src={avatarUrl || "https://via.placeholder.com/40"}
+                                        alt={username}
+                                        sx={{ width: isMobile ? 42 : 52, height: isMobile ? 42 : 52 }}
+                                    />
                                     <Box sx={{ ml: 2 }}>
-                                        <Typography sx={{ fontSize: "1rem" }}>{username}</Typography>
-                                        <Typography sx={{ fontSize: "0.8rem" }} color="text.secondary">
+                                        <Typography sx={{ fontSize: isMobile ? "0.85rem" : "1rem" }}>{username}</Typography>
+                                        <Typography sx={{ fontSize: isMobile ? "0.7rem" : "0.8rem" }} color="text.secondary">
                                             {timeAgo}
                                         </Typography>
                                     </Box>
@@ -295,9 +299,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         </Box>
                                     </Box>
                                 ) : (
-                                    <Typography variant="body1" sx={{ mt: 2 }}>
-                                        {content}
-                                    </Typography>
+                                    <Typography sx={{ mt: 2, fontSize: isMobile ? "0.85rem" : "1rem" }}>{content}</Typography>
                                 )}
 
                                 <Box sx={{ mt: 2 }}>
@@ -337,7 +339,7 @@ const ModalPost: React.FC<PostProps> = ({
                                                         <Avatar
                                                             src={comment.commenter_profile_picture}
                                                             alt={comment.commenter_username}
-                                                            sx={{ width: 40, height: 40 }}
+                                                            sx={{ width: isMobile ? 30 : 40, height: isMobile ? 30 : 40 }}
                                                         />
                                                         <Box sx={{ ml: 2, display: "flex", justifyContent: "space-between", width: "100%" }}>
                                                             <Typography variant="body2" color="text.primary">

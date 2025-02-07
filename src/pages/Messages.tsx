@@ -40,7 +40,7 @@ const Messages = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(true);
 
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
@@ -149,6 +149,7 @@ const Messages = () => {
     };
 
     const handleUserClick = (userId: number) => {
+        setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
         navigate(`/messages/${userId}`);
     };
@@ -188,7 +189,14 @@ const Messages = () => {
         <Box sx={{ display: "flex", height: "100vh" }}>
             {/* Users List */}
             {isMobile ? (
-                <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+                <Drawer
+                    anchor="left"
+                    open={drawerOpen}
+                    onClose={() => setDrawerOpen(false)}
+                    sx={{
+                        "& .MuiDrawer-paper": { border: "none", boxShadow: "none" },
+                    }}
+                >
                     <Box sx={{ width: 300, backgroundColor: "#111111", color: "white", height: "100%" }}>
                         <IconButton sx={{ position: "absolute", right: 5, top: 15 }} onClick={() => setDrawerOpen(false)}>
                             <ChevronLeftIcon sx={{ color: "white" }} />
@@ -343,6 +351,7 @@ const Messages = () => {
                                         padding: "8px 12px",
                                         borderRadius: "12px",
                                         maxWidth: "70%",
+                                        fontSize: isMobile ? "0.8rem" : "1rem",
                                     }}
                                 >
                                     {msg.message_text}

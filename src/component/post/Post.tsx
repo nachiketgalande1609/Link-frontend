@@ -173,10 +173,11 @@ const Post: React.FC<PostProps> = ({
     };
 
     return (
-        <Card sx={{ borderRadius: isMobile ? 0 : borderRadius, backgroundColor: isMobile ? "#000000" : "#101114" }}>
-            <CardContent sx={{ padding: 0 }}>
+        <Card sx={{ borderRadius: isMobile ? 0 : borderRadius }}>
+            <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <Box sx={{ padding: isMobile ? "14px" : "16px" }}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} alignItems="center">
+                        {/* Avatar */}
                         <Grid item>
                             <Avatar
                                 src={avatarUrl || "https://via.placeholder.com/40"}
@@ -184,10 +185,17 @@ const Post: React.FC<PostProps> = ({
                                 sx={{ width: isMobile ? 42 : 52, height: isMobile ? 42 : 52 }}
                             />
                         </Grid>
-                        <Grid item xs>
-                            <Typography sx={{ fontSize: "1rem" }}>{username}</Typography>
-                            <Typography sx={{ fontSize: "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
+
+                        {/* Username */}
+                        <Grid item xs zeroMinWidth>
+                            <Typography
+                                sx={{ fontSize: isMobile ? "0.85rem" : "1rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                            >
+                                {username}
+                            </Typography>
                         </Grid>
+
+                        {/* More Options (Only for post owner) */}
                         {currentUser?.id === userId && (
                             <Grid item>
                                 <IconButton onClick={handleMenuOpen}>
@@ -236,7 +244,9 @@ const Post: React.FC<PostProps> = ({
                 )}
             </CardContent>
 
-            <CardActions sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px" }}>
+            <CardActions
+                sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
+            >
                 <Box>
                     <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white" }}>
                         {isLiked ? <Favorite sx={{ fontSize: "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
@@ -278,13 +288,21 @@ const Post: React.FC<PostProps> = ({
                     </Box>
                 </Box>
             ) : (
-                <Typography sx={{ fontSize: "1rem", mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
-                    <span style={{ fontSize: "1rem", fontWeight: "bold", marginRight: "8px" }}>{username}</span>
+                <Typography
+                    sx={{
+                        fontSize: isMobile ? "0.85rem" : "1rem",
+                        mt: 2,
+                        padding: "0px 16px 16px 16px",
+                        margin: 0,
+                        backgroundColor: isMobile ? "#000000" : "#101114",
+                    }}
+                >
+                    <span style={{ fontSize: isMobile ? "0.85rem" : "1rem", fontWeight: "bold", marginRight: "8px" }}>{username}</span>
                     {content}
                 </Typography>
             )}
 
-            <Box sx={{ padding: "0 16px 16px 16px" }}>
+            <Box sx={{ padding: "0 16px 16px 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <TextField
                     fullWidth
                     label="Add a comment..."
@@ -344,10 +362,16 @@ const Post: React.FC<PostProps> = ({
                         ))
                     )}
                     {postComments.length > 3 && !showAllComments && (
-                        <Typography variant="body2" color="primary" sx={{ mt: 2, cursor: "pointer", mb: 1 }} onClick={() => setShowAllComments(true)}>
+                        <Typography
+                            variant="body2"
+                            color="primary"
+                            sx={{ mt: 2, cursor: "pointer", textAlign: "center" }}
+                            onClick={() => setShowAllComments(true)}
+                        >
                             View all {postComments.length} comments
                         </Typography>
                     )}
+                    <Typography sx={{ fontSize: "0.8rem", mt: 2, color: "#666666" }}>{timeAgo}</Typography>
                 </Box>
             </Box>
 

@@ -1,5 +1,19 @@
 import { useState, useEffect } from "react";
-import { Container, List, ListItem, ListItemText, CircularProgress, ListItemAvatar, Avatar, Typography, Paper, Button, Box } from "@mui/material";
+import {
+    Container,
+    List,
+    ListItem,
+    ListItemText,
+    CircularProgress,
+    ListItemAvatar,
+    Avatar,
+    Typography,
+    Paper,
+    Button,
+    Box,
+    useMediaQuery,
+    useTheme,
+} from "@mui/material";
 import { followUser, getNotifications, respondToFollowRequest } from "../services/api"; // Assuming you have an API to handle follow request responses
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/userContext";
@@ -22,6 +36,8 @@ interface Notification {
 const NotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const navigate = useNavigate();
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -86,22 +102,22 @@ const NotificationsPage = () => {
             {loading ? (
                 <CircularProgress sx={{ display: "block", mx: "auto", mt: 3 }} />
             ) : notifications.length === 0 ? (
-                <Typography variant="body2" sx={{ textAlign: "center", mt: 3, color: "gray" }}>
+                <Typography sx={{ textAlign: "center", mt: 3, color: "gray", fontSize: isMobile ? "0.85rem" : "1rem" }}>
                     No new notifications.
                 </Typography>
             ) : (
                 <List>
                     {notifications.map((notification) => (
-                        <Paper key={notification.id} sx={{ mb: 1, borderRadius: 2, boxShadow: 2 }}>
+                        <Paper key={notification.id} sx={{ mb: 1, boxShadow: 2, borderRadius: "20px" }}>
                             <ListItem
                                 component="div"
                                 onClick={() => handleNotificationClick(notification)}
                                 sx={{
                                     cursor: "pointer",
-                                    p: 2,
+                                    padding: isMobile ? "14px" : "16px",
                                     display: "flex",
                                     alignItems: "center",
-                                    height: "90px",
+                                    height: isMobile ? "80px" : "90px",
                                     justifyContent: "space-between",
                                     backgroundColor: "#202327",
                                     borderRadius: "20px",
@@ -111,17 +127,17 @@ const NotificationsPage = () => {
                                     <Avatar
                                         src={notification.profile_picture}
                                         alt={notification.username}
-                                        sx={{ height: "58px", width: "58px", mr: 2 }}
+                                        sx={{ height: isMobile ? "50px" : "58px", width: isMobile ? "50px" : "58px", mr: 2 }}
                                     />
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={
-                                        <Typography>
+                                        <Typography sx={{ fontSize: isMobile ? "0.85rem" : "1rem" }}>
                                             {notification.username} {notification.message}
                                         </Typography>
                                     }
                                     secondary={
-                                        <Typography variant="caption" color="gray">
+                                        <Typography color="gray" sx={{ fontSize: isMobile ? "0.7rem" : "0.8rem" }}>
                                             {new Date(notification.created_at).toLocaleString()}
                                         </Typography>
                                     }
@@ -177,8 +193,8 @@ const NotificationsPage = () => {
                                                 {notification.request_status === "accepted"
                                                     ? "Accepted"
                                                     : notification.request_status === "rejected"
-                                                    ? "Rejected"
-                                                    : null}
+                                                      ? "Rejected"
+                                                      : null}
                                             </Button>
                                         )}
                                     </Box>
