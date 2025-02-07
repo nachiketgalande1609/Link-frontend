@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     List,
     ListItem,
@@ -42,12 +42,24 @@ const Messages = () => {
 
     const [drawerOpen, setDrawerOpen] = useState(true);
 
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
     useEffect(() => {
         // Fetch data when the component mounts
         fetchData();
     }, []);
+
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     useEffect(() => {
         // Reset selected user when pathname is "/messages"
@@ -181,6 +193,11 @@ const Messages = () => {
             text: inputMessage,
         });
 
+        socket.emit("stopTyping", {
+            senderId: currentUser.id,
+            receiverId: selectedUser?.id,
+        });
+
         // Clear the input field after sending the message
         setInputMessage("");
     };
@@ -253,7 +270,14 @@ const Messages = () => {
                     </Box>
                 </Drawer>
             ) : (
-                <Box sx={{ width: "350px", backgroundColor: "#000000", color: "white", borderRight: "1px solid #202327" }}>
+                <Box
+                    sx={{
+                        width: { sm: "250px", md: "300px", lg: "350px" },
+                        backgroundColor: "#000000",
+                        color: "white",
+                        borderRight: "1px solid #202327",
+                    }}
+                >
                     <Typography variant="h6" sx={{ p: 3 }}>
                         Messages
                     </Typography>
@@ -338,7 +362,7 @@ const Messages = () => {
                     </Box>
                 )}
 
-                <Box sx={{ flexGrow: 1, padding: 2, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+                <Box sx={{ flexGrow: 1, padding: 2, overflowY: "auto", display: "flex", flexDirection: "column", paddingBottom: "50px" }}>
                     {selectedUser ? (
                         messages[selectedUser.id]?.map((msg, index) => (
                             <Box
@@ -363,7 +387,10 @@ const Messages = () => {
                             Select a user to start chatting
                         </Typography>
                     )}
+                    {/* This empty div will act as the scroll anchor */}
+                    <div ref={messagesEndRef} />
                 </Box>
+
                 {typingUser === selectedUser?.id && <div className="dot-falling"></div>}
 
                 {selectedUser && (
