@@ -18,7 +18,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DoneIcon from "@mui/icons-material/Done";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
@@ -28,31 +27,43 @@ type MessagesType = { [key: number]: Message[] };
 type User = { id: number; username: string; profile_picture: string };
 
 const Messages = () => {
+    const { userId } = useParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [messages, setMessages] = useState<MessagesType>({});
     const [inputMessage, setInputMessage] = useState("");
     const [typingUser, setTypingUser] = useState<number | null>(null);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
-
-    const { userId } = useParams();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const navigatedUser = location.state || {};
-
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
     const [drawerOpen, setDrawerOpen] = useState(true);
 
-    const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
+    const navigatedUser = location.state || {};
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
 
+    // Fetch messages initially
+    const fetchData = async () => {
+        try {
+            const res = await api.get(`/api/messages/${currentUser.id}`);
+            setUsers(res.data.data.users);
+            setMessages(res.data.data.messages);
+        } catch (error) {
+            console.error("Failed to fetch users and messages:", error);
+        }
+    };
+
     useEffect(() => {
-        // Fetch data when the component mounts
         fetchData();
     }, []);
+
+    // Scroll to bottom on new message and selecting user
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, selectedUser]);
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -60,23 +71,17 @@ const Messages = () => {
         }
     };
 
+    // Setting selected user
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    useEffect(() => {
-        // Reset selected user when pathname is "/messages"
         if (location.pathname === "/messages") {
             setSelectedUser(null);
         }
 
-        // Update selected user if userId changes
         if (userId) {
             const user = users.find((user) => user.id === parseInt(userId));
             setSelectedUser(user || null);
         }
 
-        // If navigatedUser is present and doesn't already exist in the users list, add it
         if (navigatedUser && navigatedUser.id) {
             const userExists = users.some((user) => user.id === navigatedUser.id);
             if (!userExists) {
@@ -86,6 +91,7 @@ const Messages = () => {
         }
     }, [location.pathname, userId, users, navigatedUser]);
 
+    // Socket for receiving messages
     useEffect(() => {
         socket.on("receiveMessage", (data) => {
             setMessages((prevMessages) => {
@@ -110,6 +116,27 @@ const Messages = () => {
         };
     }, [currentUser]);
 
+    // Socket for catching typing activity
+    useEffect(() => {
+        socket.on("typing", (data) => {
+            if (data.receiverId === currentUser.id && selectedUser?.id === data.senderId) {
+                setTypingUser(data.senderId);
+            }
+        });
+
+        socket.on("stopTyping", (data) => {
+            if (data.receiverId === currentUser.id && selectedUser?.id === data.senderId) {
+                setTypingUser(null);
+            }
+        });
+
+        return () => {
+            socket.off("typing");
+            socket.off("stopTyping");
+        };
+    }, [currentUser, selectedUser]);
+
+    // Socket for emitting typing activity
     const handleTyping = () => {
         if (inputMessage.trim()) {
             socket.emit("typing", {
@@ -117,12 +144,10 @@ const Messages = () => {
                 receiverId: selectedUser?.id,
             });
 
-            // Clear any previous timeout to reset typing detection
             if (typingTimeout) {
                 clearTimeout(typingTimeout);
             }
 
-            // Set a new timeout to stop typing after a delay (e.g., 1 second)
             const timeout = setTimeout(() => {
                 socket.emit("stopTyping", {
                     senderId: currentUser.id,
@@ -134,52 +159,23 @@ const Messages = () => {
         }
     };
 
-    useEffect(() => {
-        socket.on("typing", (data) => {
-            if (data.receiverId === currentUser.id && selectedUser?.id === data.senderId) {
-                setTypingUser(data.senderId);
-            }
-        });
-
-        socket.on("stopTyping", (data) => {
-            if (data.receiverId === currentUser.id && selectedUser?.id === data.senderId) {
-                setTypingUser(null); // Clear the typing user
-            }
-        });
-
-        return () => {
-            socket.off("typing");
-            socket.off("stopTyping");
-        };
-    }, [currentUser, selectedUser]);
-
-    const fetchData = async () => {
-        try {
-            const res = await api.get(`/api/messages/${currentUser.id}`);
-            setUsers(res.data.data.users);
-            setMessages(res.data.data.messages);
-        } catch (error) {
-            console.error("Failed to fetch users and messages:", error);
-        }
-    };
-
+    // Set selected user on clicking the user's chat
     const handleUserClick = (userId: number) => {
         setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
         navigate(`/messages/${userId}`);
     };
 
+    // Socket to send messages and emit stop typing
     const handleSendMessage = () => {
         if (!inputMessage.trim() || !selectedUser) return;
 
-        // Prepare the message data
         const newMessage = {
             sender_id: currentUser.id,
             message_text: inputMessage,
             timestamp: new Date().toISOString(),
         };
 
-        // Update the local messages immediately
         setMessages((prevMessages) => {
             const newMessages = { ...prevMessages };
             if (!newMessages[selectedUser.id]) {
@@ -189,7 +185,6 @@ const Messages = () => {
             return newMessages;
         });
 
-        // Emit the message through the socket
         socket.emit("sendMessage", {
             senderId: currentUser.id,
             receiverId: selectedUser.id,
@@ -201,7 +196,6 @@ const Messages = () => {
             receiverId: selectedUser?.id,
         });
 
-        // Clear the input field after sending the message
         setInputMessage("");
     };
 
@@ -344,6 +338,7 @@ const Messages = () => {
 
             {/* Messages Panel */}
             <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white" }}>
+                {/* Top bar */}
                 {selectedUser && (
                     <Box
                         sx={{
@@ -365,6 +360,7 @@ const Messages = () => {
                     </Box>
                 )}
 
+                {/* Messages Container */}
                 <Box sx={{ flexGrow: 1, padding: 2, overflowY: "auto", display: "flex", flexDirection: "column", paddingBottom: "50px" }}>
                     {selectedUser ? (
                         messages[selectedUser.id]?.map((msg, index) => (
@@ -390,11 +386,11 @@ const Messages = () => {
                                 </Typography>
                                 {msg.sender_id === currentUser.id &&
                                     (msg.read ? (
-                                        <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} /> // Read (Blue double check)
+                                        <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} />
                                     ) : msg.delivered ? (
-                                        <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Delivered (Gray double check)
+                                        <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} />
                                     ) : (
-                                        <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Sent (Single check)
+                                        <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} />
                                     ))}
                             </Box>
                         ))
@@ -403,12 +399,13 @@ const Messages = () => {
                             Select a user to start chatting
                         </Typography>
                     )}
-                    {/* This empty div will act as the scroll anchor */}
                     <div ref={messagesEndRef} />
                 </Box>
 
+                {/* Typing indicator */}
                 {typingUser === selectedUser?.id && <div className="dot-falling"></div>}
 
+                {/* Message Input */}
                 {selectedUser && (
                     <Box sx={{ display: "flex", padding: 2, mb: isMobile ? "60px" : null }}>
                         <TextField
