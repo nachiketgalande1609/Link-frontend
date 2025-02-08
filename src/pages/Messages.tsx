@@ -86,8 +86,6 @@ const Messages = () => {
         fetchData();
     }, []);
 
-    console.log(messages);
-
     // Scroll to bottom on new message and selecting user
     useEffect(() => {
         scrollToBottom();
@@ -130,6 +128,7 @@ const Messages = () => {
                     newMessages[senderId] = [];
                 }
                 newMessages[senderId].push({
+                    message_id: data.messageId,
                     sender_id: data.senderId,
                     message_text: data.message_text,
                     timestamp: new Date().toISOString(),
@@ -277,9 +276,10 @@ const Messages = () => {
         };
     }, []);
 
+    console.log(messages);
+
     useEffect(() => {
         if (selectedUser && messages[selectedUser.id]) {
-            // Find all unread messages from the selected user
             const unreadMessages = messages[selectedUser.id].filter((msg) => msg.sender_id === selectedUser.id && !msg.read);
 
             if (unreadMessages.length > 0) {
@@ -306,11 +306,8 @@ const Messages = () => {
 
     useEffect(() => {
         socket.on("messageRead", (data: { receiverId: number; messageIds: number[] }) => {
-            console.log("Message Read", data);
-
             setMessages((prevMessages) => {
                 const updatedMessages = { ...prevMessages };
-                console.log("updatedMessages", updatedMessages);
 
                 if (updatedMessages[data.receiverId]) {
                     updatedMessages[data.receiverId] = updatedMessages[data.receiverId].map((msg) =>
