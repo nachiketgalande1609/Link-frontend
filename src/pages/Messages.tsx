@@ -126,6 +126,7 @@ const Messages = () => {
                 const senderId = data.senderId;
 
                 if (!newMessages[senderId]) {
+                    fetchData();
                     newMessages[senderId] = [];
                 }
                 newMessages[senderId].push({
@@ -433,12 +434,8 @@ const Messages = () => {
                                         />
                                     </ListItemAvatar>
                                     <ListItemText
-                                        primary={user.username}
-                                        secondary={
-                                            <Typography variant="body2" sx={{ color: "#aaa" }}>
-                                                {lastMessageText}
-                                            </Typography>
-                                        }
+                                        primary={<Typography sx={{ fontSize: "1rem" }}>{user.username}</Typography>}
+                                        secondary={<Typography sx={{ fontSize: "0.8rem", color: "#aaa" }}>{lastMessageText}</Typography>}
                                     />
 
                                     {/* Unread Messages Badge */}
