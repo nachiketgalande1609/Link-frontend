@@ -132,13 +132,18 @@ const Messages = () => {
                     fetchData();
                     newMessages[senderId] = [];
                 }
-                newMessages[senderId].push({
-                    message_id: data.messageId,
-                    sender_id: data.senderId,
-                    message_text: data.message_text,
-                    timestamp: new Date().toISOString(),
-                    saved: !!data.message_id,
-                });
+
+                const messageExists = newMessages[senderId].some((message) => message.message_id === data.messageId);
+
+                if (!messageExists) {
+                    newMessages[senderId].push({
+                        message_id: data.messageId,
+                        sender_id: data.senderId,
+                        message_text: data.message_text,
+                        timestamp: new Date().toISOString(),
+                        saved: !!data.message_id,
+                    });
+                }
 
                 return newMessages;
             });
@@ -203,7 +208,7 @@ const Messages = () => {
     const handleSendMessage = () => {
         if (!inputMessage.trim() || !selectedUser) return;
 
-        const tempMessageId = Date.now() + Math.floor(Math.random() * 1000);
+        const tempMessageId = Date.now() + Math.floor(Math.random() * 1000); // Temp ID generation
 
         const newMessage = {
             message_id: tempMessageId,
@@ -220,7 +225,6 @@ const Messages = () => {
                 newMessages[selectedUser.id] = [];
             }
 
-            // **Check if message already exists before adding**
             if (!newMessages[selectedUser.id].some((msg) => msg.message_id === tempMessageId)) {
                 newMessages[selectedUser.id].push(newMessage);
             }
