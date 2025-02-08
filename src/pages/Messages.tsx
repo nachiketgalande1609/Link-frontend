@@ -18,12 +18,21 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DoneIcon from "@mui/icons-material/Done";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
 
-type Message = { sender_id: number; message_text: string; timestamp: string; delivered?: boolean; read?: boolean };
-type MessagesType = { [key: number]: Message[] };
+type Message = {
+    message_id?: string;
+    sender_id: number;
+    message_text: string;
+    timestamp: string;
+    delivered?: boolean;
+    read?: boolean;
+    saved?: boolean;
+};
+type MessagesType = Record<string, Message[]>;
 type User = { id: number; username: string; profile_picture: string };
 
 const Messages = () => {
@@ -49,8 +58,23 @@ const Messages = () => {
     const fetchData = async () => {
         try {
             const res = await api.get(`/api/messages/${currentUser.id}`);
-            setUsers(res.data.data.users);
-            setMessages(res.data.data.messages);
+            const users = res.data.data.users;
+            let messages = res.data.data.messages;
+
+            // Ensure messages with a messageId are marked as saved
+            const updatedMessages = Object.keys(messages).reduce(
+                (acc, userId) => {
+                    acc[userId] = messages[userId].map((msg: MessagesType) => ({
+                        ...msg,
+                        saved: !!msg.message_id, // If message_id exists, mark as saved
+                    }));
+                    return acc;
+                },
+                {} as Record<string, any[]>
+            ); // Explicitly typing to avoid TS issues
+
+            setUsers(users);
+            setMessages(updatedMessages);
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
         }
@@ -105,6 +129,7 @@ const Messages = () => {
                     sender_id: data.senderId,
                     message_text: data.message_text,
                     timestamp: new Date().toISOString(),
+                    saved: !!data.message_id,
                 });
 
                 return newMessages;
@@ -198,6 +223,42 @@ const Messages = () => {
 
         setInputMessage("");
     };
+
+    useEffect(() => {
+        socket.on("messageSaved", (data: { tempId: string; messageId: string }) => {
+            setMessages((prevMessages) => {
+                const newMessages = { ...prevMessages };
+
+                Object.keys(newMessages).forEach((userId) => {
+                    newMessages[userId] = newMessages[userId].map((msg) => (msg.message_id === data.tempId ? { ...msg, saved: true } : msg));
+                });
+
+                return newMessages;
+            });
+        });
+
+        return () => {
+            socket.off("messageSaved");
+        };
+    }, []);
+
+    useEffect(() => {
+        socket.on("messageDelivered", (data: { tempId: string; messageId: string }) => {
+            setMessages((prevMessages) => {
+                const newMessages = { ...prevMessages };
+
+                Object.keys(newMessages).forEach((userId) => {
+                    newMessages[userId] = newMessages[userId].map((msg) => (msg.message_id === data.tempId ? { ...msg, delivered: true } : msg));
+                });
+
+                return newMessages;
+            });
+        });
+
+        return () => {
+            socket.off("messageDelivered");
+        };
+    }, []);
 
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
@@ -386,11 +447,13 @@ const Messages = () => {
                                 </Typography>
                                 {msg.sender_id === currentUser.id &&
                                     (msg.read ? (
-                                        <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} />
+                                        <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} /> // Read
                                     ) : msg.delivered ? (
-                                        <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} />
+                                        <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Delivered
+                                    ) : msg.saved ? (
+                                        <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Saved
                                     ) : (
-                                        <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} />
+                                        <AccessTimeIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Pending
                                     ))}
                             </Box>
                         ))
