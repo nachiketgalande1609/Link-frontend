@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+
 import {
     List,
     ListItem,
@@ -24,7 +25,7 @@ import socket from "../services/socket";
 import api from "../services/config";
 
 type Message = {
-    message_id?: string;
+    message_id?: number;
     sender_id: number;
     message_text: string;
     timestamp: string;
@@ -84,6 +85,8 @@ const Messages = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    console.log(messages);
 
     // Scroll to bottom on new message and selecting user
     useEffect(() => {
@@ -196,22 +199,33 @@ const Messages = () => {
     const handleSendMessage = () => {
         if (!inputMessage.trim() || !selectedUser) return;
 
+        const tempMessageId = Date.now() + Math.floor(Math.random() * 1000);
+
         const newMessage = {
+            message_id: tempMessageId,
             sender_id: currentUser.id,
             message_text: inputMessage,
             timestamp: new Date().toISOString(),
+            saved: false,
         };
 
         setMessages((prevMessages) => {
             const newMessages = { ...prevMessages };
+
             if (!newMessages[selectedUser.id]) {
                 newMessages[selectedUser.id] = [];
             }
-            newMessages[selectedUser.id].push(newMessage);
+
+            // **Check if message already exists before adding**
+            if (!newMessages[selectedUser.id].some((msg) => msg.message_id === tempMessageId)) {
+                newMessages[selectedUser.id].push(newMessage);
+            }
+
             return newMessages;
         });
 
         socket.emit("sendMessage", {
+            tempId: tempMessageId,
             senderId: currentUser.id,
             receiverId: selectedUser.id,
             text: inputMessage,
@@ -226,12 +240,14 @@ const Messages = () => {
     };
 
     useEffect(() => {
-        socket.on("messageSaved", (data: { tempId: string; messageId: string }) => {
+        socket.on("messageSaved", (data: { tempId: number; messageId: number }) => {
             setMessages((prevMessages) => {
                 const newMessages = { ...prevMessages };
 
                 Object.keys(newMessages).forEach((userId) => {
-                    newMessages[userId] = newMessages[userId].map((msg) => (msg.message_id === data.tempId ? { ...msg, saved: true } : msg));
+                    newMessages[userId] = newMessages[userId].map((msg) =>
+                        msg.message_id === data.tempId ? { ...msg, message_id: data.messageId, saved: true } : msg
+                    );
                 });
 
                 return newMessages;
@@ -244,12 +260,12 @@ const Messages = () => {
     }, []);
 
     useEffect(() => {
-        socket.on("messageDelivered", (data: { tempId: string; messageId: string }) => {
+        socket.on("messageDelivered", (data: { messageId: number }) => {
             setMessages((prevMessages) => {
                 const newMessages = { ...prevMessages };
 
                 Object.keys(newMessages).forEach((userId) => {
-                    newMessages[userId] = newMessages[userId].map((msg) => (msg.message_id === data.tempId ? { ...msg, delivered: true } : msg));
+                    newMessages[userId] = newMessages[userId].map((msg) => (msg.message_id === data.messageId ? { ...msg, delivered: true } : msg));
                 });
 
                 return newMessages;
@@ -279,7 +295,7 @@ const Messages = () => {
                     setMessages((prevMessages) => {
                         const updatedMessages = { ...prevMessages };
                         updatedMessages[selectedUser.id] = updatedMessages[selectedUser.id].map((msg) =>
-                            messageIds.includes(msg.message_id || "") ? { ...msg, read: true } : msg
+                            messageIds.includes(msg.message_id) ? { ...msg, read: true } : msg
                         );
                         return updatedMessages;
                     });
@@ -289,15 +305,16 @@ const Messages = () => {
     }, [selectedUser, messages]);
 
     useEffect(() => {
-        socket.on("messageRead", (data: { senderId: number; messageIds: string[] }) => {
-            console.log("Messages read by receiver:", data);
+        socket.on("messageRead", (data: { receiverId: number; messageIds: number[] }) => {
+            console.log("Message Read", data);
 
             setMessages((prevMessages) => {
                 const updatedMessages = { ...prevMessages };
+                console.log("updatedMessages", updatedMessages);
 
-                if (updatedMessages[data.senderId]) {
-                    updatedMessages[data.senderId] = updatedMessages[data.senderId].map((msg) =>
-                        data.messageIds.includes(msg.message_id || "") ? { ...msg, read: true } : msg
+                if (updatedMessages[data.receiverId]) {
+                    updatedMessages[data.receiverId] = updatedMessages[data.receiverId].map((msg) =>
+                        msg.message_id !== undefined && data.messageIds.includes(msg.message_id) ? { ...msg, read: true } : msg
                     );
                 }
 
@@ -540,7 +557,7 @@ const Messages = () => {
                             }}
                         />
 
-                        <IconButton onClick={handleSendMessage} color="primary">
+                        <IconButton color="primary">
                             <SendIcon />
                         </IconButton>
                     </Box>
