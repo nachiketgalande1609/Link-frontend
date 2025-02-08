@@ -66,7 +66,8 @@ const Messages = () => {
                 (acc, userId) => {
                     acc[userId] = messages[userId].map((msg: MessagesType) => ({
                         ...msg,
-                        saved: !!msg.message_id, // If message_id exists, mark as saved
+                        saved: !!msg.message_id,
+                        delivered: msg.delivered,
                     }));
                     return acc;
                 },
@@ -257,6 +258,55 @@ const Messages = () => {
 
         return () => {
             socket.off("messageDelivered");
+        };
+    }, []);
+
+    useEffect(() => {
+        if (selectedUser && messages[selectedUser.id]) {
+            // Find all unread messages from the selected user
+            const unreadMessages = messages[selectedUser.id].filter((msg) => msg.sender_id === selectedUser.id && !msg.read);
+
+            if (unreadMessages.length > 0) {
+                const messageIds = unreadMessages.map((msg) => msg.message_id).filter((id) => !!id);
+
+                if (messageIds.length > 0) {
+                    socket.emit("messageRead", {
+                        senderId: selectedUser.id,
+                        receiverId: currentUser.id,
+                        messageIds,
+                    });
+
+                    setMessages((prevMessages) => {
+                        const updatedMessages = { ...prevMessages };
+                        updatedMessages[selectedUser.id] = updatedMessages[selectedUser.id].map((msg) =>
+                            messageIds.includes(msg.message_id || "") ? { ...msg, read: true } : msg
+                        );
+                        return updatedMessages;
+                    });
+                }
+            }
+        }
+    }, [selectedUser, messages]);
+
+    useEffect(() => {
+        socket.on("messageRead", (data: { senderId: number; messageIds: string[] }) => {
+            console.log("Messages read by receiver:", data);
+
+            setMessages((prevMessages) => {
+                const updatedMessages = { ...prevMessages };
+
+                if (updatedMessages[data.senderId]) {
+                    updatedMessages[data.senderId] = updatedMessages[data.senderId].map((msg) =>
+                        data.messageIds.includes(msg.message_id || "") ? { ...msg, read: true } : msg
+                    );
+                }
+
+                return updatedMessages;
+            });
+        });
+
+        return () => {
+            socket.off("messageRead");
         };
     }, []);
 
