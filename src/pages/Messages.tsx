@@ -13,6 +13,7 @@ import {
     useMediaQuery,
     useTheme,
     Drawer,
+    Badge,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -408,13 +409,15 @@ const Messages = () => {
                             const userMessages = messages[user.id] || [];
                             const lastMessage = userMessages[userMessages.length - 1];
                             const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
+                            const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
+
                             return (
                                 <ListItem
                                     component="button"
                                     key={user.id}
                                     onClick={() => handleUserClick(user.id)}
                                     sx={{
-                                        backgroundColor: selectedUser?.id === user.id ? "#202327" : "transparent",
+                                        backgroundColor: selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
                                         padding: "12px",
                                         mb: 1,
                                         textAlign: "left",
@@ -437,6 +440,21 @@ const Messages = () => {
                                             </Typography>
                                         }
                                     />
+
+                                    {/* Unread Messages Badge */}
+                                    {unreadCount > 0 && (
+                                        <Badge
+                                            badgeContent={unreadCount}
+                                            color="primary"
+                                            sx={{
+                                                position: "absolute",
+                                                right: "25px",
+                                                top: "50%",
+                                                transform: "translateY(-50%)",
+                                            }}
+                                        />
+                                    )}
+
                                     <div
                                         style={{
                                             position: "absolute",
