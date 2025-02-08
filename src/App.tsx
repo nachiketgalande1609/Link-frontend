@@ -264,6 +264,16 @@ const AppContent = () => {
         navigate("/login");
     };
 
+    useEffect(() => {
+        socket.on("unreadMessagesCount", (data) => {
+            setUnreadMessagesCount(data.unreadCount);
+        });
+
+        return () => {
+            socket.off("unreadMessagesCount");
+        };
+    }, []);
+
     return (
         <Box sx={{ display: "flex" }}>
             {!hideDrawer ? (
