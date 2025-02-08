@@ -24,6 +24,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
+import { useUser } from "../context/userContext";
 
 type Message = {
     message_id?: number;
@@ -39,6 +40,8 @@ type User = { id: number; username: string; profile_picture: string };
 
 const Messages = () => {
     const { userId } = useParams();
+    const { unreadMessagesCount, setUnreadMessagesCount } = useUser();
+
     const navigate = useNavigate();
     const location = useLocation();
     const theme = useTheme();
@@ -278,8 +281,6 @@ const Messages = () => {
         };
     }, []);
 
-    console.log(messages);
-
     useEffect(() => {
         if (selectedUser && messages[selectedUser.id]) {
             const unreadMessages = messages[selectedUser.id].filter((msg) => msg.sender_id === selectedUser.id && !msg.read);
@@ -301,6 +302,9 @@ const Messages = () => {
                         );
                         return updatedMessages;
                     });
+
+                    const newUnreadCount = Math.max((unreadMessagesCount || 0) - unreadMessages.length, 0);
+                    setUnreadMessagesCount(newUnreadCount);
                 }
             }
         }

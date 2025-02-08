@@ -88,7 +88,7 @@ const App = () => {
 };
 
 const AppContent = () => {
-    const { user, unreadNotificationsCount, setUnreadNotificationsCount } = useUser();
+    const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount } = useUser();
     const [open, setOpen] = useState(true);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const location = useLocation();
@@ -118,8 +118,16 @@ const AppContent = () => {
         {
             segment: `messages`,
             title: "Messages",
-            icon: <MessageOutlined sx={{ fontSize: "2rem" }} />,
-            filledIcon: <Message sx={{ fontSize: "2rem", color: "#000000" }} />,
+            icon: (
+                <Badge badgeContent={unreadMessagesCount} color="error">
+                    <MessageOutlined sx={{ fontSize: "2rem" }} />
+                </Badge>
+            ),
+            filledIcon: (
+                <Badge badgeContent={unreadMessagesCount} color="error">
+                    <Message sx={{ fontSize: "2rem", color: "#000000" }} />
+                </Badge>
+            ),
         },
         {
             segment: "notifications",
@@ -193,7 +201,8 @@ const AppContent = () => {
             try {
                 const response = await getNotificationsCount(user.id);
                 if (response?.success) {
-                    setUnreadNotificationsCount(response?.data);
+                    setUnreadNotificationsCount(response?.data?.unread_notifications);
+                    setUnreadMessagesCount(response?.data?.unread_messages);
                 }
             } catch (error) {
                 console.error("Error fetching notification count:", error);

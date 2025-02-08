@@ -11,7 +11,9 @@ interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
     unreadNotificationsCount: number | null;
+    unreadMessagesCount: number | null;
     setUnreadNotificationsCount: (count: number | null) => void;
+    setUnreadMessagesCount: (count: number | null) => void;
     resetNotificationsCount: () => void;
 }
 
@@ -20,6 +22,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState<number | null>(null);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState<number | null>(null);
 
     const resetNotificationsCount = () => {
         setUnreadNotificationsCount(null);
@@ -39,6 +42,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
                 setUser,
                 unreadNotificationsCount,
                 setUnreadNotificationsCount,
+                unreadMessagesCount,
+                setUnreadMessagesCount,
                 resetNotificationsCount,
             }}
         >
