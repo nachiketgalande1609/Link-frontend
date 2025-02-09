@@ -104,6 +104,7 @@ const AppContent = () => {
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const NAVIGATION = [
@@ -207,7 +208,7 @@ const AppContent = () => {
     // Windows Notifications Permission
     useEffect(() => {
         if (Notification.permission !== "granted") {
-            Notification.requestPermission().then((permission) => {});
+            Notification.requestPermission();
         }
     }, []);
 

@@ -68,6 +68,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [drawerOpen, setDrawerOpen] = useState(true);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [selectedFileURL, setSelectedFileURL] = useState<string>("");
+    const [isSendingMessage, setIsSendingMessage] = useState(false); // Add this line
 
     const navigatedUser = location.state || {};
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
@@ -229,10 +230,12 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             formData.append("image", selectedFile);
 
             try {
+                setIsSendingMessage(true);
                 const response = await shareChatMedia(formData);
                 imageUrl = response?.data?.imageUrl;
             } catch (error) {
                 console.error("Image upload failed:", error);
+                setIsSendingMessage(false);
                 return;
             }
         }
@@ -279,6 +282,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         });
 
         setInputMessage("");
+        setIsSendingMessage(false);
     };
 
     useEffect(() => {
@@ -513,7 +517,19 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={<Typography sx={{ fontSize: "1rem" }}>{user.username}</Typography>}
-                                        secondary={<Typography sx={{ fontSize: "0.8rem", color: "#aaa" }}>{lastMessageText}</Typography>}
+                                        secondary={
+                                            <Typography
+                                                sx={{
+                                                    fontSize: "0.8rem",
+                                                    color: "#aaa",
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                }}
+                                            >
+                                                {lastMessageText}
+                                            </Typography>
+                                        }
                                     />
 
                                     {/* Unread Messages Badge */}
@@ -555,7 +571,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             )}
 
             {/* Messages Panel */}
-            <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white" }}>
+            <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white", width: "100px" }}>
                 {/* Top bar */}
                 {selectedUser && (
                     <Box
@@ -590,10 +606,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                 key={index}
                                 sx={{
                                     display: "flex",
-                                    alignItems: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                     mb: 1,
-                                    justifyContent: "center",
                                     flexDirection: "column",
+                                    alignItems: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                 }}
                             >
                                 {msg.image_url && (
@@ -609,8 +624,15 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                             backgroundColor: "#111",
                                             overflow: "hidden",
                                             borderRadius: "10px",
+                                            position: "relative",
                                         }}
                                     >
+                                        <CircularProgress
+                                            sx={{
+                                                position: "absolute",
+                                                visibility: "visible",
+                                            }}
+                                        />
                                         <img
                                             src={msg.image_url}
                                             alt="Sent Image"
@@ -619,11 +641,28 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                                 height: "auto",
                                                 objectFit: "contain",
                                                 borderRadius: "10px",
+                                                visibility: "hidden",
+                                            }}
+                                            onLoad={(e) => {
+                                                const imgElement = e.target as HTMLImageElement;
+                                                const loader = imgElement.previousSibling as HTMLElement;
+
+                                                imgElement.style.visibility = "visible";
+                                                loader.style.visibility = "hidden";
                                             }}
                                         />
                                     </Box>
                                 )}
-                                <Box sx={{ display: "flex", alignItems: "center" }}>
+
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
+                                        width: "100%",
+                                    }}
+                                >
                                     <Typography
                                         sx={{
                                             backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#202327",
@@ -631,10 +670,13 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                             borderRadius: "12px",
                                             maxWidth: "70%",
                                             fontSize: isMobile ? "0.8rem" : "1rem",
+                                            wordWrap: "break-word", // Wraps long words onto the next line
+                                            whiteSpace: "normal", // Ensures text wraps normally
                                         }}
                                     >
                                         {msg.message_text}
                                     </Typography>
+
                                     {msg.sender_id === currentUser.id &&
                                         (msg.read ? (
                                             <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} /> // Read
@@ -705,13 +747,21 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                             </Box>
                         )}
 
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Box sx={{ display: "flex", alignItems: "center", mb: isMobile ? "60px" : null }}>
                             <TextField
                                 fullWidth
                                 placeholder="Type a message..."
                                 value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}
+                                onChange={(e) => {
+                                    setInputMessage(e.target.value);
+                                    handleTyping();
+                                }}
                                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "10px",
+                                    },
+                                }}
                             />
                             <input
                                 type="file"
@@ -727,8 +777,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                 </IconButton>
                             </label>
 
-                            <IconButton onClick={handleSendMessage} color="primary">
-                                <SendIcon />
+                            <IconButton onClick={handleSendMessage} color="primary" disabled={isSendingMessage}>
+                                {isSendingMessage ? <CircularProgress size={24} /> : <SendIcon />}
                             </IconButton>
                         </Box>
                     </Box>
