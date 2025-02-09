@@ -89,7 +89,10 @@ const App = () => {
 
 const AppContent = () => {
     const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount } = useUser();
+
+    const isMdOrLarger = useMediaQuery((theme) => theme.breakpoints.up("md"));
     const [open, setOpen] = useState(true);
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const location = useLocation();
     const navigate = useNavigate();
@@ -182,6 +185,14 @@ const AppContent = () => {
             ),
         },
     ];
+
+    useEffect(() => {
+        if (isMdOrLarger) {
+            setOpen(true);
+        } else {
+            setOpen(false);
+        }
+    }, [isMdOrLarger]);
 
     useEffect(() => {
         socket.on("onlineUsers", (data) => {

@@ -14,6 +14,7 @@ import {
     useTheme,
     Drawer,
     Badge,
+    CircularProgress,
 } from "@mui/material";
 import {
     Send as SendIcon,
@@ -22,12 +23,14 @@ import {
     Done as DoneIcon,
     DoneAll as DoneAllIcon,
     AccessTime as AccessTimeIcon,
+    PhotoCamera as PhotoCameraIcon,
+    CancelOutlined as DeleteIcon,
 } from "@mui/icons-material";
 
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
-import api from "../services/config";
 import { useUser } from "../context/userContext";
+import { getAllMessagesData, shareChatMedia } from "../services/api";
 
 type Message = {
     message_id?: number;
@@ -37,6 +40,7 @@ type Message = {
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
+    image_url?: string;
 };
 type MessagesType = Record<string, Message[]>;
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
@@ -62,6 +66,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [typingUser, setTypingUser] = useState<number | null>(null);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(true);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [selectedFileURL, setSelectedFileURL] = useState<string>("");
 
     const navigatedUser = location.state || {};
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
@@ -69,9 +75,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     // Fetch messages initially
     const fetchData = async () => {
         try {
-            const res = await api.get(`/api/messages/${currentUser.id}`);
-            const users = res.data.data.users;
-            let messages = res.data.data.messages;
+            const res = await getAllMessagesData(currentUser.id);
+            const users = res.data.users;
+            let messages = res.data.messages;
 
             // Ensure messages with a messageId are marked as saved
             const updatedMessages = Object.keys(messages).reduce(
@@ -149,6 +155,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                         message_text: data.message_text,
                         timestamp: new Date().toISOString(),
                         saved: !!data.message_id,
+                        image_url: data?.imageUrl,
                     });
                 }
 
@@ -212,15 +219,31 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     };
 
     // Socket to send messages and emit stop typing
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (!inputMessage.trim() || !selectedUser) return;
 
-        const tempMessageId = Date.now() + Math.floor(Math.random() * 1000); // Temp ID generation
+        let imageUrl = null;
+
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append("image", selectedFile);
+
+            try {
+                const response = await shareChatMedia(formData);
+                imageUrl = response?.data?.imageUrl;
+            } catch (error) {
+                console.error("Image upload failed:", error);
+                return;
+            }
+        }
+
+        const tempMessageId = Date.now() + Math.floor(Math.random() * 1000);
 
         const newMessage = {
             message_id: tempMessageId,
             sender_id: currentUser.id,
             message_text: inputMessage,
+            image_url: imageUrl,
             timestamp: new Date().toISOString(),
             saved: false,
         };
@@ -239,11 +262,15 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             return newMessages;
         });
 
+        setSelectedFile(null);
+        setSelectedFileURL("");
+
         socket.emit("sendMessage", {
             tempId: tempMessageId,
             senderId: currentUser.id,
             receiverId: selectedUser.id,
             text: inputMessage,
+            imageUrl,
         });
 
         socket.emit("stopTyping", {
@@ -340,6 +367,16 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             socket.off("messageRead");
         };
     }, []);
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            setSelectedFile(file);
+
+            const fileUrl = URL.createObjectURL(file);
+            setSelectedFileURL(fileUrl);
+        }
+    };
 
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
@@ -553,32 +590,62 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                 key={index}
                                 sx={{
                                     display: "flex",
-                                    justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
+                                    alignItems: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                     mb: 1,
-                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    flexDirection: "column",
                                 }}
                             >
-                                <Typography
-                                    sx={{
-                                        backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#202327",
-                                        padding: "8px 12px",
-                                        borderRadius: "12px",
-                                        maxWidth: "70%",
-                                        fontSize: isMobile ? "0.8rem" : "1rem",
-                                    }}
-                                >
-                                    {msg.message_text}
-                                </Typography>
-                                {msg.sender_id === currentUser.id &&
-                                    (msg.read ? (
-                                        <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} /> // Read
-                                    ) : msg.delivered ? (
-                                        <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Delivered
-                                    ) : msg.saved ? (
-                                        <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Saved
-                                    ) : (
-                                        <AccessTimeIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Pending
-                                    ))}
+                                {msg.image_url && (
+                                    <Box
+                                        sx={{
+                                            width: "200px",
+                                            minHeight: "150px",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            marginTop: "5px",
+                                            marginBottom: "10px",
+                                            backgroundColor: "#111",
+                                            overflow: "hidden",
+                                            borderRadius: "10px",
+                                        }}
+                                    >
+                                        <img
+                                            src={msg.image_url}
+                                            alt="Sent Image"
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto",
+                                                objectFit: "contain",
+                                                borderRadius: "10px",
+                                            }}
+                                        />
+                                    </Box>
+                                )}
+                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                    <Typography
+                                        sx={{
+                                            backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#202327",
+                                            padding: "8px 12px",
+                                            borderRadius: "12px",
+                                            maxWidth: "70%",
+                                            fontSize: isMobile ? "0.8rem" : "1rem",
+                                        }}
+                                    >
+                                        {msg.message_text}
+                                    </Typography>
+                                    {msg.sender_id === currentUser.id &&
+                                        (msg.read ? (
+                                            <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} /> // Read
+                                        ) : msg.delivered ? (
+                                            <DoneAllIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Delivered
+                                        ) : msg.saved ? (
+                                            <DoneIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Saved
+                                        ) : (
+                                            <AccessTimeIcon sx={{ color: "#aaa", fontSize: 16, ml: 1 }} /> // Pending
+                                        ))}
+                                </Box>
                             </Box>
                         ))
                     ) : (
@@ -594,29 +661,76 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
 
                 {/* Message Input */}
                 {selectedUser && (
-                    <Box sx={{ display: "flex", padding: 2, mb: isMobile ? "60px" : null }}>
-                        <TextField
-                            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
-                            fullWidth
-                            placeholder="Type a message..."
-                            value={inputMessage}
-                            onChange={(e) => {
-                                setInputMessage(e.target.value);
-                                handleTyping();
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    e.preventDefault(); // Prevents the default Enter key behavior (like adding a new line)
-                                    if (inputMessage.trim()) {
-                                        handleSendMessage();
-                                    }
-                                }
-                            }}
-                        />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: 2,
+                            borderTop: selectedFileURL ? "1px solid #202327" : null,
+                            position: "relative",
+                        }}
+                    >
+                        {/* If an image is attached, display it above the text field */}
+                        {selectedFile && selectedFileURL && (
+                            <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+                                <img
+                                    src={selectedFileURL}
+                                    alt="Attached"
+                                    style={{
+                                        maxWidth: "200px",
+                                        borderRadius: "8px",
+                                        marginTop: "5px",
+                                        marginBottom: "10px",
+                                    }}
+                                />
+                                {/* Discard button */}
+                                <IconButton
+                                    onClick={() => {
+                                        setSelectedFile(null);
+                                        setSelectedFileURL("");
+                                    }}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 5,
+                                        right: 5,
+                                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                        color: "white",
+                                        "&:hover": {
+                                            backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                        },
+                                    }}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        )}
 
-                        <IconButton color="primary">
-                            <SendIcon />
-                        </IconButton>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <TextField
+                                fullWidth
+                                placeholder="Type a message..."
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                            />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                style={{ display: "none" }}
+                                id="upload-image"
+                                disabled={!!(selectedFile || selectedFileURL)}
+                            />
+                            <label htmlFor="upload-image">
+                                <IconButton color="primary" component="span" disabled={!!(selectedFile || selectedFileURL)}>
+                                    <PhotoCameraIcon />
+                                </IconButton>
+                            </label>
+
+                            <IconButton onClick={handleSendMessage} color="primary">
+                                <SendIcon />
+                            </IconButton>
+                        </Box>
                     </Box>
                 )}
             </Box>

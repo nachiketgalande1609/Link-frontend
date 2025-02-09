@@ -27,3 +27,7 @@ export const SEARCH_HISTORY_ENDPOINT: string = "/api/search/history";
 export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
 
 export const SETTINGS_ENDPOINT: string = "/api/settings";
+
+// Messages Endpoints
+export const GET_ALL_MESSAGES_ENDPOINT: string = "/api/messages";
+export const SHARE_MEDIA_ENDPOINT: string = "/api/messages/media";

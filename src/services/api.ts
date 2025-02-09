@@ -18,6 +18,8 @@ import {
     UPLOAD_PROFILE_PICTURE_ENDPOINT,
     UPDATE_PROFILE_ENDPOINT,
     SETTINGS_ENDPOINT,
+    GET_ALL_MESSAGES_ENDPOINT,
+    SHARE_MEDIA_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -397,6 +399,40 @@ export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
             console.error(error.message);
         } else {
             console.error("unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getAllMessagesData = async (userId: string) => {
+    try {
+        const response = await api.get(`${GET_ALL_MESSAGES_ENDPOINT}/${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const shareChatMedia = async (mediaMessageData: FormData): Promise<any> => {
+    try {
+        const response = await api.post(SHARE_MEDIA_ENDPOINT, mediaMessageData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown error occurred");
         }
         throw error;
     }
