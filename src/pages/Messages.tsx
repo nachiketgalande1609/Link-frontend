@@ -65,10 +65,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [inputMessage, setInputMessage] = useState("");
     const [typingUser, setTypingUser] = useState<number | null>(null);
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
-    const [drawerOpen, setDrawerOpen] = useState(true);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [selectedFileURL, setSelectedFileURL] = useState<string>("");
-    const [isSendingMessage, setIsSendingMessage] = useState(false); // Add this line
+    const [isSendingMessage, setIsSendingMessage] = useState(false);
 
     const navigatedUser = location.state || {};
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
@@ -432,7 +432,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                                     backgroundColor: isOnline ? "#54ff54" : "gray",
                                                     position: "absolute",
                                                     bottom: 0,
-                                                    right: 0,
+                                                    right: 10,
                                                     border: "2px solid #000",
                                                 }}
                                             />
@@ -440,7 +440,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                         <ListItemText
                                             primary={user.username}
                                             secondary={
-                                                <Typography variant="body2" sx={{ color: "#aaa" }}>
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{ color: "#aaa", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                                                >
                                                     {lastMessageText}
                                                 </Typography>
                                             }
@@ -615,7 +618,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                     <Box
                                         sx={{
                                             width: "200px",
-                                            minHeight: "150px",
+                                            minHeight: "100px",
                                             display: "flex",
                                             justifyContent: "center",
                                             alignItems: "center",
@@ -670,11 +673,56 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                             borderRadius: "12px",
                                             maxWidth: "70%",
                                             fontSize: isMobile ? "0.8rem" : "1rem",
-                                            wordWrap: "break-word", // Wraps long words onto the next line
-                                            whiteSpace: "normal", // Ensures text wraps normally
+                                            wordWrap: "break-word",
+                                            whiteSpace: "normal",
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            position: "relative", // Positioning context for the tail
                                         }}
                                     >
-                                        {msg.message_text}
+                                        <span>{msg.message_text}</span>
+                                        <span
+                                            style={{
+                                                fontSize: "0.7rem",
+                                                color: "#bbb",
+                                                marginTop: "4px",
+                                                alignSelf: msg.sender_id === currentUser.id ? "flex-start" : "flex-end",
+                                            }}
+                                        >
+                                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
+                                        </span>
+
+                                        {msg.sender_id === currentUser.id ? (
+                                            // Tail for the sender (points right)
+                                            <span
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "10px",
+                                                    right: "-8px", // Tail points right for the sender
+                                                    transform: "translateY(-50%)",
+                                                    width: "0",
+                                                    height: "0",
+                                                    borderLeft: "8px solid transparent",
+                                                    borderRight: "8px solid transparent",
+                                                    borderTop: "8px solid #1976d2", // Tail color for sender
+                                                }}
+                                            />
+                                        ) : (
+                                            // Tail for the receiver (points left)
+                                            <span
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "10px",
+                                                    left: "-8px", // Tail points left for the receiver
+                                                    transform: "translateY(-50%)",
+                                                    width: "0",
+                                                    height: "0",
+                                                    borderLeft: "8px solid transparent",
+                                                    borderRight: "8px solid transparent",
+                                                    borderTop: "8px solid #202327", // Tail color for receiver
+                                                }}
+                                            />
+                                        )}
                                     </Typography>
 
                                     {msg.sender_id === currentUser.id &&
