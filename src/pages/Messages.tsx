@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
     List,
@@ -36,9 +36,13 @@ type Message = {
     saved?: boolean;
 };
 type MessagesType = Record<string, Message[]>;
-type User = { id: number; username: string; profile_picture: string };
+type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
 
-const Messages = () => {
+interface MessageProps {
+    onlineUsers: string[];
+}
+
+const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const { userId } = useParams();
     const { unreadMessagesCount, setUnreadMessagesCount } = useUser();
 
@@ -502,8 +506,21 @@ const Messages = () => {
                             src={selectedUser.profile_picture}
                             onClick={() => navigate(`/profile/${selectedUser?.id}`)}
                         />
-                        <Typography sx={{ cursor: "pointer" }} variant="h6" onClick={() => navigate(`/profile/${selectedUser?.id}`)}>
+                        <Typography
+                            sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+                            variant="h6"
+                            onClick={() => navigate(`/profile/${selectedUser?.id}`)}
+                        >
                             {selectedUser.username}
+                            <Box
+                                sx={{
+                                    width: "8px",
+                                    height: "8px",
+                                    borderRadius: "50%",
+                                    backgroundColor: onlineUsers.includes(selectedUser.id.toString()) ? "#54ff54" : "gray", // Green for online, gray for offline
+                                    marginLeft: "8px",
+                                }}
+                            />
                         </Typography>
                     </Box>
                 )}

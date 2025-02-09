@@ -70,7 +70,7 @@ const demoTheme = extendTheme({
 
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
-if (currentUser) {
+if (currentUser && currentUser.id) {
     socket.emit("registerUser", currentUser.id);
 }
 
@@ -98,6 +98,8 @@ const AppContent = () => {
     const handleClose = () => setModalOpen(false);
     const toggleDrawer = () => setOpen(!open);
     const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
     const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -181,16 +183,20 @@ const AppContent = () => {
         },
     ];
 
+    useEffect(() => {
+        socket.on("onlineUsers", (data) => {
+            setOnlineUsers(data);
+        });
+
+        return () => {
+            socket.off("onlineUsers");
+        };
+    }, []);
+
     // Windows Notifications Permission
     useEffect(() => {
         if (Notification.permission !== "granted") {
-            Notification.requestPermission().then((permission) => {
-                if (permission === "granted") {
-                    console.log("Notification permission granted.");
-                } else {
-                    console.log("Notification permission denied.");
-                }
-            });
+            Notification.requestPermission().then((permission) => {});
         }
     }, []);
 
@@ -257,6 +263,9 @@ const AppContent = () => {
     };
 
     const handleLogout = () => {
+        if (currentUser) {
+            socket.disconnect();
+        }
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
@@ -527,7 +536,7 @@ const AppContent = () => {
                         path="/messages/:userId?"
                         element={
                             <PrivateRoute>
-                                <Messages />
+                                <Messages onlineUsers={onlineUsers} />
                             </PrivateRoute>
                         }
                     />
