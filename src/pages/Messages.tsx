@@ -15,12 +15,15 @@ import {
     Drawer,
     Badge,
 } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import DoneIcon from "@mui/icons-material/Done";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import {
+    Send as SendIcon,
+    ChevronLeft as ChevronLeftIcon,
+    ChevronRight as ChevronRightIcon,
+    Done as DoneIcon,
+    DoneAll as DoneAllIcon,
+    AccessTime as AccessTimeIcon,
+} from "@mui/icons-material";
+
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../services/config";
@@ -362,6 +365,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                 const userMessages = messages[user.id] || [];
                                 const lastMessage = userMessages[userMessages.length - 1];
                                 const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
+                                const isOnline = onlineUsers.includes(user.id.toString());
                                 return (
                                     <ListItem
                                         sx={{
@@ -377,8 +381,20 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                         key={user.id}
                                         onClick={() => handleUserClick(user.id)}
                                     >
-                                        <ListItemAvatar>
+                                        <ListItemAvatar sx={{ position: "relative" }}>
                                             <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
+                                            <Box
+                                                sx={{
+                                                    width: "10px",
+                                                    height: "10px",
+                                                    borderRadius: "50%",
+                                                    backgroundColor: isOnline ? "#54ff54" : "gray",
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    right: 0,
+                                                    border: "2px solid #000",
+                                                }}
+                                            />
                                         </ListItemAvatar>
                                         <ListItemText
                                             primary={user.username}
@@ -423,6 +439,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                             const lastMessage = userMessages[userMessages.length - 1];
                             const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
                             const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
+                            const isOnline = onlineUsers.includes(user.id.toString());
 
                             return (
                                 <ListItem
@@ -439,10 +456,22 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                         position: "relative",
                                     }}
                                 >
-                                    <ListItemAvatar>
+                                    <ListItemAvatar sx={{ position: "relative" }}>
                                         <Avatar
                                             sx={{ width: "50px", height: "50px", mr: "12px" }}
                                             src={user.profile_picture || "https://via.placeholder.com/40"}
+                                        />
+                                        <Box
+                                            sx={{
+                                                width: "12px",
+                                                height: "12px",
+                                                borderRadius: "50%",
+                                                backgroundColor: isOnline ? "#54ff54" : "gray",
+                                                position: "absolute",
+                                                bottom: 0,
+                                                right: 10,
+                                                border: "1px solid #000",
+                                            }}
                                         />
                                     </ListItemAvatar>
                                     <ListItemText
@@ -512,15 +541,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                             onClick={() => navigate(`/profile/${selectedUser?.id}`)}
                         >
                             {selectedUser.username}
-                            <Box
-                                sx={{
-                                    width: "8px",
-                                    height: "8px",
-                                    borderRadius: "50%",
-                                    backgroundColor: onlineUsers.includes(selectedUser.id.toString()) ? "#54ff54" : "gray", // Green for online, gray for offline
-                                    marginLeft: "8px",
-                                }}
-                            />
                         </Typography>
                     </Box>
                 )}
