@@ -31,6 +31,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../services/socket";
 import { useUser } from "../context/userContext";
 import { getAllMessagesData, shareChatMedia } from "../services/api";
+import ImageDialog from "./Messages/ImageDialog";
 
 type Message = {
     message_id?: number;
@@ -69,6 +70,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [selectedFileURL, setSelectedFileURL] = useState<string>("");
     const [isSendingMessage, setIsSendingMessage] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string>("");
 
     const navigatedUser = location.state || {};
     const currentUser = JSON.parse(localStorage.getItem("user") || "");
@@ -382,6 +385,16 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         }
     };
 
+    const handleImageClick = (imageUrl: string | undefined) => {
+        setSelectedImage(imageUrl || "");
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setSelectedImage("");
+    };
+
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
             {/* Users List */}
@@ -629,6 +642,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                             borderRadius: "10px",
                                             position: "relative",
                                         }}
+                                        onClick={() => handleImageClick(msg.image_url)}
                                     >
                                         <CircularProgress
                                             sx={{
@@ -677,7 +691,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                                             whiteSpace: "normal",
                                             display: "flex",
                                             flexDirection: "column",
-                                            position: "relative", // Positioning context for the tail
+                                            position: "relative",
                                         }}
                                     >
                                         <span>{msg.message_text}</span>
@@ -832,6 +846,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     </Box>
                 )}
             </Box>
+            <ImageDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} selectedImage={selectedImage} />
         </Box>
     );
 };

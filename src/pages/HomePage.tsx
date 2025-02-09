@@ -1,4 +1,5 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography } from "@mui/material";
+import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
@@ -28,14 +29,14 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px" }}>
-            <Grid container spacing={3}>
-                {loading ? (
-                    <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="200px">
-                        <CircularProgress />
-                    </Box>
-                ) : posts.length > 0 ? (
-                    posts.map((post) => (
+        <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexGrow={1}>
+                    <CircularProgress />
+                </Box>
+            ) : posts.length > 0 ? (
+                <Grid container spacing={3}>
+                    {posts.map((post) => (
                         <Grid item xs={12} sm={12} md={12} key={post.id}>
                             <Post
                                 username={post.username}
@@ -53,13 +54,19 @@ const HomePage = () => {
                                 borderRadius="20px"
                             />
                         </Grid>
-                    ))
-                ) : (
-                    <Grid item xs={12}>
-                        <div>No posts available.</div>
-                    </Grid>
-                )}
-            </Grid>
+                    ))}
+                </Grid>
+            ) : (
+                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
+                    <SentimentDissatisfied sx={{ fontSize: 60, color: "gray" }} />
+                    <Typography variant="h6" color="textSecondary" mt={2}>
+                        No posts available
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                        Be the first to share something!
+                    </Typography>
+                </Box>
+            )}
         </Container>
     );
 };
