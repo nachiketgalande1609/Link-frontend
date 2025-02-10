@@ -364,7 +364,10 @@ const AppContent = () => {
                                         </ListItem>
                                     );
                                 }
-                                const isActive = location.pathname === `/${item.segment}`;
+                                const isActive =
+                                    item.segment === "messages"
+                                        ? location.pathname.startsWith("/messages")
+                                        : location.pathname === `/${item.segment}`;
                                 return (
                                     <ListItem
                                         key={item.segment}
