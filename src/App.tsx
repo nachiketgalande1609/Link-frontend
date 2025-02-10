@@ -9,7 +9,7 @@ import PrivateRoute from "./component/PrivateRoute";
 import PublicRoute from "./component/PublicRoute";
 
 import HomePage from "./pages/HomePage";
-import ProfilePage from "./pages/ProfilePage";
+import ProfilePage from "./pages/profile/ProfilePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ExplorePage from "./pages/ExplorePage";
 import SearchPage from "./pages/SearchPage";

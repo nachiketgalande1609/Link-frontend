@@ -34,7 +34,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Login,
-    AppRegistration,
+    AccountCircleOutlined,
 } from "@mui/icons-material";
 
 const DrawerWidth = 240;
@@ -155,7 +155,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
         : [
               { kind: "header", title: "Link" },
               { kind: "item", segment: "login", title: "Login", icon: <Login sx={{ fontSize: "2rem" }} /> },
-              { kind: "item", segment: "register", title: "Register", icon: <AppRegistration sx={{ fontSize: "2rem" }} /> },
+              { kind: "item", segment: "register", title: "Register", icon: <AccountCircleOutlined sx={{ fontSize: "2rem" }} /> },
           ];
 
     useEffect(() => {
