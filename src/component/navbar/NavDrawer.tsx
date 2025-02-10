@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import socket from "../services/socket";
+import socket from "../../services/socket";
+import CreatePostModal from "../../component/post/CreatePostModal";
 
 import {
     Box,
@@ -35,7 +36,6 @@ import {
     Login,
     AppRegistration,
 } from "@mui/icons-material";
-import CreatePostModal from "../component/post/CreatePostModal";
 
 const DrawerWidth = 240;
 const CollapsedDrawerWidth = 72.67;

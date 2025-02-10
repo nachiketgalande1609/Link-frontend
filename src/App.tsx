@@ -20,7 +20,7 @@ import Messages from "./pages/messages/Messages";
 import Notifications from "./pages/notifications/Notifications";
 import SettingsPage from "./pages/SettingsPage";
 import { getNotificationsCount } from "./services/api";
-import NavDrawer from "./component/NavDrawer";
+import NavDrawer from "./component/navbar/NavDrawer";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
