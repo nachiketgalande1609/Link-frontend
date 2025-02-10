@@ -22,6 +22,8 @@ type Message = {
     read?: boolean;
     saved?: boolean;
     image_url?: string;
+    delivered_timestamp?: string | null;
+    read_timestamp?: string | null;
 };
 type MessagesType = Record<string, Message[]>;
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
@@ -289,12 +291,14 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     }, []);
 
     useEffect(() => {
-        socket.on("messageDelivered", (data: { messageId: number }) => {
+        socket.on("messageDelivered", (data: { messageId: number; deliveredTimestamp: string | null }) => {
             setMessages((prevMessages) => {
                 const newMessages = { ...prevMessages };
 
                 Object.keys(newMessages).forEach((userId) => {
-                    newMessages[userId] = newMessages[userId].map((msg) => (msg.message_id === data.messageId ? { ...msg, delivered: true } : msg));
+                    newMessages[userId] = newMessages[userId].map((msg) =>
+                        msg.message_id === data.messageId ? { ...msg, delivered: true, delivered_timestamp: data.deliveredTimestamp } : msg
+                    );
                 });
 
                 return newMessages;
@@ -336,14 +340,15 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     }, [selectedUser, messages]);
 
     useEffect(() => {
-        socket.on("messageRead", (data: { receiverId: number; messageIds: number[] }) => {
+        socket.on("messageRead", (data: { receiverId: number; messageIds: { messageId: number; readTimestamp: string }[] }) => {
             setMessages((prevMessages) => {
                 const updatedMessages = { ...prevMessages };
 
                 if (updatedMessages[data.receiverId]) {
-                    updatedMessages[data.receiverId] = updatedMessages[data.receiverId].map((msg) =>
-                        msg.message_id !== undefined && data.messageIds.includes(msg.message_id) ? { ...msg, read: true } : msg
-                    );
+                    updatedMessages[data.receiverId] = updatedMessages[data.receiverId].map((msg) => {
+                        const readMessage = data.messageIds.find((m) => m.messageId === msg.message_id);
+                        return readMessage ? { ...msg, read: true, read_timestamp: readMessage.readTimestamp } : msg;
+                    });
                 }
 
                 return updatedMessages;
