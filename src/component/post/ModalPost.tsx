@@ -76,7 +76,7 @@ const ModalPost: React.FC<PostProps> = ({
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
 
-    const currentUser = JSON.parse(localStorage.getItem("user") || "");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     const [showAllComments, setShowAllComments] = useState(false);
 
@@ -223,9 +223,33 @@ const ModalPost: React.FC<PostProps> = ({
                                             {timeAgo}
                                         </Typography>
                                     </Box>
-                                    <IconButton onClick={handleMenuOpen} sx={{ ml: "auto" }}>
-                                        <MoreVert sx={{ fontSize: isMobile ? "1rem" : "1.2rem" }} />
-                                    </IconButton>
+
+                                    {currentUser?.id && (
+                                        <>
+                                            <IconButton onClick={handleMenuOpen} sx={{ ml: "auto" }}>
+                                                <MoreVert sx={{ fontSize: isMobile ? "1rem" : "1.2rem" }} />
+                                            </IconButton>
+                                            <Menu
+                                                anchorEl={anchorEl}
+                                                open={Boolean(anchorEl)}
+                                                onClose={handleMenuClose}
+                                                sx={{
+                                                    "& .MuiPaper-root": {
+                                                        width: "150px",
+                                                        padding: "3px 10px",
+                                                        borderRadius: "20px",
+                                                    },
+                                                }}
+                                            >
+                                                <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleEditClick}>
+                                                    Edit
+                                                </MenuItem>
+                                                <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
+                                                    Delete
+                                                </MenuItem>
+                                            </Menu>
+                                        </>
+                                    )}
                                 </Box>
 
                                 <Menu
@@ -247,35 +271,36 @@ const ModalPost: React.FC<PostProps> = ({
                                         Delete
                                     </MenuItem>
                                 </Menu>
+                                {currentUser?.id && (
+                                    <CardActions
+                                        sx={{
+                                            justifyContent: "space-between",
+                                            marginTop: "16px",
+                                            padding: 0,
+                                        }}
+                                    >
+                                        <Box>
+                                            <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
+                                                {isLiked ? (
+                                                    <Favorite sx={{ fontSize: "30px", mr: 1 }} />
+                                                ) : (
+                                                    <FavoriteBorder sx={{ fontSize: "30px", mr: 1 }} />
+                                                )}
+                                            </IconButton>
+                                            <Typography variant="body2" component="span" sx={{ mr: 2 }}>
+                                                {likes}
+                                            </Typography>
+                                            <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
+                                                <ChatBubbleOutline sx={{ fontSize: "30px", mr: 1 }} />
+                                            </IconButton>
+                                            <Typography variant="body2" component="span" sx={{ mr: 1 }}>
+                                                {commentCount}
+                                            </Typography>
+                                        </Box>
+                                    </CardActions>
+                                )}
 
-                                <CardActions
-                                    sx={{
-                                        justifyContent: "space-between",
-                                        marginTop: "16px",
-                                        padding: 0,
-                                    }}
-                                >
-                                    <Box>
-                                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
-                                            {isLiked ? (
-                                                <Favorite sx={{ fontSize: "30px", mr: 1 }} />
-                                            ) : (
-                                                <FavoriteBorder sx={{ fontSize: "30px", mr: 1 }} />
-                                            )}
-                                        </IconButton>
-                                        <Typography variant="body2" component="span" sx={{ mr: 2 }}>
-                                            {likes}
-                                        </Typography>
-                                        <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
-                                            <ChatBubbleOutline sx={{ fontSize: "30px", mr: 1 }} />
-                                        </IconButton>
-                                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                                            {commentCount}
-                                        </Typography>
-                                    </Box>
-                                </CardActions>
-
-                                {isEditing ? (
+                                {currentUser?.id && isEditing ? (
                                     <Box sx={{ mt: 2 }}>
                                         <TextField
                                             fullWidth
@@ -303,21 +328,23 @@ const ModalPost: React.FC<PostProps> = ({
                                 )}
 
                                 <Box sx={{ mt: 2 }}>
-                                    <TextField
-                                        fullWidth
-                                        label="Add a comment..."
-                                        variant="outlined"
-                                        value={commentText}
-                                        onChange={(e) => setCommentText(e.target.value)}
-                                        onKeyDown={(e) => e.key === "Enter" && handleComment()}
-                                        sx={{
-                                            mb: "16px",
-                                            "& .MuiOutlinedInput-root": {
-                                                borderRadius: "20px",
-                                            },
-                                        }}
-                                        inputRef={commentInputRef}
-                                    />
+                                    {currentUser?.id && (
+                                        <TextField
+                                            fullWidth
+                                            label="Add a comment..."
+                                            variant="outlined"
+                                            value={commentText}
+                                            onChange={(e) => setCommentText(e.target.value)}
+                                            onKeyDown={(e) => e.key === "Enter" && handleComment()}
+                                            sx={{
+                                                mb: "16px",
+                                                "& .MuiOutlinedInput-root": {
+                                                    borderRadius: "20px",
+                                                },
+                                            }}
+                                            inputRef={commentInputRef}
+                                        />
+                                    )}
 
                                     {visibleComments.length === 0 ? (
                                         <Box sx={{ display: "flex", justifyContent: "center" }}>

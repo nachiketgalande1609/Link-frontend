@@ -16,6 +16,8 @@ import {
     useTheme,
     BottomNavigation,
     BottomNavigationAction,
+    Dialog,
+    Button,
 } from "@mui/material";
 import {
     HomeOutlined as HomeOutlined,
@@ -31,6 +33,8 @@ import {
     Favorite,
     ChevronLeft,
     ChevronRight,
+    Login,
+    AppRegistration,
 } from "@mui/icons-material";
 
 import { useUser } from "./context/userContext";
@@ -93,7 +97,7 @@ const AppContent = () => {
     const isMdOrLarger = useMediaQuery((theme) => theme.breakpoints.up("md"));
     const [open, setOpen] = useState(true);
 
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [openDialog, setOpenDialog] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const [modalOpen, setModalOpen] = useState(false);
@@ -107,85 +111,104 @@ const AppContent = () => {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const NAVIGATION = [
-        { kind: "header", title: "Link" },
-        {
-            segment: "",
-            title: "Home",
-            icon: <HomeOutlined sx={{ fontSize: "2rem" }} />,
-            filledIcon: <HomeFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
-        },
-        {
-            segment: "search",
-            title: "Search",
-            icon: <Search sx={{ fontSize: "2rem" }} />,
-            filledIcon: <Search sx={{ fontSize: "2rem", color: "#000000" }} />,
-        },
-        {
-            segment: `messages`,
-            title: "Messages",
-            icon: (
-                <Badge badgeContent={unreadMessagesCount} color="error">
-                    <MessageOutlined sx={{ fontSize: "2rem" }} />
-                </Badge>
-            ),
-            filledIcon: (
-                <Badge badgeContent={unreadMessagesCount} color="error">
-                    <Message sx={{ fontSize: "2rem", color: "#000000" }} />
-                </Badge>
-            ),
-        },
-        {
-            segment: "notifications",
-            title: "Notifications",
-            icon: (
-                <Badge badgeContent={unreadNotificationsCount} color="error">
-                    <FavoriteBorder sx={{ fontSize: "2rem" }} />
-                </Badge>
-            ),
-            filledIcon: (
-                <Badge badgeContent={unreadNotificationsCount} color="error">
-                    <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />
-                </Badge>
-            ),
-        },
-        {
-            segment: "explore",
-            title: "Explore",
-            icon: <CompassOutlined sx={{ fontSize: "2rem" }} />,
-            filledIcon: <CompassFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
-        },
-        {
-            segment: `profile/${currentUser.id}`,
-            title: "Profile",
-            icon: (
-                <img
-                    src={user?.profile_picture_url}
-                    alt="Profile"
-                    style={{
-                        width: "33px",
-                        height: "33px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        outline: "2px solid #ffffff",
-                    }}
-                />
-            ),
-            filledIcon: (
-                <img
-                    src={user?.profile_picture_url || "default-profile-pic.jpg"}
-                    alt="Profile"
-                    style={{
-                        width: "33px",
-                        height: "33px",
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                        outline: "2px solid #000000",
-                    }}
-                />
-            ),
-        },
-    ];
+
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
+
+    type NavigationItem =
+        | { kind: "header"; title: string; segment?: string }
+        | { kind: "item"; segment?: string; title: string; icon: JSX.Element; filledIcon?: JSX.Element };
+
+    const NAVIGATION: NavigationItem[] = currentUser
+        ? [
+              { kind: "header", title: "Link" },
+              {
+                  kind: "item",
+                  segment: "",
+                  title: "Home",
+                  icon: <HomeOutlined sx={{ fontSize: "2rem" }} />,
+                  filledIcon: <HomeFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+              },
+              {
+                  kind: "item",
+                  segment: "search",
+                  title: "Search",
+                  icon: <Search sx={{ fontSize: "2rem" }} />,
+                  filledIcon: <Search sx={{ fontSize: "2rem", color: "#000000" }} />,
+              },
+              {
+                  kind: "item",
+                  segment: "messages",
+                  title: "Messages",
+                  icon: (
+                      <Badge badgeContent={unreadMessagesCount} color="error">
+                          <MessageOutlined sx={{ fontSize: "2rem" }} />
+                      </Badge>
+                  ),
+                  filledIcon: (
+                      <Badge badgeContent={unreadMessagesCount} color="error">
+                          <Message sx={{ fontSize: "2rem", color: "#000000" }} />
+                      </Badge>
+                  ),
+              },
+              {
+                  kind: "item",
+                  segment: "notifications",
+                  title: "Notifications",
+                  icon: (
+                      <Badge badgeContent={unreadNotificationsCount} color="error">
+                          <FavoriteBorder sx={{ fontSize: "2rem" }} />
+                      </Badge>
+                  ),
+                  filledIcon: (
+                      <Badge badgeContent={unreadNotificationsCount} color="error">
+                          <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />
+                      </Badge>
+                  ),
+              },
+              {
+                  kind: "item",
+                  segment: "explore",
+                  title: "Explore",
+                  icon: <CompassOutlined sx={{ fontSize: "2rem" }} />,
+                  filledIcon: <CompassFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+              },
+              {
+                  kind: "item",
+                  segment: `profile/${currentUser.id}`,
+                  title: "Profile",
+                  icon: (
+                      <img
+                          src={currentUser?.profile_picture_url || "default-profile-pic.jpg"}
+                          alt="Profile"
+                          style={{
+                              width: "33px",
+                              height: "33px",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                              outline: "2px solid #ffffff",
+                          }}
+                      />
+                  ),
+                  filledIcon: (
+                      <img
+                          src={currentUser?.profile_picture_url || "default-profile-pic.jpg"}
+                          alt="Profile"
+                          style={{
+                              width: "33px",
+                              height: "33px",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                              outline: "2px solid #000000",
+                          }}
+                      />
+                  ),
+              },
+          ]
+        : [
+              { kind: "header", title: "Link" },
+              { kind: "item", segment: "login", title: "Login", icon: <Login sx={{ fontSize: "2rem" }} /> },
+              { kind: "item", segment: "register", title: "Register", icon: <AppRegistration sx={{ fontSize: "2rem" }} /> },
+          ];
 
     useEffect(() => {
         if (isMdOrLarger) {
@@ -266,12 +289,8 @@ const AppContent = () => {
         };
     }, [user, setNotificationAlert]);
 
-    const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
+    const handleMenuClick = () => {
+        setOpenDialog(true);
     };
 
     const handleLogout = () => {
@@ -281,7 +300,7 @@ const AppContent = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
 
-        setAnchorEl(null);
+        setOpenDialog(false);
         navigate("/login");
     };
 
@@ -294,6 +313,10 @@ const AppContent = () => {
             socket.off("unreadMessagesCount");
         };
     }, []);
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -401,94 +424,72 @@ const AppContent = () => {
                                     </ListItem>
                                 );
                             })}
-                            <ListItem
-                                onClick={handleOpen}
-                                sx={{
-                                    textDecoration: "none",
-                                    padding: "12px 12px",
-                                    cursor: "pointer",
-                                    borderRadius: "20px",
-                                    "&:hover": { backgroundColor: "#202327" },
-                                    margin: "5px 0",
-                                    justifyContent: "flex-start",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
-                                    <AddIcon sx={{ fontSize: "2rem" }} />
-                                </ListItemIcon>
-                                <Typography
+                            {currentUser?.id && (
+                                <ListItem
+                                    onClick={handleOpen}
                                     sx={{
-                                        fontSize: "1rem",
-                                        color: "white",
-                                        visibility: open ? "visible" : "hidden",
-                                        transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
-                                        opacity: open ? 1 : 0,
-                                        transform: open ? "translateX(0)" : "translateX(-20px)",
-                                        whiteSpace: "nowrap",
+                                        textDecoration: "none",
+                                        padding: "12px 12px",
+                                        cursor: "pointer",
+                                        borderRadius: "20px",
+                                        "&:hover": { backgroundColor: "#202327" },
+                                        margin: "5px 0",
+                                        justifyContent: "flex-start",
+                                        alignItems: "center",
                                     }}
                                 >
-                                    Create Post
-                                </Typography>
-                            </ListItem>
-                            <Box sx={{ flexGrow: 1 }} />
-                            <ListItem
-                                onClick={handleMenuClick}
-                                sx={{
-                                    textDecoration: "none",
-                                    padding: "12px 12px",
-                                    cursor: "pointer",
-                                    borderRadius: "20px",
-                                    "&:hover": { backgroundColor: "#202327" },
-                                    margin: "5px 0",
-                                    justifyContent: "flex-start",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
-                                    <MenuIcon sx={{ fontSize: "2rem" }} />
-                                </ListItemIcon>
-                                <Typography
-                                    sx={{
-                                        fontSize: "1rem",
-                                        color: "white",
-                                        visibility: open ? "visible" : "hidden",
-                                        transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
-                                        opacity: open ? 1 : 0,
-                                        transform: open ? "translateX(0)" : "translateX(-20px)",
-                                    }}
-                                >
-                                    More
-                                </Typography>
-                            </ListItem>
-                        </List>
+                                    <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
+                                        <AddIcon sx={{ fontSize: "2rem" }} />
+                                    </ListItemIcon>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "1rem",
+                                            color: "white",
+                                            visibility: open ? "visible" : "hidden",
+                                            transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
+                                            opacity: open ? 1 : 0,
+                                            transform: open ? "translateX(0)" : "translateX(-20px)",
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        Create Post
+                                    </Typography>
+                                </ListItem>
+                            )}
 
-                        {/* Dropdown Menu */}
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleMenuClose}
-                            anchorOrigin={{ vertical: "top", horizontal: "left" }}
-                            transformOrigin={{ vertical: "bottom", horizontal: "left" }}
-                            sx={{
-                                "& .MuiPaper-root": {
-                                    width: "250px",
-                                    padding: "3px 10px",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#202327",
-                                },
-                            }}
-                        >
-                            <MenuItem
-                                onClick={() => navigate("/settings?setting=profiledetails")}
-                                sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}
-                            >
-                                Settings
-                            </MenuItem>
-                            <MenuItem onClick={handleLogout} sx={{ width: "100%", textAlign: "center", height: "50px", borderRadius: "15px" }}>
-                                Logout
-                            </MenuItem>
-                        </Menu>
+                            <Box sx={{ flexGrow: 1 }} />
+                            {currentUser?.id && (
+                                <ListItem
+                                    onClick={handleMenuClick}
+                                    sx={{
+                                        textDecoration: "none",
+                                        padding: "12px 12px",
+                                        cursor: "pointer",
+                                        borderRadius: "20px",
+                                        "&:hover": { backgroundColor: "#202327" },
+                                        margin: "5px 0",
+                                        justifyContent: "flex-start",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
+                                        <MenuIcon sx={{ fontSize: "2rem" }} />
+                                    </ListItemIcon>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "1rem",
+                                            color: "white",
+                                            visibility: open ? "visible" : "hidden",
+                                            transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
+                                            opacity: open ? 1 : 0,
+                                            transform: open ? "translateX(0)" : "translateX(-20px)",
+                                        }}
+                                    >
+                                        More
+                                    </Typography>
+                                </ListItem>
+                            )}
+                        </List>
                     </Drawer>
                 ) : (
                     // Mobile Bottom Navigation
@@ -539,14 +540,7 @@ const AppContent = () => {
                             </PrivateRoute>
                         }
                     />
-                    <Route
-                        path="/profile/:userId"
-                        element={
-                            <PrivateRoute>
-                                <ProfilePage />
-                            </PrivateRoute>
-                        }
-                    />
+                    <Route path="/profile/:userId" element={<ProfilePage />} />
                     <Route
                         path="/messages/:userId?"
                         element={
@@ -607,6 +601,76 @@ const AppContent = () => {
                 </Routes>
             </Box>
             <CreatePostModal open={modalOpen} handleClose={handleClose} />
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(32, 35, 39, 0.9)",
+                        color: "white",
+                        textAlign: "center",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    },
+                }}
+            >
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        navigate("/settings?setting=profiledetails");
+                        setOpenDialog(false);
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Settings
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleLogout();
+                        setOpenDialog(false);
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Logout
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={handleCloseDialog}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                    }}
+                >
+                    Cancel
+                </Button>
+            </Dialog>
         </Box>
     );
 };

@@ -29,7 +29,7 @@ const ProfileDetails = () => {
     const { setUser } = useUser();
     const notifications = useNotifications();
 
-    const user = JSON.parse(localStorage.getItem("user") || "");
+    const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const [profileData, setProfileData] = useState<Profile | null>(null);
 
     const [openDialog, setOpenDialog] = useState(false);

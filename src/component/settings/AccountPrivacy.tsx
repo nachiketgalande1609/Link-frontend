@@ -6,7 +6,7 @@ import { useNotifications } from "@toolpad/core/useNotifications";
 const AccountPrivacy = () => {
     const notifications = useNotifications();
     const [loading, setLoading] = useState(false);
-    const currentUser = JSON.parse(localStorage.getItem("user") || "");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const [isPrivate, setIsPrivate] = useState(currentUser.is_private);
 
     const handleToggle = async () => {

@@ -22,7 +22,7 @@ interface Notification {
 const NotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const { resetNotificationsCount } = useUser();
 
     async function fetchNotifications() {

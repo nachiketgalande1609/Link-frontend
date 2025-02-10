@@ -4,7 +4,7 @@ import { useNotifications } from "@toolpad/core/useNotifications";
 
 const General = () => {
     const notifications = useNotifications();
-    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const [themeMode, setThemeMode] = useState(currentUser.theme || "light");
 
     const handleToggle = async () => {

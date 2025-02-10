@@ -76,7 +76,7 @@ const Post: React.FC<PostProps> = ({
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
 
-    const currentUser = JSON.parse(localStorage.getItem("user") || "");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     const [showAllComments, setShowAllComments] = useState(false);
 

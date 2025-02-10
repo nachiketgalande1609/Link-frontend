@@ -56,7 +56,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [selectedImage, setSelectedImage] = useState<string>("");
 
     const navigatedUser = location.state || {};
-    const currentUser = JSON.parse(localStorage.getItem("user") || "");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Fetch messages initially
     const fetchData = async () => {

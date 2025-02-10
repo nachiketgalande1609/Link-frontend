@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, Menu, MenuItem, useMediaQuery, useTheme, Box } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, useMediaQuery, useTheme, Box } from "@mui/material";
 import ProfilePagePost from "../component/post/ProfilePagePost";
 import ModalPost from "../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../services/api";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useParams, useNavigate } from "react-router-dom";
 import LockIcon from "@mui/icons-material/Lock";
+import { useLocation } from "react-router-dom";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 interface Profile {
     username: string;
@@ -23,23 +25,28 @@ interface Profile {
 }
 
 const ProfilePage = () => {
+    const location = useLocation();
+    const profileUrl = `${window.location.origin}${location.pathname}`;
     const { userId } = useParams();
     const navigate = useNavigate();
     const theme = useTheme();
+    const notifications = useNotifications();
+
+    console.log(profileUrl);
 
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const currentUser = JSON.parse(localStorage.getItem("user") || "");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     const [profileData, setProfileData] = useState<Profile | null>(null);
     const [posts, setPosts] = useState<any[]>([]);
     const [selectedPost, setSelectedPost] = useState<any | null>(null);
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const [openDialog, setOpenDialog] = useState(false);
     const [mobileGridWidth, setMobileGridWidth] = useState(4);
 
     async function fetchProfile() {
         try {
-            if (userId && currentUser?.id) {
+            if (userId) {
                 const res = await getProfile(userId, currentUser?.id);
                 setProfileData(res.data);
                 setIsFollowing(res.data.is_following);
@@ -96,23 +103,37 @@ const ProfilePage = () => {
     const handleSendMessage = () => {
         navigate(`/messages/${userId}`, { state: profileData });
     };
-    const handleMoreOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+
+    const handleMoreOptionsClick = () => {
+        setOpenDialog(true);
     };
 
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
     };
 
     const handleEditProfile = () => {
         navigate("/settings?setting=profiledetails");
-        handleCloseMenu();
+        handleCloseDialog();
     };
 
     const toggleMobileGridWidth = () => {
         if (mobileGridWidth == 4) {
             setMobileGridWidth(12);
         } else setMobileGridWidth(4);
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            await navigator.clipboard.writeText(profileUrl);
+            notifications.show("Profile link copied to clipboard!", {
+                severity: "success",
+                autoHideDuration: 3000,
+            });
+            handleCloseDialog();
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
     };
 
     return (
@@ -127,35 +148,14 @@ const ProfilePage = () => {
                 }}
             >
                 <Grid container spacing={3} alignItems="start" sx={{ position: "relative" }}>
-                    <IconButton aria-label="more options" onClick={handleMoreOptionsClick} sx={{ position: "absolute", right: 0, top: 15 }}>
-                        <MoreHorizIcon />
-                    </IconButton>
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleCloseMenu}
-                        sx={{
-                            "& .MuiPaper-root": {
-                                width: "150px",
-                                padding: "1px 8px",
-                                borderRadius: "20px",
-                                backgroundColor: "#202327",
-                            },
-                        }}
-                    >
-                        <MenuItem
-                            onClick={handleEditProfile}
-                            sx={{
-                                width: "100%",
-                                textAlign: "center",
-                                height: "40px",
-                                borderRadius: "15px",
-                                fontSize: isMobile ? "0.85rem" : "0.9rem",
-                            }}
-                        >
-                            Edit Profile
-                        </MenuItem>
-                    </Menu>
+                    {currentUser?.id && (
+                        <>
+                            <IconButton aria-label="more options" onClick={handleMoreOptionsClick} sx={{ position: "absolute", right: 0, top: 15 }}>
+                                <MoreHorizIcon />
+                            </IconButton>
+                        </>
+                    )}
+
                     <Grid item xs={12} sm={12} md={3} lg={2} sx={{ display: "flex", justifyContent: "center" }}>
                         <Avatar
                             src={profileData?.profile_picture}
@@ -198,7 +198,7 @@ const ProfilePage = () => {
                             </Typography>
                         )}
 
-                        {userId != currentUser?.id && (
+                        {currentUser?.id && userId != currentUser?.id && (
                             <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end" }}>
                                 <Button
                                     onClick={
@@ -325,6 +325,72 @@ const ProfilePage = () => {
                         isMobile={isMobile}
                     />
                 )}
+            </Dialog>
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(32, 35, 39, 0.9)",
+                        color: "white",
+                        textAlign: "center",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    },
+                }}
+            >
+                <Button
+                    fullWidth
+                    onClick={handleEditProfile}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Edit Profile
+                </Button>
+
+                <Button
+                    fullWidth
+                    onClick={handleCopyLink}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Copy Profile Link
+                </Button>
+
+                <Button
+                    fullWidth
+                    onClick={handleCloseDialog}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                    }}
+                >
+                    Cancel
+                </Button>
             </Dialog>
         </Container>
     );
