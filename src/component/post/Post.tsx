@@ -29,7 +29,7 @@ interface PostProps {
     likes: number;
     comments: number;
     avatarUrl?: string;
-    imageUrl?: string;
+    fileUrl?: string;
     timeAgo: string;
     postId: string;
     userId: string;
@@ -56,7 +56,7 @@ const Post: React.FC<PostProps> = ({
     likes,
     comments,
     avatarUrl,
-    imageUrl,
+    fileUrl,
     timeAgo,
     postId,
     userId,
@@ -225,11 +225,11 @@ const Post: React.FC<PostProps> = ({
                     </Grid>
                 </Box>
 
-                {imageUrl && (
+                {fileUrl && (
                     <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }}>
                         <CardMedia
                             component="img"
-                            image={imageUrl}
+                            image={fileUrl}
                             alt="Post Image"
                             sx={{
                                 position: "absolute",

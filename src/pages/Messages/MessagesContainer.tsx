@@ -1,12 +1,19 @@
 import React, { useState } from "react";
-import { Typography, Box, CircularProgress, useMediaQuery, useTheme, Drawer, IconButton } from "@mui/material";
-import { Done as DoneIcon, DoneAll as DoneAllIcon, AccessTime as AccessTimeIcon, Close as CloseIcon } from "@mui/icons-material";
+import { Typography, Box, CircularProgress, useMediaQuery, useTheme, Drawer, IconButton, Button } from "@mui/material";
+import {
+    Done as DoneIcon,
+    DoneAll as DoneAllIcon,
+    AccessTime as AccessTimeIcon,
+    Close as CloseIcon,
+    PictureAsPdf as PictureAsPdfIcon,
+    InsertDriveFile as FolderIcon,
+} from "@mui/icons-material";
 
 interface MessagesContainerProps {
     selectedUser: User | null;
     messages: Record<number, Message[]>;
     currentUser: User;
-    handleImageClick: (imageUrl: string) => void;
+    handleImageClick: (fileUrl: string) => void;
     messagesEndRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -18,9 +25,11 @@ type Message = {
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    image_url?: string;
+    file_url?: string;
     delivered_timestamp?: string | null;
     read_timestamp?: string | null;
+    file_name: string | null;
+    file_size: string | null;
 };
 
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
@@ -64,7 +73,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                             }
                         }}
                     >
-                        {msg.image_url && (
+                        {msg.file_url && (
                             <Box
                                 sx={{
                                     width: "200px",
@@ -79,36 +88,158 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                                     borderRadius: "10px",
                                     position: "relative",
                                     cursor: "pointer",
+                                    marginRight: "24px",
                                 }}
-                                onClick={() => msg.image_url && handleImageClick(msg.image_url)}
                             >
-                                <CircularProgress
-                                    sx={{
-                                        position: "absolute",
-                                        visibility: "visible",
-                                    }}
-                                />
-                                <img
-                                    src={msg.image_url}
-                                    alt="Sent Image"
-                                    style={{
-                                        maxWidth: "100%",
-                                        height: "auto",
-                                        objectFit: "contain",
-                                        borderRadius: "10px",
-                                        visibility: "hidden",
-                                    }}
-                                    onLoad={(e) => {
-                                        const imgElement = e.target as HTMLImageElement;
-                                        const loader = imgElement.previousSibling as HTMLElement;
+                                {msg.file_url.match(/\.(jpeg|jpg|png|gif|bmp|webp)$/i) ? (
+                                    <>
+                                        <CircularProgress
+                                            sx={{
+                                                position: "absolute",
+                                                visibility: "visible",
+                                            }}
+                                        />
+                                        <img
+                                            src={msg.file_url}
+                                            alt="Sent Image"
+                                            style={{
+                                                maxWidth: "100%",
+                                                height: "auto",
+                                                objectFit: "contain",
+                                                borderRadius: "10px",
+                                                visibility: "hidden",
+                                            }}
+                                            onLoad={(e) => {
+                                                const imgElement = e.target as HTMLImageElement;
+                                                const loader = imgElement.previousSibling as HTMLElement;
 
-                                        imgElement.style.visibility = "visible";
-                                        loader.style.visibility = "hidden";
-                                    }}
-                                />
+                                                imgElement.style.visibility = "visible";
+                                                loader.style.display = "none";
+                                            }}
+                                            onClick={() => msg.file_url && handleImageClick(msg.file_url)}
+                                        />
+                                    </>
+                                ) : msg.file_url.match(/\.(mp4|webm|ogg)$/i) ? (
+                                    <video
+                                        controls
+                                        style={{
+                                            maxWidth: "100%",
+                                            height: "auto",
+                                            borderRadius: "10px",
+                                        }}
+                                    >
+                                        <source src={msg.file_url} />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                ) : msg.file_url.match(/\.pdf$/i) ? (
+                                    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", backgroundColor: "#202327" }}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                gap: 2,
+                                                padding: 1.5,
+                                                borderRadius: 2,
+                                                backgroundColor: "#f5f5f5",
+                                                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                                            }}
+                                        >
+                                            <PictureAsPdfIcon sx={{ color: "#d32f2f", fontSize: 40 }} />
+
+                                            <Button
+                                                href={msg.file_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                variant="contained"
+                                                size="small"
+                                                color="error"
+                                                sx={{
+                                                    textTransform: "none",
+                                                    borderRadius: 2,
+                                                    flexGrow: 1,
+                                                }}
+                                            >
+                                                View
+                                            </Button>
+                                        </Box>
+                                        <Box sx={{ flex: 1, overflow: "hidden", padding: "8px 8px 4px 8px" }}>
+                                            <Typography
+                                                fontWeight={500}
+                                                sx={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    maxWidth: "100%",
+                                                    fontSize: "14px",
+                                                }}
+                                            >
+                                                {msg.file_name}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                {msg.file_size
+                                                    ? Number(msg.file_size) < 1024 * 1024
+                                                        ? (Number(msg.file_size) / 1024).toFixed(2) + " KB"
+                                                        : (Number(msg.file_size) / (1024 * 1024)).toFixed(2) + " MB"
+                                                    : "N/A"}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                ) : (
+                                    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", backgroundColor: "#202327" }}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                gap: 2,
+                                                padding: 1.5,
+                                                borderRadius: 2,
+                                                backgroundColor: "#f5f5f5",
+                                                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                                            }}
+                                        >
+                                            <FolderIcon sx={{ color: "#ffd014", fontSize: 40 }} />
+
+                                            <Button
+                                                href={msg.file_url}
+                                                download
+                                                rel="noopener noreferrer"
+                                                variant="contained"
+                                                size="small"
+                                                color="error"
+                                                sx={{
+                                                    textTransform: "none",
+                                                    borderRadius: 2,
+                                                    flexGrow: 1,
+                                                }}
+                                            >
+                                                Download
+                                            </Button>
+                                        </Box>
+                                        <Box sx={{ flex: 1, overflow: "hidden", padding: "8px 8px 4px 8px" }}>
+                                            <Typography
+                                                fontWeight={500}
+                                                sx={{
+                                                    whiteSpace: "nowrap",
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    maxWidth: "100%",
+                                                    fontSize: "14px",
+                                                }}
+                                            >
+                                                {msg.file_name}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                {msg.file_size
+                                                    ? Number(msg.file_size) < 1024 * 1024
+                                                        ? (Number(msg.file_size) / 1024).toFixed(2) + " KB"
+                                                        : (Number(msg.file_size) / (1024 * 1024)).toFixed(2) + " MB"
+                                                    : "N/A"}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                )}
                             </Box>
                         )}
-
                         <Box
                             sx={{
                                 display: "flex",

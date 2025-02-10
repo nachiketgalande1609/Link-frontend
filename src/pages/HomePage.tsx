@@ -43,7 +43,7 @@ const HomePage = () => {
                                 content={post.content}
                                 likes={post.like_count}
                                 comments={post.comment_count}
-                                imageUrl={post.image_url}
+                                fileUrl={post.file_url}
                                 avatarUrl={post.profile_picture}
                                 timeAgo={post.timeAgo}
                                 postId={post.id}

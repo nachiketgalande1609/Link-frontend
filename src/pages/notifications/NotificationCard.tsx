@@ -11,7 +11,7 @@ interface Notification {
     sender_id: string;
     username: string;
     profile_picture: string;
-    image_url?: string;
+    file_url?: string;
     request_status: string;
     requester_id?: number;
     request_id: number;
@@ -121,10 +121,10 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                         )}
                     </Box>
                 )}
-                {(notification.type === "like" || notification.type === "comment") && notification.image_url && (
+                {(notification.type === "like" || notification.type === "comment") && notification.file_url && (
                     <Box sx={{ ml: 2, display: "flex", justifyContent: "flex-end", width: "80px" }}>
                         <img
-                            src={notification.image_url}
+                            src={notification.file_url}
                             alt="Post image"
                             style={{ width: "58px", height: "58px", objectFit: "cover", borderRadius: "8px" }}
                         />

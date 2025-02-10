@@ -34,7 +34,7 @@ type Message = {
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    image_url?: string;
+    file_url?: string;
 };
 type MessagesType = Record<string, Message[]>;
 

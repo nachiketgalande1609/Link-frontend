@@ -91,7 +91,7 @@ const ProfileDetails = () => {
             const file = dataURItoFile(croppedDataUrl);
             uploadProfilePicture(user.id, file)
                 .then((response) => {
-                    const updatedUser = { ...user, profile_picture_url: response.imageUrl };
+                    const updatedUser = { ...user, profile_picture_url: response.fileUrl };
                     setUser(updatedUser);
                     localStorage.setItem("user", JSON.stringify(updatedUser));
                     notifications.show("Profile picture updated successfully!", {

@@ -27,7 +27,7 @@ interface PostProps {
     likes: number;
     comments: number;
     avatarUrl?: string;
-    imageUrl?: string;
+    fileUrl?: string;
     timeAgo: string;
     postId: string;
     userId: string;
@@ -55,7 +55,7 @@ const ModalPost: React.FC<PostProps> = ({
     likes: initialLikes,
     comments,
     avatarUrl,
-    imageUrl,
+    fileUrl,
     timeAgo,
     postId,
     userId,
@@ -195,10 +195,10 @@ const ModalPost: React.FC<PostProps> = ({
                     <Grid container spacing={2}>
                         {/* Left column for image */}
                         <Grid item xs={12} sm={6}>
-                            {imageUrl && (
+                            {fileUrl && (
                                 <CardMedia
                                     component="img"
-                                    image={imageUrl}
+                                    image={fileUrl}
                                     alt="Post Image"
                                     sx={{
                                         width: "100%",

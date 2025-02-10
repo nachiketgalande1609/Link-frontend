@@ -257,7 +257,7 @@ const ProfilePage = () => {
                                 }}
                                 style={{ cursor: "pointer" }}
                             >
-                                <ProfilePagePost imageUrl={post.image_url} />
+                                <ProfilePagePost fileUrl={post.file_url} />
                             </Grid>
                         ))
                     ) : (
@@ -288,7 +288,7 @@ const ProfilePage = () => {
                         content={selectedPost.content}
                         likes={selectedPost.like_count}
                         comments={selectedPost.comment_count}
-                        imageUrl={selectedPost.image_url}
+                        fileUrl={selectedPost.file_url}
                         avatarUrl={selectedPost.profile_picture}
                         timeAgo={selectedPost.timeAgo}
                         postId={selectedPost.id}

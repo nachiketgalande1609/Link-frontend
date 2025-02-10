@@ -1,18 +1,18 @@
 import React from "react";
 import { Card, CardContent, Box, CardMedia } from "@mui/material";
 interface PostProps {
-    imageUrl?: string;
+    fileUrl?: string;
 }
 
-const ProfilePagePost: React.FC<PostProps> = ({ imageUrl }) => {
+const ProfilePagePost: React.FC<PostProps> = ({ fileUrl }) => {
     return (
         <Card sx={{ borderRadius: "10px", position: "relative" }}>
             <CardContent sx={{ padding: "0 !important" }}>
-                {imageUrl && (
+                {fileUrl && (
                     <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }}>
                         <CardMedia
                             component="img"
-                            image={imageUrl}
+                            image={fileUrl}
                             alt="Post Image"
                             sx={{
                                 position: "absolute",

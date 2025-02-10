@@ -1,6 +1,11 @@
 import React from "react";
-import { Box, TextField, IconButton, CircularProgress, useMediaQuery, useTheme } from "@mui/material";
-import { Send as SendIcon, PhotoCamera as PhotoCameraIcon, CancelOutlined as DeleteIcon } from "@mui/icons-material";
+import { Box, TextField, IconButton, CircularProgress, useMediaQuery, useTheme, Typography } from "@mui/material";
+import {
+    Send as SendIcon,
+    AttachFileOutlined as AttachFileIcon,
+    CancelOutlined as DeleteIcon,
+    InsertDriveFile as FileIcon,
+} from "@mui/icons-material";
 
 type MessageInputProps = {
     selectedFile: File | null;
@@ -10,7 +15,7 @@ type MessageInputProps = {
     inputMessage: string;
     setInputMessage: React.Dispatch<React.SetStateAction<string>>;
     handleTyping: () => void;
-    handleSendMessage: () => void;
+    handleSendMessage: () => Promise<void>;
     handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     isSendingMessage: boolean;
 };
@@ -29,6 +34,29 @@ const MessageInput: React.FC<MessageInputProps> = ({
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    // Function to determine file type
+    const getFilePreview = () => {
+        if (!selectedFile || !selectedFileURL) return null;
+
+        const fileType = selectedFile.type;
+
+        if (fileType.startsWith("image/")) {
+            return <img src={selectedFileURL} alt="Attached" style={{ maxWidth: "200px", borderRadius: "8px" }} />;
+        } else if (fileType.startsWith("video/")) {
+            return <video src={selectedFileURL} controls style={{ maxWidth: "200px", borderRadius: "8px" }} />;
+        } else if (fileType.startsWith("audio/")) {
+            return <audio controls src={selectedFileURL} style={{ width: "100%" }} />;
+        } else {
+            return (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <FileIcon />
+                    <Typography variant="body2">{selectedFile.name}</Typography>
+                </Box>
+            );
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -39,20 +67,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 position: "relative",
             }}
         >
-            {/* If an image is attached, display it above the text field */}
+            {/* File Preview */}
             {selectedFile && selectedFileURL && (
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                    <img
-                        src={selectedFileURL}
-                        alt="Attached"
-                        style={{
-                            maxWidth: "200px",
-                            borderRadius: "8px",
-                            marginTop: "5px",
-                            marginBottom: "10px",
-                        }}
-                    />
-                    {/* Discard button */}
+                    {getFilePreview()}
                     <IconButton
                         onClick={() => {
                             setSelectedFile(null);
@@ -60,13 +78,14 @@ const MessageInput: React.FC<MessageInputProps> = ({
                         }}
                         sx={{
                             position: "absolute",
-                            top: 5,
-                            right: 5,
+                            top: 15,
+                            right: 15,
                             backgroundColor: "rgba(0, 0, 0, 0.5)",
                             color: "white",
                             "&:hover": {
                                 backgroundColor: "rgba(0, 0, 0, 0.7)",
                             },
+                            padding: 0,
                         }}
                     >
                         <DeleteIcon />
@@ -93,15 +112,14 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 />
                 <input
                     type="file"
-                    accept="image/*"
                     onChange={handleFileChange}
                     style={{ display: "none" }}
-                    id="upload-image"
+                    id="upload-file"
                     disabled={!!(selectedFile || selectedFileURL)}
                 />
-                <label htmlFor="upload-image">
+                <label htmlFor="upload-file">
                     <IconButton color="primary" component="span" disabled={!!(selectedFile || selectedFileURL)}>
-                        <PhotoCameraIcon />
+                        <AttachFileIcon />
                     </IconButton>
                 </label>
 

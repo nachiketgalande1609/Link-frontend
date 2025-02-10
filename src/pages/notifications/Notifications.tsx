@@ -13,7 +13,7 @@ interface Notification {
     sender_id: string;
     username: string;
     profile_picture: string;
-    image_url?: string;
+    file_url?: string;
     request_status: string;
     requester_id?: number;
     request_id: number;

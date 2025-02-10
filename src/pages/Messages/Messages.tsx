@@ -21,7 +21,9 @@ type Message = {
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    image_url?: string;
+    file_url?: string;
+    file_name: string | null;
+    file_size: string | null;
     delivered_timestamp?: string | null;
     read_timestamp?: string | null;
 };
@@ -141,7 +143,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                         message_text: data.message_text,
                         timestamp: new Date().toISOString(),
                         saved: !!data.message_id,
-                        image_url: data?.imageUrl,
+                        file_url: data?.fileUrl,
+                        file_name: data.fileName,
+                        file_size: data.fileSize,
                     });
                 }
 
@@ -208,7 +212,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const handleSendMessage = async () => {
         if (!inputMessage.trim() || !selectedUser) return;
 
-        let imageUrl = null;
+        let fileUrl = null;
+        let fileName = null;
+        let fileSize = null;
 
         if (selectedFile) {
             const formData = new FormData();
@@ -217,7 +223,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             try {
                 setIsSendingMessage(true);
                 const response = await shareChatMedia(formData);
-                imageUrl = response?.data?.imageUrl;
+                fileUrl = response?.data?.fileUrl;
+                fileName = response?.data?.fileName;
+                fileSize = response?.data?.fileSize;
             } catch (error) {
                 console.error("Image upload failed:", error);
                 setIsSendingMessage(false);
@@ -231,7 +239,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             message_id: tempMessageId,
             sender_id: currentUser.id,
             message_text: inputMessage,
-            image_url: imageUrl,
+            file_url: fileUrl,
+            file_name: fileName,
+            file_size: fileSize,
             timestamp: new Date().toISOString(),
             saved: false,
         };
@@ -258,7 +268,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             senderId: currentUser.id,
             receiverId: selectedUser.id,
             text: inputMessage,
-            imageUrl,
+            fileUrl,
+            fileName,
+            fileSize,
         });
 
         socket.emit("stopTyping", {
@@ -370,8 +382,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         }
     };
 
-    const handleImageClick = (imageUrl: string | undefined) => {
-        setSelectedImage(imageUrl || "");
+    const handleImageClick = (fileUrl: string | undefined) => {
+        setSelectedImage(fileUrl || "");
         setOpenDialog(true);
     };
 
