@@ -148,13 +148,9 @@ const ProfilePage = () => {
                 }}
             >
                 <Grid container spacing={3} alignItems="start" sx={{ position: "relative" }}>
-                    {currentUser?.id && (
-                        <>
-                            <IconButton aria-label="more options" onClick={handleMoreOptionsClick} sx={{ position: "absolute", right: 0, top: 15 }}>
-                                <MoreHorizIcon />
-                            </IconButton>
-                        </>
-                    )}
+                    <IconButton aria-label="more options" onClick={handleMoreOptionsClick} sx={{ position: "absolute", right: 0, top: 15 }}>
+                        <MoreHorizIcon />
+                    </IconButton>
 
                     <Grid item xs={12} sm={12} md={3} lg={2} sx={{ display: "flex", justifyContent: "center" }}>
                         <Avatar
@@ -345,22 +341,23 @@ const ProfilePage = () => {
                     },
                 }}
             >
-                <Button
-                    fullWidth
-                    onClick={handleEditProfile}
-                    sx={{
-                        padding: "10px",
-                        fontSize: isMobile ? "0.85rem" : "0.9rem",
-                        backgroundColor: "#202327",
-                        textTransform: "none",
-                        borderRadius: 0,
-                        "&:hover": { backgroundColor: "#2e3238" },
-                        borderBottom: "1px solid #505050",
-                    }}
-                >
-                    Edit Profile
-                </Button>
-
+                {currentUser?.id && (
+                    <Button
+                        fullWidth
+                        onClick={handleEditProfile}
+                        sx={{
+                            padding: "10px",
+                            fontSize: isMobile ? "0.85rem" : "0.9rem",
+                            backgroundColor: "#202327",
+                            textTransform: "none",
+                            borderRadius: 0,
+                            "&:hover": { backgroundColor: "#2e3238" },
+                            borderBottom: "1px solid #505050",
+                        }}
+                    >
+                        Edit Profile
+                    </Button>
+                )}
                 <Button
                     fullWidth
                     onClick={handleCopyLink}
@@ -376,7 +373,6 @@ const ProfilePage = () => {
                 >
                     Copy Profile Link
                 </Button>
-
                 <Button
                     fullWidth
                     onClick={handleCloseDialog}

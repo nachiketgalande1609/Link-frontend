@@ -183,6 +183,7 @@ const ModalPost: React.FC<PostProps> = ({
                     padding: 0,
                     backgroundColor: "black",
                 },
+                padding: 0,
             }}
         >
             <CardContent
