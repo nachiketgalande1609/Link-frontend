@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Box, CircularProgress, useMediaQuery, useTheme, Drawer, IconButton } from "@mui/material";
 import { Done as DoneIcon, DoneAll as DoneAllIcon, AccessTime as AccessTimeIcon, Close as CloseIcon } from "@mui/icons-material";
-import { matchesGlob } from "path";
 
 interface MessagesContainerProps {
     selectedUser: User | null;
