@@ -28,10 +28,10 @@ import {
 } from "@mui/icons-material";
 
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import socket from "../services/socket";
-import { useUser } from "../context/userContext";
-import { getAllMessagesData, shareChatMedia } from "../services/api";
-import ImageDialog from "./Messages/ImageDialog";
+import socket from "../../services/socket";
+import { useUser } from "../../context/userContext";
+import { getAllMessagesData, shareChatMedia } from "../../services/api";
+import ImageDialog from "./ImageDialog";
 
 type Message = {
     message_id?: number;
