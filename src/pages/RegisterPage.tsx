@@ -149,7 +149,7 @@ const RegisterPage: React.FC = () => {
                         color="primary"
                         fullWidth
                         onClick={handleRegister}
-                        sx={{ mt: 2, borderRadius: "20px", height: "38.67px" }}
+                        sx={{ mt: 2, borderRadius: "15px", height: "38.67px" }}
                     >
                         Register
                     </Button>

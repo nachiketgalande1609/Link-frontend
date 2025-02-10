@@ -139,7 +139,7 @@ const LoginPage: React.FC = () => {
                                 },
                             }}
                         />
-                        <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2, borderRadius: "20px" }}>
+                        <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2, borderRadius: "15px" }}>
                             Login
                         </Button>
                     </form>

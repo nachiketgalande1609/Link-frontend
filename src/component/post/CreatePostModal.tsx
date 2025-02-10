@@ -131,7 +131,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         fullWidth
                         onClick={handleSubmit}
                         disabled={!postContent.trim()}
-                        sx={{ borderRadius: "20px" }}
+                        sx={{ borderRadius: "15px" }}
                     >
                         {loading ? <CircularProgress size={24} color="inherit" /> : "Post"}
                     </Button>

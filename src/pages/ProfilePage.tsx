@@ -204,7 +204,7 @@ const ProfilePage = () => {
                                     }
                                     disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
                                     variant="outlined"
-                                    sx={{ mt: 2, borderRadius: "20px" }}
+                                    sx={{ mt: 2, borderRadius: "15px" }}
                                 >
                                     {profileData?.is_request_active
                                         ? "Request Pending"
@@ -212,7 +212,7 @@ const ProfilePage = () => {
                                           ? "Following"
                                           : "Follow"}
                                 </Button>
-                                <Button onClick={handleSendMessage} variant="outlined" sx={{ mt: 2, ml: 2, borderRadius: "20px" }}>
+                                <Button onClick={handleSendMessage} variant="outlined" sx={{ mt: 2, ml: 2, borderRadius: "15px" }}>
                                     Message
                                 </Button>
                             </Box>

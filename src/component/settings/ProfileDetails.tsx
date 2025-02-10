@@ -222,7 +222,7 @@ const ProfileDetails = () => {
                         onClick={handleUpdateProfile}
                         disabled={!isModified || profileUpdating}
                         sx={{
-                            borderRadius: "20px",
+                            borderRadius: "15px",
                             textTransform: "uppercase",
                             fontWeight: "bold",
                             "&:hover": { backgroundColor: "#007bb5" },
@@ -295,10 +295,10 @@ const ProfileDetails = () => {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary" disabled={uploading}>
+                    <Button onClick={() => setOpenDialog(false)} color="primary" disabled={uploading} sx={{ borderRadius: "15px" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleUploadProfilePic} color="primary" disabled={uploading}>
+                    <Button onClick={handleUploadProfilePic} color="primary" disabled={uploading} sx={{ borderRadius: "15px" }}>
                         Upload Photo
                     </Button>
                 </DialogActions>
