@@ -49,8 +49,8 @@ import SearchPage from "./pages/SearchPage";
 import { extendTheme } from "@mui/material/styles";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import Messages from "./pages/Messages/Messages";
-import Notifications from "./pages/Notifications";
+import Messages from "./pages/messages/Messages";
+import Notifications from "./pages/notifications/Notifications";
 import SettingsPage from "./pages/SettingsPage";
 import { getNotificationsCount } from "./services/api";
 
