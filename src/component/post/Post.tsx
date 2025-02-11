@@ -20,8 +20,10 @@ import {
     useMediaQuery,
     useTheme,
 } from "@mui/material";
+
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost } from "../../services/api"; // Assuming you have an updatePost function in your API
+import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 
 interface PostProps {
     username: string;
@@ -75,12 +77,9 @@ const Post: React.FC<PostProps> = ({
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
-
-    const [showAllComments, setShowAllComments] = useState(false);
-
-    const visibleComments = showAllComments ? postComments : postComments.slice(0, 2);
 
     const commentInputRef = useRef<HTMLInputElement>(null);
 
@@ -173,7 +172,7 @@ const Post: React.FC<PostProps> = ({
     };
 
     return (
-        <Card sx={{ borderRadius: isMobile ? 0 : borderRadius }}>
+        <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius }}>
             <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <Box sx={{ padding: isMobile ? "14px" : "16px" }}>
                     <Grid container spacing={2} alignItems="center">
@@ -255,7 +254,7 @@ const Post: React.FC<PostProps> = ({
                         {likes}
                     </Typography>
                     <IconButton sx={{ color: "#ffffff" }} onClick={handleFocusCommentField}>
-                        <ChatBubbleOutline sx={{ fontSize: "30px" }} />
+                        <ChatBubbleOutline sx={{ fontSize: "30px" }} onClick={() => setDrawerOpen(true)} />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {commentCount}
@@ -303,76 +302,7 @@ const Post: React.FC<PostProps> = ({
             )}
 
             <Box sx={{ padding: "0 16px 16px 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
-                <TextField
-                    fullWidth
-                    label="Add a comment..."
-                    variant="outlined"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleComment()}
-                    sx={{
-                        mb: "16px",
-                        "& .MuiOutlinedInput-root": {
-                            borderRadius: "20px",
-                        },
-                    }}
-                    inputRef={commentInputRef}
-                />
-                <Box
-                    sx={{
-                        maxHeight: "200px",
-                        overflowY: "auto",
-                        paddingRight: 2,
-                        "&::-webkit-scrollbar": {
-                            width: "4px",
-                        },
-                        "&::-webkit-scrollbar-thumb": {
-                            backgroundColor: "#ffffff",
-                            borderRadius: "10px",
-                        },
-                        "&::-webkit-scrollbar-track": {
-                            backgroundColor: "#202327",
-                        },
-                    }}
-                >
-                    {visibleComments.length === 0 ? (
-                        <Typography variant="body2" color="text.secondary">
-                            No comments yet
-                        </Typography>
-                    ) : (
-                        visibleComments.map((comment) => (
-                            <Box key={comment.id} sx={{ mb: 2 }}>
-                                <Box sx={{ display: "flex", alignItems: "center" }}>
-                                    <Avatar
-                                        src={comment.commenter_profile_picture}
-                                        alt={comment.commenter_username}
-                                        sx={{ width: isMobile ? 35 : 40, height: isMobile ? 35 : 40 }}
-                                    />
-                                    <Box sx={{ ml: isMobile ? "10px" : "16px", display: "flex", justifyContent: "space-between", width: "100%" }}>
-                                        <Typography variant="body2" color="text.primary">
-                                            <strong style={{ fontWeight: "bold", marginRight: "4px" }}>{comment.commenter_username}</strong>
-                                            {comment.content}
-                                        </Typography>
-                                        <Typography variant="caption" sx={{ ml: 2, color: "#666666" }}>
-                                            {comment.timeAgo}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </Box>
-                        ))
-                    )}
-                    {postComments.length > 3 && !showAllComments && (
-                        <Typography
-                            variant="body2"
-                            color="primary"
-                            sx={{ mt: 2, cursor: "pointer", textAlign: "center" }}
-                            onClick={() => setShowAllComments(true)}
-                        >
-                            View all {postComments.length} comments
-                        </Typography>
-                    )}
-                    <Typography sx={{ fontSize: "0.8rem", mt: 2, color: "#666666" }}>{timeAgo}</Typography>
-                </Box>
+                <Typography sx={{ fontSize: "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
             </Box>
 
             {/* Confirmation Dialog */}
@@ -398,6 +328,18 @@ const Post: React.FC<PostProps> = ({
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ScrollableCommentsDrawer
+                drawerOpen={drawerOpen}
+                setDrawerOpen={setDrawerOpen}
+                postComments={postComments}
+                handleComment={handleComment}
+                commentText={commentText}
+                setCommentText={setCommentText}
+                commentInputRef={commentInputRef}
+                content={content}
+                username={username}
+                avatarUrl={avatarUrl}
+            />
         </Card>
     );
 };
