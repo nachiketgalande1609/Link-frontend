@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import socket from "../../services/socket";
 import CreatePostModal from "../../component/post/CreatePostModal";
+import Logo from "../../static/logo-transparent.png";
 
 import {
     Box,
@@ -18,6 +19,7 @@ import {
     Badge,
     Dialog,
     Button,
+    Fade,
 } from "@mui/material";
 import {
     HomeOutlined as HomeOutlined,
@@ -229,39 +231,55 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                     display: "flex",
                                                     justifyContent: "space-between",
                                                     alignItems: "center",
-                                                    padding: 2,
+                                                    padding: open ? 2 : "21px 0",
                                                 }}
                                             >
-                                                <Typography
-                                                    style={{
-                                                        visibility: open ? "visible" : "hidden",
-                                                        backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
-                                                        WebkitBackgroundClip: "text",
-                                                        WebkitTextFillColor: "transparent",
-                                                    }}
-                                                    sx={{
-                                                        transition: "opacity 0.3s ease-in-out, visibility 0.9s ease-in-out",
-                                                        opacity: open ? 1 : 0,
-                                                    }}
-                                                    variant="h3"
-                                                    className="lily-script-one-regular"
-                                                >
-                                                    Ripple
-                                                </Typography>
-                                                <IconButton
-                                                    onClick={toggleDrawer}
-                                                    sx={{
-                                                        color: "white",
-                                                        transition: "transform 0.3s",
-                                                        position: "absolute",
-                                                        right: open ? 0 : 8,
-                                                        top: 24,
-                                                        borderRadius: "50%",
-                                                        "&:hover": { backgroundColor: "#000000" },
-                                                    }}
-                                                >
-                                                    {open ? <ChevronLeft /> : <ChevronRight />}
-                                                </IconButton>
+                                                {open ? (
+                                                    <Fade in={open} timeout={1000}>
+                                                        <Typography
+                                                            style={{
+                                                                visibility: open ? "visible" : "hidden",
+                                                                backgroundImage: "linear-gradient(to right,#7a60ff,#ff8800)",
+                                                                WebkitBackgroundClip: "text",
+                                                                WebkitTextFillColor: "transparent",
+                                                            }}
+                                                            sx={{
+                                                                transition: "opacity 0.3s ease-in-out, visibility 0.9s ease-in-out",
+                                                                opacity: open ? 1 : 0,
+                                                            }}
+                                                            variant="h3"
+                                                            className="lily-script-one-regular"
+                                                        >
+                                                            Ripple
+                                                        </Typography>
+                                                    </Fade>
+                                                ) : (
+                                                    <img
+                                                        src={Logo}
+                                                        alt="Logo"
+                                                        style={{
+                                                            width: "54.22px",
+                                                            transition: "width 0.3s ease-in-out",
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={toggleDrawer}
+                                                    />
+                                                )}
+                                                {open ? (
+                                                    <IconButton
+                                                        onClick={toggleDrawer}
+                                                        sx={{
+                                                            color: "white",
+                                                            position: "absolute",
+                                                            right: open ? 0 : 8,
+                                                            top: 24,
+                                                            borderRadius: "50%",
+                                                            "&:hover": { backgroundColor: "#000000" },
+                                                        }}
+                                                    >
+                                                        <ChevronLeft />
+                                                    </IconButton>
+                                                ) : null}
                                             </ListItem>
                                         );
                                     }

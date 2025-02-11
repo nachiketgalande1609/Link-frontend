@@ -24,6 +24,7 @@ import {
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
+import { useNavigate } from "react-router-dom";
 
 interface PostProps {
     username: string;
@@ -68,6 +69,7 @@ const Post: React.FC<PostProps> = ({
     borderRadius,
 }) => {
     const theme = useTheme();
+    const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
@@ -189,13 +191,25 @@ const Post: React.FC<PostProps> = ({
                     <Grid container spacing={2} alignItems="center">
                         {/* Avatar */}
                         <Grid item>
-                            <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 42, height: 42 }} />
+                            <Avatar
+                                src={avatarUrl || "https://via.placeholder.com/40"}
+                                alt={username}
+                                sx={{ width: 42, height: 42, cursor: "pointer" }}
+                                onClick={() => navigate(`/profile/${userId}`)}
+                            />
                         </Grid>
 
                         {/* Username */}
                         <Grid item xs zeroMinWidth>
                             <Typography
-                                sx={{ fontSize: isMobile ? "0.85rem" : "1rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                                sx={{
+                                    fontSize: isMobile ? "0.85rem" : "1rem",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    cursor: "pointer",
+                                }}
+                                onClick={() => navigate(`/profile/${userId}`)}
                             >
                                 {username}
                             </Typography>
@@ -269,13 +283,13 @@ const Post: React.FC<PostProps> = ({
             >
                 <Box>
                     <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white" }}>
-                        {isLiked ? <Favorite sx={{ fontSize: "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
+                        {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {likes}
                     </Typography>
                     <IconButton sx={{ color: "#ffffff" }} onClick={handleFocusCommentField}>
-                        <ChatBubbleOutline sx={{ fontSize: "30px" }} onClick={() => setDrawerOpen(true)} />
+                        <ChatBubbleOutline sx={{ fontSize: isMobile ? "26px" : "30px" }} onClick={() => setDrawerOpen(true)} />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {commentCount}
@@ -323,7 +337,7 @@ const Post: React.FC<PostProps> = ({
             )}
 
             <Box sx={{ padding: "0 16px 16px 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
-                <Typography sx={{ fontSize: "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
+                <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
             </Box>
 
             {/* Confirmation Dialog */}

@@ -1,4 +1,4 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography, Divider } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
@@ -43,7 +43,13 @@ const HomePage = () => {
                             sm={12}
                             md={12}
                             key={post.id}
-                            sx={{ display: "flex", alignItems: "center", flexDirection: "column", paddingTop: isMobile ? "0 !important" : "20px" }}
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                flexDirection: "column",
+                                paddingTop: isMobile ? "0 !important" : "20px",
+                                marginBottom: isMobile && index !== posts.length - 1 ? "2px" : "none", // Apply border except for last item
+                            }}
                         >
                             <Post
                                 username={post.username}
@@ -60,8 +66,6 @@ const HomePage = () => {
                                 initialComments={post.comments}
                                 borderRadius="20px"
                             />
-                            {index < posts.length - 1 && isMobile && <Divider sx={{ backgroundColor: "#444444", width: "95%" }} />}{" "}
-                            {/* Divider between posts */}
                         </Grid>
                     ))}
                 </Grid>
