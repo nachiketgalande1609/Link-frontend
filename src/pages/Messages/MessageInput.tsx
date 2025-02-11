@@ -5,21 +5,23 @@ import {
     AttachFileOutlined as AttachFileIcon,
     CancelOutlined as DeleteIcon,
     InsertDriveFile as FileIcon,
+    Close as CloseIcon,
 } from "@mui/icons-material";
 
 type Message = {
-    message_id?: number;
+    message_id: number;
     sender_id: number;
     message_text: string;
     timestamp: string;
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    file_url?: string;
-    file_name: string | null;
-    file_size: string | null;
+    file_url: string;
     delivered_timestamp?: string | null;
     read_timestamp?: string | null;
+    file_name: string | null;
+    file_size: string | null;
+    reply_to: number | null;
 };
 
 type MessageInputProps = {
@@ -86,6 +88,34 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 position: "relative",
             }}
         >
+            {/* Reply Preview */}
+            {selectedMessageForReply && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        backgroundColor: "#202327",
+                        padding: "8px",
+                        borderRadius: "8px",
+                        marginBottom: "8px",
+                        position: "relative",
+                    }}
+                >
+                    <Typography variant="body2" sx={{ flexGrow: 1, color: "#909090" }}>
+                        Replying to: {selectedMessageForReply.message_text}
+                    </Typography>
+                    <IconButton
+                        onClick={cancelReply}
+                        sx={{
+                            color: "#777",
+                            marginLeft: "8px",
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+            )}
+
             {/* File Preview */}
             {selectedFile && selectedFileURL && (
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>

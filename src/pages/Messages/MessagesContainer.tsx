@@ -12,7 +12,7 @@ import {
 
 interface MessagesContainerProps {
     selectedUser: User | null;
-    messages: Record<number, Message[]>;
+    messages: MessagesType;
     currentUser: User;
     handleImageClick: (fileUrl: string) => void;
     messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -32,7 +32,10 @@ type Message = {
     read_timestamp?: string | null;
     file_name: string | null;
     file_size: string | null;
+    reply_to: number | null;
 };
+
+type MessagesType = Record<string, Message[]>;
 
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
 

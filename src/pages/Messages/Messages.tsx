@@ -14,19 +14,21 @@ import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";
 
 type Message = {
-    message_id?: number;
+    message_id: number;
     sender_id: number;
     message_text: string;
     timestamp: string;
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    file_url?: string;
-    file_name: string | null;
-    file_size: string | null;
+    file_url: string;
     delivered_timestamp?: string | null;
     read_timestamp?: string | null;
+    file_name: string | null;
+    file_size: string | null;
+    reply_to: number | null;
 };
+
 type MessagesType = Record<string, Message[]>;
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
 
@@ -103,7 +105,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     // Scroll to bottom on new message and selecting user
     useEffect(() => {
         scrollToBottom();
-    }, [messages, selectedUser]);
+    }, [messages, selectedUser, selectedMessageForReply]);
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -155,6 +157,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                         file_url: data?.fileUrl,
                         file_name: data.fileName,
                         file_size: data.fileSize,
+                        reply_to: data.replyTo,
                     });
                 }
 
@@ -253,6 +256,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             file_size: fileSize,
             timestamp: new Date().toISOString(),
             saved: false,
+            reply_to: selectedMessageForReply?.message_id || null,
         };
 
         setMessages((prevMessages) => {
@@ -271,6 +275,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
 
         setSelectedFile(null);
         setSelectedFileURL("");
+        setSelectedMessageForReply(null);
 
         socket.emit("sendMessage", {
             tempId: tempMessageId,
@@ -280,6 +285,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             fileUrl,
             fileName,
             fileSize,
+            replyTo: selectedMessageForReply?.message_id || null,
         });
 
         socket.emit("stopTyping", {
