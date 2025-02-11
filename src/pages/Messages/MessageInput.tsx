@@ -8,6 +8,8 @@ import {
     Close as CloseIcon,
 } from "@mui/icons-material";
 
+type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
+
 type Message = {
     message_id: number;
     sender_id: number;
@@ -39,6 +41,7 @@ type MessageInputProps = {
     isSendingMessage: boolean;
     selectedMessageForReply: Message | null;
     cancelReply: () => void;
+    selectedUser: User | null;
 };
 
 const MessageInput: React.FC<MessageInputProps> = ({
@@ -53,10 +56,13 @@ const MessageInput: React.FC<MessageInputProps> = ({
     handleFileChange,
     isSendingMessage,
     selectedMessageForReply,
+    selectedUser,
     cancelReply,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Function to determine file type
     const getFilePreview = () => {
@@ -94,26 +100,40 @@ const MessageInput: React.FC<MessageInputProps> = ({
             {selectedMessageForReply && (
                 <Box
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        backgroundColor: "#202327",
-                        padding: "8px",
+                        backgroundColor: "#333",
+                        padding: "6px",
+                        borderLeft: "3px solid #1DA1F2",
                         borderRadius: "8px",
-                        marginBottom: "8px",
+                        minWidth: "100px",
+                        fontSize: "0.85rem",
+                        color: "#ccc",
+                        mb: 1,
+                        cursor: "pointer",
                         position: "relative",
+                        "&:hover": { backgroundColor: "#444" },
                     }}
                 >
-                    <Typography variant="body2" sx={{ flexGrow: 1, color: "#909090" }}>
-                        Replying to: {selectedMessageForReply.message_text}
+                    <Typography sx={{ fontSize: "0.9rem", fontWeight: "bold", color: "#1DA1F2", mb: 0.5 }}>
+                        {selectedMessageForReply.sender_id === currentUser.id ? "You" : selectedUser?.username}
+                    </Typography>
+                    <Typography noWrap sx={{ fontSize: "0.9rem" }}>
+                        {selectedMessageForReply.message_text.length > 50
+                            ? selectedMessageForReply.message_text.slice(0, 50) + "..."
+                            : selectedMessageForReply.message_text}
                     </Typography>
                     <IconButton
                         onClick={cancelReply}
                         sx={{
-                            color: "#777",
-                            marginLeft: "8px",
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            color: "white",
+                            "&:hover": {
+                                backgroundColor: "transparent",
+                            },
                         }}
                     >
-                        <CloseIcon />
+                        <CloseIcon sx={{ fontSize: "16px" }} />
                     </IconButton>
                 </Box>
             )}

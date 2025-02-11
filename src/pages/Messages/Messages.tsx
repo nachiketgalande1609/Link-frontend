@@ -471,6 +471,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                         handleFileChange={handleFileChange}
                         isSendingMessage={isSendingMessage}
                         selectedMessageForReply={selectedMessageForReply}
+                        selectedUser={selectedUser}
                         cancelReply={cancelReply}
                     />
                 )}
