@@ -228,7 +228,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
 
     // Socket to send messages and emit stop typing
     const handleSendMessage = async () => {
-        if (!inputMessage.trim() || !selectedUser) return;
+        if ((!inputMessage.trim() && !selectedFile) || !selectedUser) return; // Prevent sending empty messages
 
         let fileUrl = null;
         let fileName = null;

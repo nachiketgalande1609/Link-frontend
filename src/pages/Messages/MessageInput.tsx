@@ -154,7 +154,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
                         setInputMessage(e.target.value);
                         handleTyping();
                     }}
-                    onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && (inputMessage.trim() || selectedFile)) {
+                            handleSendMessage();
+                        }
+                    }}
                     sx={{
                         "& .MuiOutlinedInput-root": {
                             borderRadius: "10px",
@@ -174,7 +178,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                     </IconButton>
                 </label>
 
-                <IconButton onClick={handleSendMessage} color="primary" disabled={isSendingMessage}>
+                <IconButton onClick={() => (inputMessage.trim() || selectedFile) && handleSendMessage()} color="primary" disabled={isSendingMessage}>
                     {isSendingMessage ? <CircularProgress size={24} /> : <SendIcon />}
                 </IconButton>
             </Box>
