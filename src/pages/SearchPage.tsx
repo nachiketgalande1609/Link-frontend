@@ -1,5 +1,4 @@
-// SearchPage.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     TextField,
     Container,
@@ -24,6 +23,7 @@ export default function SearchPage() {
     const [loading, setLoading] = useState(false);
     const debouncedQuery = useDebounce(searchQuery, 300);
     const navigate = useNavigate();
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -40,15 +40,19 @@ export default function SearchPage() {
         loadHistory();
     }, []);
 
+    // Focus on search input when component mounts
+    useEffect(() => {
+        if (searchInputRef.current) {
+            searchInputRef.current.focus();
+        }
+    }, []);
+
     // Handle user click
     const handleUserClick = async (targetUser: any) => {
         try {
-            // Add to search history
             await addToSearchHistory(currentUser?.id, targetUser.id);
-            // Refresh history list
             const historyResponse = await getSearchHistory(currentUser?.id);
             setHistory(historyResponse.data.data);
-            // Navigate to profile
             navigate(`/profile/${targetUser.id}`);
         } catch (error) {
             console.error("Error saving history:", error);
@@ -98,6 +102,7 @@ export default function SearchPage() {
                 label="Search Users"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                inputRef={searchInputRef} // Attach ref here
             />
             {loading && <CircularProgress sx={{ display: "block", mx: "auto" }} />}
             {/* Search Results */}
