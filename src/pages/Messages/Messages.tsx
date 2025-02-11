@@ -27,6 +27,8 @@ type Message = {
     file_name: string | null;
     file_size: string | null;
     reply_to: number | null;
+    image_height: number | null;
+    image_width: number | null;
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -158,6 +160,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                         file_name: data.fileName,
                         file_size: data.fileSize,
                         reply_to: data.replyTo,
+                        image_width: data.iamgeWidth,
+                        image_height: data.imageHeight,
                     });
                 }
 
@@ -169,6 +173,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             socket.off("receiveMessage");
         };
     }, [currentUser]);
+
+    console.log(messages);
 
     // Socket for catching typing activity
     useEffect(() => {
@@ -227,6 +233,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         let fileUrl = null;
         let fileName = null;
         let fileSize = null;
+        let imageWidth = null;
+        let imageHeight = null;
 
         if (selectedFile) {
             const formData = new FormData();
@@ -238,6 +246,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 fileUrl = response?.data?.fileUrl;
                 fileName = response?.data?.fileName;
                 fileSize = response?.data?.fileSize;
+                imageWidth = response?.data?.imageWidth;
+                imageHeight = response?.data?.imageHeight;
             } catch (error) {
                 console.error("Image upload failed:", error);
                 setIsSendingMessage(false);
@@ -254,6 +264,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             file_url: fileUrl,
             file_name: fileName,
             file_size: fileSize,
+            image_width: imageWidth,
+            image_height: imageHeight,
             timestamp: new Date().toISOString(),
             saved: false,
             reply_to: selectedMessageForReply?.message_id || null,
@@ -285,6 +297,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             fileUrl,
             fileName,
             fileSize,
+            imageWidth,
+            imageHeight,
             replyTo: selectedMessageForReply?.message_id || null,
         });
 

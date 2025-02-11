@@ -26,16 +26,25 @@ type MessagesDrawerProps = {
 };
 
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
+
 type Message = {
-    message_id?: number;
+    message_id: number;
     sender_id: number;
     message_text: string;
     timestamp: string;
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    file_url?: string;
+    file_url: string;
+    delivered_timestamp?: string | null;
+    read_timestamp?: string | null;
+    file_name: string | null;
+    file_size: string | null;
+    reply_to: number | null;
+    image_height: number | null;
+    image_width: number | null;
 };
+
 type MessagesType = Record<string, Message[]>;
 
 const MessagesDrawer: React.FC<MessagesDrawerProps> = ({

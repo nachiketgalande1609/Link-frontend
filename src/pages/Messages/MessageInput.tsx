@@ -22,6 +22,8 @@ type Message = {
     file_name: string | null;
     file_size: string | null;
     reply_to: number | null;
+    image_height: number | null;
+    image_width: number | null;
 };
 
 type MessageInputProps = {

@@ -34,6 +34,8 @@ type Message = {
     file_name: string | null;
     file_size: string | null;
     reply_to: number | null;
+    image_height: number | null;
+    image_width: number | null;
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -93,7 +95,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                             {msg.file_url && (
                                 <Box
                                     sx={{
-                                        width: "200px",
                                         minHeight: "100px",
                                         display: "flex",
                                         justifyContent: "center",
@@ -120,8 +121,11 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                 src={msg.file_url}
                                                 alt="Sent Image"
                                                 style={{
-                                                    maxWidth: "100%",
-                                                    height: "auto",
+                                                    height: "300px",
+                                                    width:
+                                                        msg.image_width && msg.image_height
+                                                            ? `${(msg.image_width / msg.image_height) * 300}px`
+                                                            : "auto", // Fallback to auto if dimensions are missing
                                                     objectFit: "contain",
                                                     borderRadius: "10px",
                                                     visibility: "hidden",
