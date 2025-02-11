@@ -91,7 +91,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                padding: 2,
                 borderTop: selectedFileURL ? "1px solid #202327" : null,
                 position: "relative",
             }}
@@ -140,7 +139,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
 
             {/* File Preview */}
             {selectedFile && selectedFileURL && (
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", mb: 2, padding: 2 }}>
                     {getFilePreview()}
                     <IconButton
                         onClick={() => {
@@ -164,12 +163,13 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 </Box>
             )}
 
-            <Box sx={{ display: "flex", alignItems: "center", mb: isMobile ? "50px" : null }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: isMobile ? "50px" : null, padding: 2, borderTop: "1px solid #202327" }}>
                 <TextField
                     fullWidth
                     placeholder="Type a message..."
                     size={isMobile ? "small" : "medium"}
                     value={inputMessage}
+                    variant="standard"
                     onChange={(e) => {
                         setInputMessage(e.target.value);
                         handleTyping();
@@ -179,12 +179,22 @@ const MessageInput: React.FC<MessageInputProps> = ({
                             handleSendMessage();
                         }
                     }}
+                    multiline
+                    minRows={1}
+                    maxRows={4}
                     sx={{
-                        "& .MuiOutlinedInput-root": {
-                            borderRadius: "10px",
+                        "& .MuiInput-underline:before": {
+                            borderBottom: "none !important",
+                        },
+                        "& .MuiInput-underline:after": {
+                            borderBottom: "none !important",
+                        },
+                        "& .MuiInput-underline:hover:before": {
+                            borderBottom: "none !important",
                         },
                     }}
                 />
+
                 <input
                     type="file"
                     onChange={handleFileChange}

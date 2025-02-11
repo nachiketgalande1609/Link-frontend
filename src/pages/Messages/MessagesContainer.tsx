@@ -93,6 +93,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                     clearTimeout(Number(e.currentTarget.dataset.timeout));
                                 }
                             }}
+                            onMouseEnter={() => setHoveredMessage(msg.message_id)}
+                            onMouseLeave={() => setHoveredMessage(null)}
                         >
                             <Box>
                                 {msg.file_url && (
@@ -333,8 +335,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                         backgroundColor: highlightedMessageId === msg.message_id ? "#0b335b" : "transparent",
                                         borderRadius: "12px",
                                     }}
-                                    onMouseEnter={() => setHoveredMessage(msg.message_id)}
-                                    onMouseLeave={() => setHoveredMessage(null)}
                                 >
                                     {msg?.message_text && (
                                         <Typography
@@ -392,7 +392,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                     )}
                                 </Box>
                             </Box>
-                            <Box sx={{ paddingBottom: "2px" }}>
+                            <Box sx={{ paddingBottom: "1px" }}>
                                 {msg.sender_id === currentUser.id &&
                                     (msg.read ? (
                                         <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} />
