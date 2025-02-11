@@ -56,6 +56,15 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [isSendingMessage, setIsSendingMessage] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string>("");
+    const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
+
+    const handleReply = (msg: Message) => {
+        setSelectedMessageForReply(msg);
+    };
+
+    const cancelReply = () => {
+        setSelectedMessageForReply(null);
+    };
 
     const navigatedUser = location.state || {};
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
@@ -422,6 +431,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     currentUser={currentUser}
                     handleImageClick={handleImageClick}
                     messagesEndRef={messagesEndRef}
+                    handleReply={handleReply}
                 />
 
                 {/* Typing indicator */}
@@ -440,6 +450,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                         handleSendMessage={handleSendMessage}
                         handleFileChange={handleFileChange}
                         isSendingMessage={isSendingMessage}
+                        selectedMessageForReply={selectedMessageForReply}
+                        cancelReply={cancelReply}
                     />
                 )}
             </Box>

@@ -7,6 +7,7 @@ import {
     Close as CloseIcon,
     Article as PdfIcon,
     InsertDriveFile as FolderIcon,
+    Reply as ReplyIcon,
 } from "@mui/icons-material";
 
 interface MessagesContainerProps {
@@ -15,10 +16,11 @@ interface MessagesContainerProps {
     currentUser: User;
     handleImageClick: (fileUrl: string) => void;
     messagesEndRef: React.RefObject<HTMLDivElement>;
+    handleReply: (msg: Message) => void;
 }
 
 type Message = {
-    message_id?: number;
+    message_id: number;
     sender_id: number;
     message_text: string;
     timestamp: string;
@@ -34,13 +36,21 @@ type Message = {
 
 type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
 
-const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, messages, currentUser, handleImageClick, messagesEndRef }) => {
+const MessagesContainer: React.FC<MessagesContainerProps> = ({
+    selectedUser,
+    messages,
+    currentUser,
+    handleImageClick,
+    messagesEndRef,
+    handleReply,
+}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     // State to manage the drawer
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+    const [hoveredMessage, setHoveredMessage] = useState<number | null>(null);
 
     // Handle double click on a message
     const handleDoubleClick = (msg: Message) => {
@@ -260,6 +270,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                                 justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                 width: "100%",
                             }}
+                            onMouseEnter={() => setHoveredMessage(msg.message_id)}
+                            onMouseLeave={() => setHoveredMessage(null)}
                         >
                             <Typography
                                 sx={{
@@ -286,6 +298,25 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                                 >
                                     {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
                                 </span>
+                                {hoveredMessage === msg.message_id && (
+                                    <IconButton
+                                        sx={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            transform: "translateY(-50%)",
+                                            left: msg.sender_id === currentUser.id ? "-40px" : "auto",
+                                            right: msg.sender_id === currentUser.id ? "auto" : "-40px",
+                                            backgroundColor: "rgba(0, 0, 0, 0.3)",
+                                            color: "white",
+                                            "&:hover": {
+                                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                            },
+                                        }}
+                                        onClick={() => handleReply(msg)}
+                                    >
+                                        <ReplyIcon />
+                                    </IconButton>
+                                )}
                             </Typography>
 
                             {msg.sender_id === currentUser.id &&

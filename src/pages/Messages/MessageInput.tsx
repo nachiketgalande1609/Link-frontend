@@ -7,6 +7,21 @@ import {
     InsertDriveFile as FileIcon,
 } from "@mui/icons-material";
 
+type Message = {
+    message_id?: number;
+    sender_id: number;
+    message_text: string;
+    timestamp: string;
+    delivered?: boolean;
+    read?: boolean;
+    saved?: boolean;
+    file_url?: string;
+    file_name: string | null;
+    file_size: string | null;
+    delivered_timestamp?: string | null;
+    read_timestamp?: string | null;
+};
+
 type MessageInputProps = {
     selectedFile: File | null;
     setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>;
@@ -18,6 +33,8 @@ type MessageInputProps = {
     handleSendMessage: () => Promise<void>;
     handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     isSendingMessage: boolean;
+    selectedMessageForReply: Message | null;
+    cancelReply: () => void;
 };
 
 const MessageInput: React.FC<MessageInputProps> = ({
@@ -31,6 +48,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
     handleSendMessage,
     handleFileChange,
     isSendingMessage,
+    selectedMessageForReply,
+    cancelReply,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
