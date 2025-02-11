@@ -5,7 +5,7 @@ import {
     DoneAll as DoneAllIcon,
     AccessTime as AccessTimeIcon,
     Close as CloseIcon,
-    PictureAsPdf as PictureAsPdfIcon,
+    Article as PdfIcon,
     InsertDriveFile as FolderIcon,
 } from "@mui/icons-material";
 
@@ -163,7 +163,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                                                     justifyContent: "center",
                                                 }}
                                             >
-                                                <PictureAsPdfIcon sx={{ color: "#d32f2f", fontSize: 40 }} />
+                                                <PdfIcon sx={{ color: "#d32f2f", fontSize: 40 }} />
                                                 {msg.file_name && (
                                                     <Typography fontSize={14} color="text.secondary">
                                                         .{msg.file_name.split(".").pop()}
