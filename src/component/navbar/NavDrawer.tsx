@@ -232,6 +232,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                     justifyContent: "space-between",
                                                     alignItems: "center",
                                                     padding: open ? 2 : "21px 0",
+                                                    height: "90px",
                                                 }}
                                             >
                                                 {open ? (
