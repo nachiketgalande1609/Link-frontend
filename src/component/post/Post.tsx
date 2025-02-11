@@ -78,6 +78,7 @@ const Post: React.FC<PostProps> = ({
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [showLikeAnimation, setShowLikeAnimation] = useState(false);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -171,6 +172,16 @@ const Post: React.FC<PostProps> = ({
         }
     };
 
+    const handleDoubleClickLike = async () => {
+        if (!isLiked) {
+            await handleLike();
+        }
+        setShowLikeAnimation(true);
+        setTimeout(() => {
+            setShowLikeAnimation(false);
+        }, 1000); // Adjust timing if needed
+    };
+
     return (
         <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius, width: "100%" }}>
             <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
@@ -221,7 +232,7 @@ const Post: React.FC<PostProps> = ({
                 </Box>
 
                 {fileUrl && (
-                    <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }}>
+                    <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }} onDoubleClick={handleDoubleClickLike}>
                         <CardMedia
                             component="img"
                             image={fileUrl}
@@ -235,6 +246,20 @@ const Post: React.FC<PostProps> = ({
                                 objectFit: "cover",
                             }}
                         />
+                        {showLikeAnimation && (
+                            <Favorite
+                                sx={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%) scale(1.5)",
+                                    color: "red",
+                                    opacity: 1,
+                                    fontSize: "80px",
+                                    transition: "opacity 0.5s ease-in-out",
+                                }}
+                            />
+                        )}
                     </Box>
                 )}
             </CardContent>
