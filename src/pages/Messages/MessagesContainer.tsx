@@ -25,7 +25,7 @@ type Message = {
     delivered?: boolean;
     read?: boolean;
     saved?: boolean;
-    file_url?: string;
+    file_url: string;
     delivered_timestamp?: string | null;
     read_timestamp?: string | null;
     file_name: string | null;
@@ -132,36 +132,46 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : msg.file_url.match(/\.pdf$/i) ? (
-                                    <Box sx={{ display: "flex", flexDirection: "column", width: "100%", backgroundColor: "#202327" }}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            width: "100%",
+                                            backgroundColor: "#202327",
+                                        }}
+                                    >
                                         <Box
                                             sx={{
                                                 display: "flex",
-                                                justifyContent: "center",
-                                                gap: 2,
-                                                padding: 1.5,
-                                                borderRadius: 2,
-                                                backgroundColor: "#f5f5f5",
-                                                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                                                flexDirection: "column",
+                                                width: "100%",
+                                                backgroundColor: "#202327",
+                                                cursor: "pointer",
                                             }}
+                                            onClick={() => window.open(msg.file_url, "_blank", "noopener,noreferrer")}
                                         >
-                                            <PictureAsPdfIcon sx={{ color: "#d32f2f", fontSize: 40 }} />
-
-                                            <Button
-                                                href={msg.file_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                variant="contained"
-                                                size="small"
-                                                color="error"
+                                            <Box
                                                 sx={{
-                                                    textTransform: "none",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: 1,
+                                                    padding: 1.5,
                                                     borderRadius: 2,
-                                                    flexGrow: 1,
+                                                    border: "1px solid #505050",
+                                                    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                                                    margin: "6px",
+                                                    justifyContent: "center",
                                                 }}
                                             >
-                                                View
-                                            </Button>
+                                                <PictureAsPdfIcon sx={{ color: "#d32f2f", fontSize: 40 }} />
+                                                {msg.file_name && (
+                                                    <Typography fontSize={14} color="text.secondary">
+                                                        .{msg.file_name.split(".").pop()}
+                                                    </Typography>
+                                                )}
+                                            </Box>
                                         </Box>
+
                                         <Box sx={{ flex: 1, overflow: "hidden", padding: "8px 8px 4px 8px" }}>
                                             <Typography
                                                 fontWeight={500}
@@ -190,31 +200,33 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({ selectedUser, mes
                                             sx={{
                                                 display: "flex",
                                                 justifyContent: "center",
-                                                gap: 2,
+                                                alignItems: "center",
+                                                gap: 1,
                                                 padding: 1.5,
                                                 borderRadius: 2,
-                                                backgroundColor: "#f5f5f5",
+                                                border: "1px solid #505050",
                                                 boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                                                margin: "6px",
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={() => {
+                                                const link = document.createElement("a");
+                                                link.href = msg.file_url;
+                                                link.download = ""; // Allows the browser to handle the filename
+                                                link.rel = "noopener noreferrer";
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
                                             }}
                                         >
                                             <FolderIcon sx={{ color: "#ffd014", fontSize: 40 }} />
-
-                                            <Button
-                                                href={msg.file_url}
-                                                download
-                                                rel="noopener noreferrer"
-                                                variant="contained"
-                                                size="small"
-                                                color="error"
-                                                sx={{
-                                                    textTransform: "none",
-                                                    borderRadius: 2,
-                                                    flexGrow: 1,
-                                                }}
-                                            >
-                                                Download
-                                            </Button>
+                                            {msg.file_name && (
+                                                <Typography fontSize={14} color="text.secondary">
+                                                    .{msg.file_name.split(".").pop()}
+                                                </Typography>
+                                            )}
                                         </Box>
+
                                         <Box sx={{ flex: 1, overflow: "hidden", padding: "8px 8px 4px 8px" }}>
                                             <Typography
                                                 fontWeight={500}
