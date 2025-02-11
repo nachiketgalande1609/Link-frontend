@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, IconButton, Avatar, Box, TextField, SwipeableDrawer, useMediaQuery, useTheme, styled } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
@@ -41,6 +41,13 @@ export default function ScrollableCommentsDrawer({
 }: ScrollableCommentsDrawerProps) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    // Focus input when drawer opens
+    useEffect(() => {
+        if (drawerOpen && commentInputRef.current) {
+            setTimeout(() => commentInputRef.current?.focus(), 300); // Delay to allow animation to complete
+        }
+    }, [drawerOpen, commentInputRef]);
 
     const Puller = styled("div")(({ theme }) => ({
         width: 100,
@@ -154,20 +161,27 @@ export default function ScrollableCommentsDrawer({
                     alignItems: "center",
                     gap: 1,
                     padding: isMobile ? "10px 8px" : "10px 16px",
+                    backgroundColor: "#202327",
                     borderTop: "1px solid #505050",
                 }}
             >
                 <TextField
                     fullWidth
-                    variant="outlined"
+                    variant="standard"
                     placeholder="Write a comment..."
                     value={commentText}
                     size={isMobile ? "small" : "medium"}
                     onChange={(e) => setCommentText(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleComment()}
                     sx={{
-                        "& .MuiOutlinedInput-root": {
-                            borderRadius: "15px",
+                        "& .MuiInput-underline:before": {
+                            borderBottom: "none !important",
+                        },
+                        "& .MuiInput-underline:after": {
+                            borderBottom: "none !important",
+                        },
+                        "& .MuiInput-underline:hover:before": {
+                            borderBottom: "none !important",
                         },
                     }}
                     inputRef={commentInputRef}

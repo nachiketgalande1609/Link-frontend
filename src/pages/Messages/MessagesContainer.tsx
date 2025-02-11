@@ -334,6 +334,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                         transition: "background-color 0.5s ease-in-out",
                                         backgroundColor: highlightedMessageId === msg.message_id ? "#0b335b" : "transparent",
                                         borderRadius: "12px",
+                                        position: "relative",
                                     }}
                                 >
                                     {msg?.message_text && (
@@ -342,7 +343,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                 backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#202327",
                                                 padding: "8px 12px",
                                                 borderRadius: "12px",
-                                                maxWidth: "70%",
+                                                maxWidth: isMobile ? "70vw" : { lg: "40vw", md: "30vw", sm: "30vw", xs: "20vw" },
                                                 fontSize: isMobile ? "0.8rem" : "1rem",
                                                 wordWrap: "break-word",
                                                 whiteSpace: "normal",

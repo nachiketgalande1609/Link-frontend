@@ -282,13 +282,13 @@ const Post: React.FC<PostProps> = ({
                 sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
             >
                 <Box>
-                    <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white" }}>
+                    <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", ":hover": { backgroundColor: "transparent" } }}>
                         {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                         {likes}
                     </Typography>
-                    <IconButton sx={{ color: "#ffffff" }} onClick={handleFocusCommentField}>
+                    <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
                         <ChatBubbleOutline sx={{ fontSize: isMobile ? "26px" : "30px" }} onClick={() => setDrawerOpen(true)} />
                     </IconButton>
                     <Typography variant="body2" component="span" sx={{ mr: 1 }}>
