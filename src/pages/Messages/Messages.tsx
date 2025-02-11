@@ -8,7 +8,7 @@ import socket from "../../services/socket";
 import { useUser } from "../../context/userContext";
 import { getAllMessagesData, shareChatMedia } from "../../services/api";
 import ImageDialog from "./ImageDialog";
-import MessagesContainer from "./MessagesContainer";
+import MessagesContainer from "./messageContainer/MessagesContainer";
 import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";

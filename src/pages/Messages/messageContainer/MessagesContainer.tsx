@@ -8,7 +8,7 @@ import {
     InsertDriveFile as FolderIcon,
     Reply as ReplyIcon,
 } from "@mui/icons-material";
-import BlurBackgroundImage from "../../static/blur.jpg";
+import BlurBackgroundImage from "../../../static/blur.jpg";
 
 import MessageDetailsDrawer from "./MessageDetailsDrawer";
 
