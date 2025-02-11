@@ -172,17 +172,13 @@ const Post: React.FC<PostProps> = ({
     };
 
     return (
-        <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius }}>
+        <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius, width: "100%" }}>
             <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <Box sx={{ padding: isMobile ? "14px" : "16px" }}>
                     <Grid container spacing={2} alignItems="center">
                         {/* Avatar */}
                         <Grid item>
-                            <Avatar
-                                src={avatarUrl || "https://via.placeholder.com/40"}
-                                alt={username}
-                                sx={{ width: isMobile ? 42 : 52, height: isMobile ? 42 : 52 }}
-                            />
+                            <Avatar src={avatarUrl || "https://via.placeholder.com/40"} alt={username} sx={{ width: 42, height: 42 }} />
                         </Grid>
 
                         {/* Username */}

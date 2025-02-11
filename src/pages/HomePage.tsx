@@ -1,4 +1,4 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography, Divider } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
@@ -35,9 +35,16 @@ const HomePage = () => {
                     <CircularProgress />
                 </Box>
             ) : posts.length > 0 ? (
-                <Grid container spacing={3}>
-                    {posts.map((post) => (
-                        <Grid item xs={12} sm={12} md={12} key={post.id}>
+                <Grid container spacing={3} sx={{ marginTop: "10px" }}>
+                    {posts.map((post, index) => (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={12}
+                            md={12}
+                            key={post.id}
+                            sx={{ display: "flex", alignItems: "center", flexDirection: "column", paddingTop: isMobile ? "0 !important" : "20px" }}
+                        >
                             <Post
                                 username={post.username}
                                 content={post.content}
@@ -53,6 +60,8 @@ const HomePage = () => {
                                 initialComments={post.comments}
                                 borderRadius="20px"
                             />
+                            {index < posts.length - 1 && isMobile && <Divider sx={{ backgroundColor: "#444444", width: "95%" }} />}{" "}
+                            {/* Divider between posts */}
                         </Grid>
                     ))}
                 </Grid>
