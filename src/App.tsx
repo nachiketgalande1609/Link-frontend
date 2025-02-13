@@ -11,7 +11,6 @@ import PublicRoute from "./component/PublicRoute";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import NotFoundPage from "./pages/NotFoundPage";
-import ExplorePage from "./pages/ExplorePage";
 import SearchPage from "./pages/SearchPage";
 import { extendTheme } from "@mui/material/styles";
 import LoginPage from "./pages/LoginPage";
@@ -161,14 +160,6 @@ const AppContent = () => {
                         element={
                             <PrivateRoute>
                                 <Notifications />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/explore"
-                        element={
-                            <PrivateRoute>
-                                <ExplorePage />
                             </PrivateRoute>
                         }
                     />

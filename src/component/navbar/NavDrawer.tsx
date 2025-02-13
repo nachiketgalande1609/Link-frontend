@@ -24,8 +24,6 @@ import {
 import {
     HomeOutlined as HomeOutlined,
     Home as HomeFilled,
-    ExploreOutlined as CompassOutlined,
-    Explore as CompassFilled,
     SearchOutlined as Search,
     Menu as MenuIcon,
     Add as AddIcon,
@@ -34,7 +32,6 @@ import {
     FavoriteBorder,
     Favorite,
     ChevronLeft,
-    ChevronRight,
     Login,
     AccountCircleOutlined,
 } from "@mui/icons-material";
@@ -114,13 +111,6 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                           <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />
                       </Badge>
                   ),
-              },
-              {
-                  kind: "item",
-                  segment: "explore",
-                  title: "Explore",
-                  icon: <CompassOutlined sx={{ fontSize: "2rem" }} />,
-                  filledIcon: <CompassFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
               },
               {
                   kind: "item",
