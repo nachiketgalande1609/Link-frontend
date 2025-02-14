@@ -99,42 +99,46 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog }: Mor
             >
                 Copy Profile Link
             </Button>
-            <Button
-                fullWidth
-                onClick={() => {
-                    navigate("/settings?setting=profiledetails");
-                    handleCloseDialog();
-                }}
-                sx={{
-                    padding: "10px",
-                    fontSize: isMobile ? "0.85rem" : "0.9rem",
-                    backgroundColor: "#202327",
-                    textTransform: "none",
-                    borderRadius: 0,
-                    "&:hover": { backgroundColor: "#2e3238" },
-                    borderBottom: "1px solid #505050",
-                }}
-            >
-                Settings
-            </Button>
-            <Button
-                fullWidth
-                onClick={() => {
-                    handleLogout();
-                    handleCloseDialog();
-                }}
-                sx={{
-                    padding: "10px",
-                    fontSize: isMobile ? "0.85rem" : "0.9rem",
-                    backgroundColor: "#202327",
-                    textTransform: "none",
-                    borderRadius: 0,
-                    "&:hover": { backgroundColor: "#2e3238" },
-                    borderBottom: "1px solid #505050",
-                }}
-            >
-                Logout
-            </Button>
+            {isMobile && (
+                <>
+                    <Button
+                        fullWidth
+                        onClick={() => {
+                            navigate("/settings?setting=profiledetails");
+                            handleCloseDialog();
+                        }}
+                        sx={{
+                            padding: "10px",
+                            fontSize: isMobile ? "0.85rem" : "0.9rem",
+                            backgroundColor: "#202327",
+                            textTransform: "none",
+                            borderRadius: 0,
+                            "&:hover": { backgroundColor: "#2e3238" },
+                            borderBottom: "1px solid #505050",
+                        }}
+                    >
+                        Settings
+                    </Button>
+                    <Button
+                        fullWidth
+                        onClick={() => {
+                            handleLogout();
+                            handleCloseDialog();
+                        }}
+                        sx={{
+                            padding: "10px",
+                            fontSize: isMobile ? "0.85rem" : "0.9rem",
+                            backgroundColor: "#202327",
+                            textTransform: "none",
+                            borderRadius: 0,
+                            "&:hover": { backgroundColor: "#2e3238" },
+                            borderBottom: "1px solid #505050",
+                        }}
+                    >
+                        Logout
+                    </Button>
+                </>
+            )}
             <Button
                 fullWidth
                 onClick={handleCloseDialog}

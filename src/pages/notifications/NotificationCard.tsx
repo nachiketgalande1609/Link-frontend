@@ -1,5 +1,6 @@
 import { ListItem, ListItemText, ListItemAvatar, Avatar, Typography, Paper, Button, Box, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { timeAgo } from "../../utils/utils";
 
 // Define the Notification interface separately
 interface Notification {
@@ -64,7 +65,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                     }
                     secondary={
                         <Typography color="gray" sx={{ fontSize: isMobile ? "0.7rem" : "0.8rem" }}>
-                            {new Date(notification.created_at).toLocaleString()}
+                            {timeAgo(notification.created_at)}
                         </Typography>
                     }
                     sx={{ flexGrow: 1 }}

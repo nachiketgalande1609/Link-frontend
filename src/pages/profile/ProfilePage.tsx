@@ -4,7 +4,7 @@ import ProfilePagePost from "../../component/post/ProfilePagePost";
 import ModalPost from "../../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../../services/api";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import LockIcon from "@mui/icons-material/Lock";
 import MoreOptionsDialog from "./MoreOptionsDialog";
 
