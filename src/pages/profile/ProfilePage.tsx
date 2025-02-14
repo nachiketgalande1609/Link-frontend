@@ -3,7 +3,7 @@ import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton,
 import ProfilePagePost from "../../component/post/ProfilePagePost";
 import ModalPost from "../../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../../services/api";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { MoreVert } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import LockIcon from "@mui/icons-material/Lock";
 import MoreOptionsDialog from "./MoreOptionsDialog";
@@ -125,8 +125,12 @@ const ProfilePage = () => {
                 }}
             >
                 <Grid container spacing={3} alignItems="start" sx={{ position: "relative" }}>
-                    <IconButton aria-label="more options" onClick={handleMoreOptionsClick} sx={{ position: "absolute", right: 0, top: 15 }}>
-                        <MoreHorizIcon />
+                    <IconButton
+                        aria-label="more options"
+                        onClick={handleMoreOptionsClick}
+                        sx={{ position: "absolute", right: 0, top: 15, ":hover": { backgroundColor: "transparent" } }}
+                    >
+                        <MoreVert />
                     </IconButton>
 
                     <Grid item xs={12} sm={12} md={3} lg={2} sx={{ display: "flex", justifyContent: "center" }}>
