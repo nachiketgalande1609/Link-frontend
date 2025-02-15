@@ -132,7 +132,7 @@ export default function SearchPage() {
                                 <ListItemAvatar>
                                     <Avatar src={item.profile_picture} />
                                 </ListItemAvatar>
-                                <ListItemText primary={item.username} secondary={item.email} onClick={() => navigate(`/profile/${item.user_id}`)} />
+                                <ListItemText primary={item.username} secondary={item.email} onClick={() => navigate(`/profile/${item.id}`)} />
                                 <IconButton
                                     edge="end"
                                     onClick={(e) => {
