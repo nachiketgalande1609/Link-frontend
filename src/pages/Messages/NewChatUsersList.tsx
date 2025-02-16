@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, MenuItem, Avatar, TextField, Box, Typography } from "@mui/material";
 
 interface User {
@@ -16,8 +16,19 @@ interface NewChatUsersListProps {
     usersList: User[];
     handleUserClick: (userId: number) => void;
 }
+
 const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList, handleUserClick }: NewChatUsersListProps) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+    // Focus the input field when the menu opens
+    useEffect(() => {
+        if (open) {
+            setTimeout(() => {
+                searchInputRef.current?.focus();
+            }, 100); // Small delay to ensure menu opens before focusing
+        }
+    }, [open]);
 
     // Filter users based on the search term
     const filteredUsers = usersList.filter((user) => user.username.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -36,13 +47,14 @@ const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList, handleUserCl
                 horizontal: "right",
             }}
             PaperProps={{
-                sx: { minWidth: 250, padding: 0, backgroundColor: "#000000" },
+                sx: { minWidth: 250, padding: 0, backgroundColor: "#000000", borderRadius: "10px" },
             }}
             MenuListProps={{ sx: { p: 0 } }}
             sx={{ backgroundColor: "rgb(0, 0, 0, 0.5)" }}
         >
             <Box sx={{ padding: "14px 10px 2px 10px", borderBottom: "1px solid #444444" }}>
                 <TextField
+                    inputRef={(el) => (searchInputRef.current = el)} // Ensure ref captures the input field
                     variant="standard"
                     size="small"
                     placeholder="Search users..."
@@ -51,8 +63,8 @@ const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList, handleUserCl
                     onChange={(e) => setSearchTerm(e.target.value)}
                     sx={{
                         "& .MuiInputBase-input": {
-                            fontSize: "0.9rem", // Reduce text size
-                            color: "#ffffff", // Adjust text color for better visibility
+                            fontSize: "0.9rem",
+                            color: "#ffffff",
                         },
                         "& .MuiInput-underline:before": {
                             borderBottom: "none !important",
