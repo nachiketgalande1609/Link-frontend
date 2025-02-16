@@ -174,8 +174,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         };
     }, [currentUser]);
 
-    console.log(messages);
-
     // Socket for catching typing activity
     useEffect(() => {
         socket.on("typing", (data) => {
@@ -224,6 +222,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
         navigate(`/messages/${userId}`);
+        console.log("Running");
     };
 
     // Socket to send messages and emit stop typing

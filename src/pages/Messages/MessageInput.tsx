@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, TextField, IconButton, CircularProgress, useMediaQuery, useTheme, Typography } from "@mui/material";
 import {
     Send as SendIcon,
@@ -61,8 +61,15 @@ const MessageInput: React.FC<MessageInputProps> = ({
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+
+    useEffect(() => {
+        if (selectedUser && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [selectedUser]);
 
     // Function to determine file type
     const getFilePreview = () => {
@@ -170,6 +177,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                     size={isMobile ? "small" : "medium"}
                     value={inputMessage}
                     variant="standard"
+                    inputRef={inputRef}
                     onChange={(e) => {
                         setInputMessage(e.target.value);
                         handleTyping();

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, MenuItem, Avatar, TextField, Box, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 interface User {
     id: number;
@@ -17,7 +18,9 @@ interface NewChatUsersListProps {
     handleUserClick: (userId: number) => void;
 }
 
-const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList, handleUserClick }: NewChatUsersListProps) => {
+const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList }: NewChatUsersListProps) => {
+    const navigate = useNavigate();
+
     const [searchTerm, setSearchTerm] = useState("");
     const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,6 +35,11 @@ const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList, handleUserCl
 
     // Filter users based on the search term
     const filteredUsers = usersList.filter((user) => user.username.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const handleUserClick = (user: any) => {
+        navigate(`/messages/${user.id}`, { state: user });
+        setAnchorEl(null);
+    };
 
     return (
         <Menu
@@ -83,7 +91,7 @@ const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList, handleUserCl
             {/* User list */}
             {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                    <MenuItem key={user.id} onClick={() => handleUserClick(user.id)} sx={{ p: "10px 12px" }}>
+                    <MenuItem key={user.id} onClick={() => handleUserClick(user)} sx={{ p: "10px 12px" }}>
                         <Avatar src={user.profile_picture} sx={{ mr: 2 }} />
                         <Typography sx={{ fontSize: "0.9rem" }}>{user.username}</Typography>
                     </MenuItem>
