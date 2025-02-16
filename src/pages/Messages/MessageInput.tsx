@@ -8,7 +8,7 @@ import {
     Close as CloseIcon,
 } from "@mui/icons-material";
 
-type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
+type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
 type Message = {
     message_id: number;

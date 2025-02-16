@@ -41,7 +41,7 @@ type Message = {
 
 type MessagesType = Record<string, Message[]>;
 
-type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
+type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
 const MessagesContainer: React.FC<MessagesContainerProps> = ({
     selectedUser,

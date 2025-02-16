@@ -20,6 +20,7 @@ import {
     SETTINGS_ENDPOINT,
     GET_ALL_MESSAGES_ENDPOINT,
     SHARE_MEDIA_ENDPOINT,
+    FOLLOWING_USERS_LIST_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -250,6 +251,20 @@ export const followUser = async (followerId: string, followingId: string) => {
             console.error("Failed to send follow request:", error.message);
         } else {
             console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const getFollowingUsers = async (userId: string) => {
+    try {
+        const response = await api.get(`${FOLLOWING_USERS_LIST_ENDPOINT}/${userId}`);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to fetch following users:", error.message);
+        } else {
+            console.error("Failed to fetch following users: Unknown error");
         }
         throw error;
     }

@@ -6,7 +6,7 @@ import { ChevronLeft } from "@mui/icons-material";
 interface messagesTopBarProps {
     selectedUser: User | null;
 }
-type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
+type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
 const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser }) => {
     const navigate = useNavigate();

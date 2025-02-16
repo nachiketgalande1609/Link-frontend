@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     List,
     ListItem,
@@ -13,7 +13,9 @@ import {
     Drawer,
     Badge,
 } from "@mui/material";
-import { ChevronLeft as ChevronLeftIcon } from "@mui/icons-material";
+import { ChevronLeft as ChevronLeftIcon, PersonAdd as PersonAddIcon } from "@mui/icons-material";
+import { getFollowingUsers } from "../../services/api";
+import NewChatUsersList from "./NewChatUsersList";
 
 type MessagesDrawerProps = {
     drawerOpen: boolean;
@@ -25,7 +27,7 @@ type MessagesDrawerProps = {
     handleUserClick: (userId: number) => void;
 };
 
-type User = { id: number; username: string; profile_picture: string; isOnline: Boolean };
+type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
 type Message = {
     message_id: number;
@@ -58,6 +60,23 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [usersList, setUsersList] = useState<User[]>([]);
+    const open = Boolean(anchorEl);
+
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+
+    const fetchUsersList = async () => {
+        const response = await getFollowingUsers(currentUser?.id);
+        if (response.success) {
+            setUsersList(response.data);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsersList();
+    }, []);
+
     return (
         <div>
             {isMobile ? (
@@ -150,9 +169,20 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         height: "100vh",
                     }}
                 >
-                    <Typography variant="h6" sx={{ p: 3 }}>
-                        Messages
-                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 3 }}>
+                        <Typography variant="h6">Messages</Typography>
+                        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                            <PersonAddIcon sx={{ color: "white" }} />
+                        </IconButton>
+                    </Box>
+
+                    <NewChatUsersList
+                        anchorEl={anchorEl}
+                        open={open}
+                        setAnchorEl={setAnchorEl}
+                        usersList={usersList}
+                        handleUserClick={handleUserClick}
+                    />
                     <List>
                         {users?.map((user) => {
                             const userMessages = messages[user.id] || [];
