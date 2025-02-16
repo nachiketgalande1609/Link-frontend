@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-// const BASE_URL = "http://192.168.31.142:5000";
-const BASE_URL = "http://192.168.1.10:5000";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const token = localStorage.getItem("token");
 
