@@ -18,7 +18,7 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, Send } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost } from "../../services/api";
 
 interface PostProps {
@@ -210,9 +210,9 @@ const ModalPost: React.FC<PostProps> = ({
                         </Grid>
 
                         {/* Right column for post details */}
-                        <Grid item xs={12} sm={6}>
-                            <Box sx={{ padding: isMobile ? "0 10px 10px 10px" : "20px" }}>
-                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Grid item xs={12} sm={6} sx={{ padding: "0px !important" }}>
+                            <Box>
+                                <Box sx={{ display: "flex", alignItems: "center", padding: isMobile ? "0 10px 10px 10px" : "35px 15px 5px 15px" }}>
                                     <Avatar
                                         src={avatarUrl || "https://via.placeholder.com/40"}
                                         alt={username}
@@ -277,22 +277,22 @@ const ModalPost: React.FC<PostProps> = ({
                                         sx={{
                                             justifyContent: "space-between",
                                             marginTop: "16px",
-                                            padding: 0,
+                                            padding: isMobile ? "0 10px 10px 10px" : "0 15px",
                                         }}
                                     >
                                         <Box>
                                             <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
                                                 {isLiked ? (
-                                                    <Favorite sx={{ fontSize: "30px", mr: 1 }} />
+                                                    <Favorite sx={{ fontSize: "35px", mr: 1 }} />
                                                 ) : (
-                                                    <FavoriteBorder sx={{ fontSize: "30px", mr: 1 }} />
+                                                    <FavoriteBorder sx={{ fontSize: "35px", mr: 1 }} />
                                                 )}
                                             </IconButton>
                                             <Typography variant="body2" component="span" sx={{ mr: 2 }}>
                                                 {likes}
                                             </Typography>
                                             <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
-                                                <ChatBubbleOutline sx={{ fontSize: "30px", mr: 1 }} />
+                                                <ChatBubbleOutline sx={{ fontSize: "35px", mr: 1 }} />
                                             </IconButton>
                                             <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                                                 {commentCount}
@@ -302,7 +302,7 @@ const ModalPost: React.FC<PostProps> = ({
                                 )}
 
                                 {currentUser?.id && isEditing ? (
-                                    <Box sx={{ mt: 2 }}>
+                                    <Box sx={{ mt: 2, padding: isMobile ? "0 10px 10px 10px" : "0 15px" }}>
                                         <TextField
                                             fullWidth
                                             multiline
@@ -325,28 +325,47 @@ const ModalPost: React.FC<PostProps> = ({
                                         </Box>
                                     </Box>
                                 ) : (
-                                    <Typography sx={{ mt: 2, fontSize: isMobile ? "0.85rem" : "1rem" }}>{content}</Typography>
+                                    <Typography
+                                        sx={{ mt: 2, fontSize: isMobile ? "0.85rem" : "1rem", padding: isMobile ? "0 10px 10px 10px" : "0 15px" }}
+                                    >
+                                        {content}
+                                    </Typography>
                                 )}
 
-                                <Box sx={{ mt: 2 }}>
+                                <Box
+                                    sx={{
+                                        mt: 2,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        borderTop: "1px solid #202327",
+                                        padding: isMobile ? "0 10px 10px 10px" : "15px",
+                                    }}
+                                >
                                     {currentUser?.id && (
-                                        <TextField
-                                            fullWidth
-                                            label="Add a comment..."
-                                            variant="outlined"
-                                            value={commentText}
-                                            onChange={(e) => setCommentText(e.target.value)}
-                                            onKeyDown={(e) => e.key === "Enter" && handleComment()}
-                                            sx={{
-                                                mb: "16px",
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: "20px",
-                                                },
-                                            }}
-                                            inputRef={commentInputRef}
-                                        />
+                                        <>
+                                            <TextField
+                                                fullWidth
+                                                placeholder="Add a comment..."
+                                                variant="standard"
+                                                value={commentText}
+                                                onChange={(e) => setCommentText(e.target.value)}
+                                                inputRef={commentInputRef}
+                                                sx={{
+                                                    "& .MuiInput-underline:before": { borderBottom: "none !important" },
+                                                    "& .MuiInput-underline:after": { borderBottom: "none !important" },
+                                                    "& .MuiInput-underline:hover:before": { borderBottom: "none !important" },
+                                                }}
+                                            />
+                                            <IconButton
+                                                onClick={handleComment}
+                                                sx={{ color: "#ffffff", ml: 1, "&:hover": { backgroundColor: "transparent" } }}
+                                            >
+                                                <Send fontSize="small" />
+                                            </IconButton>
+                                        </>
                                     )}
-
+                                </Box>
+                                <Box sx={{ padding: isMobile ? "0 10px 10px 10px" : "15px", borderTop: "1px solid #202327" }}>
                                     {visibleComments.length === 0 ? (
                                         <Box sx={{ display: "flex", justifyContent: "center" }}>
                                             <Typography variant="body2" color="text.secondary">
@@ -357,7 +376,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         <Box
                                             sx={{
                                                 maxHeight: "50vh",
-                                                overflowY: "auto",
+                                                overflowY: "scroll",
                                                 paddingRight: 2,
                                             }}
                                         >
@@ -371,7 +390,7 @@ const ModalPost: React.FC<PostProps> = ({
                                                         />
                                                         <Box sx={{ ml: 2, display: "flex", justifyContent: "space-between", width: "100%" }}>
                                                             <Typography variant="body2" color="text.primary">
-                                                                <strong style={{ fontWeight: "bold", marginRight: "4px" }}>
+                                                                <strong style={{ fontWeight: "bold", marginRight: "4px", color: "#aaaaaa" }}>
                                                                     {comment.commenter_username}
                                                                 </strong>
                                                                 {comment.content}
