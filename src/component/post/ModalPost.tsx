@@ -409,7 +409,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         <Typography
                                             variant="body2"
                                             color="primary"
-                                            sx={{ mt: 1, cursor: "pointer", mb: 1 }}
+                                            sx={{ mt: 1, cursor: "pointer", mb: 1, textAlign: "center" }}
                                             onClick={() => setShowAllComments(true)}
                                         >
                                             View all {postComments.length} comments
