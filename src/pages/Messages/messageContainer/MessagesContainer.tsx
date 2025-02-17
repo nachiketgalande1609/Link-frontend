@@ -404,7 +404,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                     )}
                                 </Box>
                             </Box>
-                            <Box sx={{ paddingBottom: "1px" }}>
+                            <Box sx={{ paddingBottom: "2px" }}>
                                 {msg.sender_id === currentUser.id &&
                                     (msg.read ? (
                                         <DoneAllIcon sx={{ color: "#1DA1F2", fontSize: 16, ml: 1 }} />

@@ -287,6 +287,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                         width: "100%",
                                         border: "none",
                                         position: "relative",
+                                        cursor: "pointer",
                                     }}
                                 >
                                     <ListItemAvatar sx={{ position: "relative" }}>
