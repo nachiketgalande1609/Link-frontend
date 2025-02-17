@@ -13,7 +13,15 @@ import {
     Drawer,
     Badge,
 } from "@mui/material";
-import { ChevronLeft as ChevronLeftIcon, PersonAdd as PersonAddIcon } from "@mui/icons-material";
+import {
+    ChevronLeft as ChevronLeftIcon,
+    PersonAdd as PersonAddIcon,
+    InsertDriveFile,
+    Image,
+    VideoLibrary,
+    MusicNote,
+    Description,
+} from "@mui/icons-material";
 import { getFollowingUsers } from "../../services/api";
 import NewChatUsersList from "./NewChatUsersList";
 
@@ -77,6 +85,64 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
         fetchUsersList();
     }, []);
 
+    const getLastMessageText = (lastMessage: Message | undefined) => {
+        if (!lastMessage) return "No messages yet";
+
+        if (lastMessage.message_text) {
+            return lastMessage.message_text;
+        }
+
+        if (lastMessage.file_url) {
+            const fileType = lastMessage.file_name?.split(".").pop()?.toLowerCase();
+
+            if (!fileType) {
+                return (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                        <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />
+                        <Typography variant="body2" component="span">
+                            [File]
+                        </Typography>
+                    </Box>
+                );
+            }
+
+            const fileTypeMapping: Record<string, { icon: JSX.Element; label: string }> = {
+                jpg: { icon: <Image sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Image" },
+                jpeg: { icon: <Image sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Image" },
+                png: { icon: <Image sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Image" },
+                gif: { icon: <Image sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Image" },
+                mp4: { icon: <VideoLibrary sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Video" },
+                mov: { icon: <VideoLibrary sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Video" },
+                avi: { icon: <VideoLibrary sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Video" },
+                mp3: { icon: <MusicNote sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Audio" },
+                wav: { icon: <MusicNote sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Audio" },
+                pdf: { icon: <Description sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "PDF" },
+                doc: { icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Document" },
+                docx: { icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Document" },
+                xls: { icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Spreadsheet" },
+                xlsx: { icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Spreadsheet" },
+                ppt: { icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Presentation" },
+                pptx: { icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />, label: "Presentation" },
+            };
+
+            const fileData = fileTypeMapping[fileType] || {
+                icon: <InsertDriveFile sx={{ fontSize: 16, verticalAlign: "middle" }} />,
+                label: "[File]",
+            };
+
+            return (
+                <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    {fileData.icon}
+                    <Typography variant="body2" component="span">
+                        {fileData.label}
+                    </Typography>
+                </Box>
+            );
+        }
+
+        return "No messages yet";
+    };
+
     return (
         <div>
             {isMobile ? (
@@ -99,7 +165,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                             {users.map((user) => {
                                 const userMessages = messages[user.id] || [];
                                 const lastMessage = userMessages[userMessages.length - 1];
-                                const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
+                                const lastMessageText = getLastMessageText(lastMessage);
                                 const isOnline = onlineUsers.includes(user.id.toString());
                                 return (
                                     <ListItem
@@ -187,7 +253,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         {users?.map((user) => {
                             const userMessages = messages[user.id] || [];
                             const lastMessage = userMessages[userMessages.length - 1];
-                            const lastMessageText = lastMessage ? lastMessage.message_text : "No messages yet";
+                            const lastMessageText = getLastMessageText(lastMessage);
                             const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
                             const isOnline = onlineUsers.includes(user.id.toString());
 
