@@ -10,8 +10,6 @@ import {
     Box,
     CardMedia,
     TextField,
-    Menu,
-    MenuItem,
     Dialog,
     DialogActions,
     DialogContent,
@@ -21,7 +19,8 @@ import {
     useTheme,
 } from "@mui/material";
 
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined } from "@mui/icons-material";
+
 import { deletePost, likePost, addComment, updatePost } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 import { useNavigate } from "react-router-dom";
@@ -74,8 +73,9 @@ const Post: React.FC<PostProps> = ({
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
     const [postComments, setPostComments] = useState(initialComments);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
+
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
@@ -90,6 +90,18 @@ const Post: React.FC<PostProps> = ({
         if (commentInputRef.current) {
             commentInputRef.current.focus();
         }
+    };
+
+    const handleOptionsDialogClose = () => {
+        setOptionsDialogOpen(false);
+    };
+
+    const handleOptionsDialogOpen = () => {
+        setOptionsDialogOpen(true);
+    };
+
+    const handleDialogOpen = () => {
+        setDialogOpen(true);
     };
 
     const handleLike = async () => {
@@ -140,26 +152,18 @@ const Post: React.FC<PostProps> = ({
         } catch (error) {}
     };
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleDeleteClick = () => {
-        setDialogOpen(true);
-        handleMenuClose();
-    };
-
     const handleCancel = () => {
         setDialogOpen(false);
     };
 
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditedContent(""); // Reset the content if cancelled
+    };
+
     const handleEditClick = () => {
-        setIsEditing(true);
-        handleMenuClose();
+        setEditedContent(content); // Pre-fill the content for editing
+        setIsEditing(true); // You can also manage state to show modal
     };
 
     const handleSaveEdit = async () => {
@@ -168,6 +172,7 @@ const Post: React.FC<PostProps> = ({
             if (response?.success) {
                 setIsEditing(false);
                 fetchPosts();
+                setEditedContent(""); // Reset the content after saving
             }
         } catch (error) {
             console.error("Error updating post:", error);
@@ -187,64 +192,6 @@ const Post: React.FC<PostProps> = ({
     return (
         <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius, width: "100%" }}>
             <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
-                <Box sx={{ padding: isMobile ? "14px" : "16px" }}>
-                    <Grid container spacing={2} alignItems="center">
-                        {/* Avatar */}
-                        <Grid item>
-                            <Avatar
-                                src={avatarUrl || "https://via.placeholder.com/40"}
-                                alt={username}
-                                sx={{ width: 42, height: 42, cursor: "pointer" }}
-                                onClick={() => navigate(`/profile/${userId}`)}
-                            />
-                        </Grid>
-
-                        {/* Username */}
-                        <Grid item xs zeroMinWidth>
-                            <Typography
-                                sx={{
-                                    fontSize: isMobile ? "0.85rem" : "1rem",
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    cursor: "pointer",
-                                }}
-                                onClick={() => navigate(`/profile/${userId}`)}
-                            >
-                                {username}
-                            </Typography>
-                        </Grid>
-
-                        {/* More Options (Only for post owner) */}
-                        {currentUser?.id === userId && (
-                            <Grid item>
-                                <IconButton onClick={handleMenuOpen}>
-                                    <MoreVert />
-                                </IconButton>
-                                <Menu
-                                    anchorEl={anchorEl}
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleMenuClose}
-                                    sx={{
-                                        "& .MuiPaper-root": {
-                                            width: "150px",
-                                            padding: "3px 10px",
-                                            borderRadius: "20px",
-                                        },
-                                    }}
-                                >
-                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleEditClick}>
-                                        Edit
-                                    </MenuItem>
-                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
-                                        Delete
-                                    </MenuItem>
-                                </Menu>
-                            </Grid>
-                        )}
-                    </Grid>
-                </Box>
-
                 {fileUrl && (
                     <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }} onDoubleClick={handleDoubleClickLike}>
                         <CardMedia
@@ -258,6 +205,7 @@ const Post: React.FC<PostProps> = ({
                                 width: "100%",
                                 height: "100%",
                                 objectFit: "cover",
+                                borderRadius: "20px",
                             }}
                         />
                         {showLikeAnimation && (
@@ -281,62 +229,79 @@ const Post: React.FC<PostProps> = ({
             <CardActions
                 sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
             >
-                <Box>
-                    <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", ":hover": { backgroundColor: "transparent" } }}>
-                        {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
-                    </IconButton>
-                    <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                        {likes}
-                    </Typography>
-                    <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
-                        <ChatBubbleOutline sx={{ fontSize: isMobile ? "26px" : "30px" }} onClick={() => setDrawerOpen(true)} />
-                    </IconButton>
-                    <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                        {commentCount}
-                    </Typography>
+                <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", ":hover": { backgroundColor: "transparent" } }}>
+                            {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
+                        </IconButton>
+                        <Typography variant="body2" component="span" sx={{ mr: 2 }}>
+                            {likes}
+                        </Typography>
+
+                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
+                            <ChatBubbleOutline sx={{ fontSize: isMobile ? "26px" : "30px" }} onClick={() => setDrawerOpen(true)} />
+                        </IconButton>
+                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
+                            {commentCount}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }}>
+                            <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
+                        </IconButton>
+                        <IconButton onClick={handleOptionsDialogOpen} sx={{ padding: "0" }}>
+                            <MoreVert />
+                        </IconButton>
+                    </Box>
                 </Box>
             </CardActions>
 
-            {isEditing ? (
-                <Box sx={{ mt: 2, padding: "0px 16px 16px 16px", margin: 0 }}>
-                    <TextField
-                        fullWidth
-                        multiline
-                        value={editedContent}
-                        onChange={(e) => setEditedContent(e.target.value)}
-                        sx={{
-                            mb: 2,
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: "20px",
-                            },
-                        }}
-                    />
-                    {/* Buttons aligned to the right */}
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                        <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "15px" }}>
-                            Cancel
-                        </Button>
-                        <Button onClick={handleSaveEdit} variant="contained" color="primary" sx={{ borderRadius: "15px" }}>
-                            Save
-                        </Button>
-                    </Box>
-                </Box>
-            ) : (
-                <Typography
-                    sx={{
-                        fontSize: isMobile ? "0.85rem" : "1rem",
-                        mt: 2,
-                        padding: "0px 16px 16px 16px",
-                        margin: 0,
-                        backgroundColor: isMobile ? "#000000" : "#101114",
-                    }}
-                >
-                    <span style={{ fontSize: isMobile ? "0.85rem" : "1rem", fontWeight: "bold", marginRight: "8px" }}>{username}</span>
-                    {content}
-                </Typography>
-            )}
+            <Box sx={{ padding: isMobile ? "0 14px" : "0 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
+                <Grid container spacing={2} alignItems="flex-start">
+                    {/* Avatar */}
+                    <Grid item>
+                        <Avatar
+                            src={
+                                avatarUrl ||
+                                "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                            }
+                            alt={username}
+                            sx={{ width: 52, height: 52, cursor: "pointer" }}
+                            onClick={() => navigate(`/profile/${userId}`)}
+                        />
+                    </Grid>
 
-            <Box sx={{ padding: "0 16px 16px 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
+                    {/* Username */}
+                    <Grid item xs zeroMinWidth>
+                        <Typography
+                            sx={{
+                                fontSize: isMobile ? "0.85rem" : "1rem",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => navigate(`/profile/${userId}`)}
+                        >
+                            {username}
+                        </Typography>
+                        <Typography
+                            sx={{
+                                fontSize: isMobile ? "0.8rem" : "0.9rem",
+                                mt: 0.5,
+                                backgroundColor: isMobile ? "#000000" : "#101114",
+                            }}
+                        >
+                            {content}
+                        </Typography>
+                    </Grid>
+
+                    {/* More Options (Only for post owner) */}
+                    {currentUser?.id === userId && <Grid item></Grid>}
+                </Grid>
+            </Box>
+
+            <Box sx={{ padding: "16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
             </Box>
 
@@ -363,6 +328,117 @@ const Post: React.FC<PostProps> = ({
                     </Button>
                 </DialogActions>
             </Dialog>
+            {/* Modal for Editing Post */}
+            <Dialog
+                open={isEditing}
+                onClose={handleCancelEdit}
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        width: "90%",
+                        maxWidth: "600px",
+                        padding: "20px",
+                        backgroundColor: "#000000",
+                    },
+                }}
+            >
+                <DialogContent sx={{ padding: 0 }}>
+                    <TextField
+                        fullWidth
+                        multiline
+                        size="small"
+                        variant="standard"
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        sx={{
+                            mb: 2,
+                            "& .MuiOutlinedInput-root": {},
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ padding: "0" }}>
+                    <Button onClick={handleCancelEdit} size="small" sx={{ color: "#ffffff", borderRadius: "15px" }}>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSaveEdit} size="small" variant="contained" color="primary" sx={{ borderRadius: "15px" }}>
+                        Save
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={optionsDialogOpen}
+                onClose={handleOptionsDialogClose}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(32, 35, 39, 0.9)",
+                        color: "white",
+                        textAlign: "center",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    },
+                }}
+            >
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleEditClick();
+                        handleOptionsDialogClose();
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Edit Post
+                </Button>
+
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleDialogOpen();
+                        handleOptionsDialogClose();
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Delete Post
+                </Button>
+
+                <Button
+                    fullWidth
+                    onClick={handleOptionsDialogClose}
+                    sx={{
+                        padding: "10px",
+                        fontSize: "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                    }}
+                >
+                    Cancel
+                </Button>
+            </Dialog>
+
             <ScrollableCommentsDrawer
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}
