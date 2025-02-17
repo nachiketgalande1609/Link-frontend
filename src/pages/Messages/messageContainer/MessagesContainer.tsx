@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Box, CircularProgress, useMediaQuery, useTheme, IconButton } from "@mui/material";
+import { Typography, Box, CircularProgress, useMediaQuery, useTheme, IconButton, Button } from "@mui/material";
 import {
     Done as DoneIcon,
     DoneAll as DoneAllIcon,
@@ -7,6 +7,7 @@ import {
     Article as PdfIcon,
     InsertDriveFile as FolderIcon,
     Reply as ReplyIcon,
+    AddCommentOutlined as AddCommentOutlined,
 } from "@mui/icons-material";
 import BlurBackgroundImage from "../../../static/blur.jpg";
 
@@ -20,6 +21,8 @@ interface MessagesContainerProps {
     messagesEndRef: React.RefObject<HTMLDivElement>;
     handleReply: (msg: Message) => void;
     chatTheme: string;
+    anchorEl: HTMLElement | null;
+    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 }
 
 type Message = {
@@ -52,6 +55,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     messagesEndRef,
     handleReply,
     chatTheme,
+    anchorEl,
+    setAnchorEl,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -94,7 +99,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                             key={index}
                             sx={{
                                 display: "flex",
-                                mb: 2,
+                                mb: "10px",
                                 flexDirection: "row",
                                 justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                 alignItems: "end",
@@ -389,10 +394,9 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                         transform: "translateY(-50%)",
                                                         left: msg.sender_id === currentUser.id ? "-40px" : "auto",
                                                         right: msg.sender_id === currentUser.id ? "auto" : "-40px",
-                                                        backgroundColor: "rgba(0, 0, 0, 0.3)",
                                                         color: "white",
                                                         "&:hover": {
-                                                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                                            backgroundColor: "transparent",
                                                         },
                                                     }}
                                                     onClick={() => handleReply(msg)}
@@ -420,9 +424,20 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                     );
                 })
             ) : (
-                <Typography variant="body2" sx={{ textAlign: "center", mt: 5 }}>
-                    Select a user to start chatting
-                </Typography>
+                <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                    <AddCommentOutlined sx={{ fontSize: "50px" }} />
+                    <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
+                        Select a user to start chatting
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        sx={{ display: "block", margin: "20px auto", textAlign: "center", borderRadius: "15px" }}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                    >
+                        Send Message
+                    </Button>
+                </Box>
             )}
             <div ref={messagesEndRef} />
 

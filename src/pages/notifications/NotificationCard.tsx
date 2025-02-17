@@ -65,7 +65,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                     }
                     secondary={
                         <Typography color="gray" sx={{ fontSize: isMobile ? "0.7rem" : "0.8rem" }}>
-                            {timeAgo(notification.created_at)}
+                            {timeAgo(notification.created_at)} ago
                         </Typography>
                     }
                     sx={{ flexGrow: 1 }}

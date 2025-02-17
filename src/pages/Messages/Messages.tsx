@@ -62,6 +62,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [selectedImage, setSelectedImage] = useState<string>("");
     const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
     const [chatTheme, setChatTheme] = useState(() => localStorage.getItem("chatTheme") || "");
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleReply = (msg: Message) => {
         setSelectedMessageForReply(msg);
@@ -431,6 +432,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 onlineUsers={onlineUsers}
                 selectedUser={selectedUser}
                 handleUserClick={handleUserClick}
+                anchorEl={anchorEl}
+                setAnchorEl={setAnchorEl}
             />
 
             {isMobile && (
@@ -464,6 +467,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     messagesEndRef={messagesEndRef}
                     handleReply={handleReply}
                     chatTheme={chatTheme}
+                    anchorEl={anchorEl}
+                    setAnchorEl={setAnchorEl}
                 />
 
                 {/* Typing indicator */}

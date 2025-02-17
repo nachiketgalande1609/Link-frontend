@@ -25,6 +25,7 @@ import {
 } from "@mui/icons-material";
 import { getFollowingUsers } from "../../services/api";
 import NewChatUsersList from "./NewChatUsersList";
+import { timeAgo } from "../../utils/utils";
 
 type MessagesDrawerProps = {
     drawerOpen: boolean;
@@ -34,6 +35,8 @@ type MessagesDrawerProps = {
     onlineUsers: string[];
     selectedUser: User | null;
     handleUserClick: (userId: number) => void;
+    anchorEl: HTMLElement | null;
+    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 };
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
@@ -66,10 +69,11 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
     onlineUsers,
     selectedUser,
     handleUserClick,
+    anchorEl,
+    setAnchorEl,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [usersList, setUsersList] = useState<User[]>([]);
     const open = Boolean(anchorEl);
 
@@ -159,19 +163,23 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         <IconButton sx={{ position: "absolute", right: 5, top: 15 }} onClick={() => setDrawerOpen(false)}>
                             <ChevronLeftIcon sx={{ color: "white" }} />
                         </IconButton>
-                        <Typography variant="h6" sx={{ p: "20px" }}>
+                        <Typography variant="h6" sx={{ p: "20px", borderBottom: "1px solid #202327" }}>
                             Messages
                         </Typography>
-                        <List>
+                        <List sx={{ padding: 0 }}>
                             {users.map((user) => {
                                 const userMessages = messages[user.id] || [];
                                 const lastMessage = userMessages[userMessages.length - 1];
                                 const lastMessageText = getLastMessageText(lastMessage);
                                 const isOnline = onlineUsers.includes(user.id.toString());
+                                const lastMessageTimestamp = timeAgo(lastMessage?.timestamp);
+                                const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
+
                                 return (
                                     <ListItem
                                         sx={{
-                                            backgroundColor: selectedUser?.id === user.id ? "#202327" : "transparent",
+                                            backgroundColor:
+                                                selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
                                             padding: "12px",
                                             mb: 1,
                                             textAlign: "left",
@@ -217,14 +225,45 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                         <ListItemText
                                             primary={user.username}
                                             secondary={
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{ color: "#aaa", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
-                                                >
-                                                    {lastMessageText}
-                                                </Typography>
+                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            color: "#aaa",
+                                                            whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            maxWidth: "calc(100% - 50px)", // Adjust based on your layout, if necessary
+                                                        }}
+                                                    >
+                                                        {lastMessageText}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="caption"
+                                                        sx={{
+                                                            color: "#aaa",
+                                                            whiteSpace: "nowrap",
+                                                            marginLeft: "8px", // Optional, adds spacing between message and timestamp
+                                                        }}
+                                                    >
+                                                        {lastMessageTimestamp}
+                                                    </Typography>
+                                                </Box>
                                             }
                                         />
+                                        {unreadCount > 0 && (
+                                            <Badge
+                                                badgeContent={unreadCount}
+                                                color="primary"
+                                                sx={{
+                                                    position: "absolute",
+                                                    right: "22px",
+                                                    top: "calc(50% - 13px )",
+                                                    transform: "translateY(-50%)",
+                                                }}
+                                            />
+                                        )}
+
                                         <div
                                             style={{
                                                 position: "absolute",
@@ -252,7 +291,9 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         height: "100vh",
                     }}
                 >
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 3 }}>
+                    <Box
+                        sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: "15px", borderBottom: "1px solid #202327" }}
+                    >
                         <Typography variant="h6">Messages</Typography>
                         <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
                             <PersonAddIcon sx={{ color: "white" }} />
@@ -266,13 +307,14 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         usersList={usersList}
                         handleUserClick={handleUserClick}
                     />
-                    <List>
+                    <List sx={{ padding: 0 }}>
                         {users?.map((user) => {
                             const userMessages = messages[user.id] || [];
                             const lastMessage = userMessages[userMessages.length - 1];
                             const lastMessageText = getLastMessageText(lastMessage);
                             const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
                             const isOnline = onlineUsers.includes(user.id.toString());
+                            const lastMessageTimestamp = timeAgo(lastMessage?.timestamp);
 
                             return (
                                 <ListItem
@@ -325,19 +367,32 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                         )}
                                     </ListItemAvatar>
                                     <ListItemText
-                                        primary={<Typography sx={{ fontSize: "1rem" }}>{user.username}</Typography>}
+                                        primary={user.username}
                                         secondary={
-                                            <Typography
-                                                sx={{
-                                                    fontSize: "0.8rem",
-                                                    color: "#aaa",
-                                                    whiteSpace: "nowrap",
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                }}
-                                            >
-                                                {lastMessageText}
-                                            </Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                <Typography
+                                                    variant="body2"
+                                                    sx={{
+                                                        color: "#aaa",
+                                                        whiteSpace: "nowrap",
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        maxWidth: "calc(100% - 50px)", // Adjust based on your layout, if necessary
+                                                    }}
+                                                >
+                                                    {lastMessageText}
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        color: "#aaa",
+                                                        whiteSpace: "nowrap",
+                                                        marginLeft: "8px", // Optional, adds spacing between message and timestamp
+                                                    }}
+                                                >
+                                                    {lastMessageTimestamp}
+                                                </Typography>
+                                            </Box>
                                         }
                                     />
 
@@ -348,8 +403,8 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             color="primary"
                                             sx={{
                                                 position: "absolute",
-                                                right: "25px",
-                                                top: "50%",
+                                                right: "22px",
+                                                top: "calc(50% - 13px )",
                                                 transform: "translateY(-50%)",
                                             }}
                                         />

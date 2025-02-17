@@ -289,6 +289,11 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                             key={item.segment}
                                             component={Link}
                                             to={`/${item.segment}`}
+                                            onClick={() => {
+                                                if (item.segment === "messages") {
+                                                    setOpen(false);
+                                                }
+                                            }}
                                             sx={{
                                                 textDecoration: "none",
                                                 padding: "12px 12px",
