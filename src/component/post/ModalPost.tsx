@@ -188,7 +188,7 @@ const ModalPost: React.FC<PostProps> = ({
         >
             <CardContent
                 sx={{
-                    padding: 0,
+                    padding: "0px !important",
                 }}
             >
                 <Box sx={{}}>
