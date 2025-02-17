@@ -21,6 +21,7 @@ import {
     VideoLibrary,
     MusicNote,
     Description,
+    CloseOutlined,
 } from "@mui/icons-material";
 import { getFollowingUsers } from "../../services/api";
 import NewChatUsersList from "./NewChatUsersList";
@@ -184,18 +185,33 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                     >
                                         <ListItemAvatar sx={{ position: "relative" }}>
                                             <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
-                                            <Box
-                                                sx={{
-                                                    width: "10px",
-                                                    height: "10px",
-                                                    borderRadius: "50%",
-                                                    backgroundColor: isOnline ? "#54ff54" : "gray",
-                                                    position: "absolute",
-                                                    bottom: 0,
-                                                    right: 10,
-                                                    border: "2px solid #000",
-                                                }}
-                                            />
+                                            {isOnline ? (
+                                                <Box
+                                                    sx={{
+                                                        width: "10px",
+                                                        height: "10px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#54ff54",
+                                                        position: "absolute",
+                                                        bottom: 0,
+                                                        right: 13,
+                                                        border: "1px solid #000",
+                                                    }}
+                                                />
+                                            ) : (
+                                                <CloseOutlined
+                                                    sx={{
+                                                        color: "white",
+                                                        position: "absolute",
+                                                        bottom: 0,
+                                                        right: 10,
+                                                        backgroundColor: "#000000",
+                                                        borderRadius: "50%",
+                                                        width: "13.33px",
+                                                        height: "13.33px",
+                                                    }}
+                                                />
+                                            )}
                                         </ListItemAvatar>
                                         <ListItemText
                                             primary={user.username}
@@ -277,18 +293,33 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             sx={{ width: "50px", height: "50px", mr: "12px" }}
                                             src={user.profile_picture || "https://via.placeholder.com/40"}
                                         />
-                                        <Box
-                                            sx={{
-                                                width: "12px",
-                                                height: "12px",
-                                                borderRadius: "50%",
-                                                backgroundColor: isOnline ? "#54ff54" : "gray",
-                                                position: "absolute",
-                                                bottom: 0,
-                                                right: 10,
-                                                border: "1px solid #000",
-                                            }}
-                                        />
+                                        {isOnline ? (
+                                            <Box
+                                                sx={{
+                                                    width: "12px",
+                                                    height: "12px",
+                                                    borderRadius: "50%",
+                                                    backgroundColor: "#54ff54",
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    right: 10,
+                                                    border: "1px solid #000",
+                                                }}
+                                            />
+                                        ) : (
+                                            <CloseOutlined
+                                                sx={{
+                                                    color: "white",
+                                                    position: "absolute",
+                                                    bottom: 0,
+                                                    right: 10,
+                                                    backgroundColor: "#000000",
+                                                    borderRadius: "50%",
+                                                    width: "13.33px",
+                                                    height: "13.33px",
+                                                }}
+                                            />
+                                        )}
                                     </ListItemAvatar>
                                     <ListItemText
                                         primary={<Typography sx={{ fontSize: "1rem" }}>{user.username}</Typography>}

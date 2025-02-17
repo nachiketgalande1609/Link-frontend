@@ -61,6 +61,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string>("");
     const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
+    const [chatTheme, setChatTheme] = useState(() => localStorage.getItem("chatTheme") || "");
 
     const handleReply = (msg: Message) => {
         setSelectedMessageForReply(msg);
@@ -439,9 +440,20 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             )}
 
             {/* Messages Panel */}
-            <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", backgroundColor: "#000000", color: "white", width: "100px" }}>
+            <Box
+                sx={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    color: "white",
+                    width: "100px",
+                    backgroundImage: chatTheme,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                }}
+            >
                 {/* Top bar */}
-                {selectedUser && <MessagesTopBar selectedUser={selectedUser} />}
+                {selectedUser && <MessagesTopBar selectedUser={selectedUser} chatTheme={chatTheme} setChatTheme={setChatTheme} />}
 
                 {/* Messages Container */}
                 <MessagesContainer
@@ -451,6 +463,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     handleImageClick={handleImageClick}
                     messagesEndRef={messagesEndRef}
                     handleReply={handleReply}
+                    chatTheme={chatTheme}
                 />
 
                 {/* Typing indicator */}

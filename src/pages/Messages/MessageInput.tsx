@@ -100,6 +100,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 flexDirection: "column",
                 borderTop: selectedFileURL ? "1px solid #202327" : null,
                 position: "relative",
+                backgroundColor: "rgb(0,0,0,0.65)",
             }}
         >
             {/* Reply Preview */}

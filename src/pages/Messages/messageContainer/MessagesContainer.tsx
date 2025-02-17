@@ -19,6 +19,7 @@ interface MessagesContainerProps {
     handleImageClick: (fileUrl: string) => void;
     messagesEndRef: React.RefObject<HTMLDivElement>;
     handleReply: (msg: Message) => void;
+    chatTheme: string;
 }
 
 type Message = {
@@ -50,6 +51,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     handleImageClick,
     messagesEndRef,
     handleReply,
+    chatTheme,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -73,7 +75,16 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     };
 
     return (
-        <Box sx={{ flexGrow: 1, padding: 2, overflowY: "auto", display: "flex", flexDirection: "column", paddingBottom: "50px" }}>
+        <Box
+            sx={{
+                flexGrow: 1,
+                padding: 2,
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
+                paddingBottom: "50px",
+            }}
+        >
             {selectedUser ? (
                 messages[selectedUser.id]?.map((msg, index) => {
                     const originalMessage = msg.reply_to ? findOriginalMessage(msg.reply_to) : null;
