@@ -135,7 +135,10 @@ const ProfilePage = () => {
 
                     <Grid item xs={12} sm={12} md={3} lg={2} sx={{ display: "flex", justifyContent: "center" }}>
                         <Avatar
-                            src={profileData?.profile_picture}
+                            src={
+                                profileData?.profile_picture ||
+                                "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                            }
                             sx={{
                                 width: { xs: 100, sm: 110, md: 120, lg: 140 },
                                 height: { xs: 100, sm: 110, md: 120, lg: 140 },

@@ -175,7 +175,11 @@ const ProfileDetails = () => {
             >
                 <Box sx={{ position: "relative", mb: 3 }}>
                     <Avatar
-                        src={user?.profile_picture_url ? `${user.profile_picture_url}?t=${new Date().getTime()}` : ""}
+                        src={
+                            user?.profile_picture_url
+                                ? `${user.profile_picture_url}?t=${new Date().getTime()}`
+                                : "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                        }
                         sx={{ width: 120, height: 120, marginBottom: 2, border: "4px solid #fff" }}
                     />
                     <IconButton

@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Link, Fade } from "@mui/material";
 import { registerUser } from "../services/api";
+import { useUser } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage: React.FC = () => {
+    const { setUser } = useUser();
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,12 +37,20 @@ const RegisterPage: React.FC = () => {
         }
 
         try {
-            await registerUser({ email, username, password });
-            setSuccess("Registration successful!");
-            setEmail("");
-            setUsername("");
-            setPassword("");
-            setConfirmPassword("");
+            const response = await registerUser({ email, username, password });
+
+            if (response.success) {
+                // Store the token and user details in localStorage
+                const { token, user } = response.data;
+                localStorage.setItem("token", token);
+                localStorage.setItem("user", JSON.stringify(user));
+
+                setUser(user);
+
+                setSuccess("Registration successful!");
+                navigate("/");
+                setError(response.error || "Registration failed!");
+            }
         } catch (err: any) {
             setError(err.response?.data?.error || "Registration failed!");
         }

@@ -118,7 +118,10 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   title: "Profile",
                   icon: (
                       <img
-                          src={currentUser?.profile_picture_url || "default-profile-pic.jpg"}
+                          src={
+                              currentUser?.profile_picture_url ||
+                              "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                          }
                           alt="Profile"
                           style={{
                               width: "33px",
@@ -131,7 +134,10 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   ),
                   filledIcon: (
                       <img
-                          src={currentUser?.profile_picture_url || "default-profile-pic.jpg"}
+                          src={
+                              currentUser?.profile_picture_url ||
+                              "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                          }
                           alt="Profile"
                           style={{
                               width: "33px",
