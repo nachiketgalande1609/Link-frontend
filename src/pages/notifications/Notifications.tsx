@@ -20,10 +20,11 @@ interface Notification {
 }
 
 const NotificationsPage = () => {
+    const { unreadNotificationsCount, resetNotificationsCount } = useUser();
+
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
-    const { resetNotificationsCount } = useUser();
 
     async function fetchNotifications() {
         if (!currentUser?.id) return;
@@ -41,7 +42,7 @@ const NotificationsPage = () => {
     useEffect(() => {
         fetchNotifications();
         resetNotificationsCount();
-    }, [currentUser?.id]);
+    }, [currentUser?.id, unreadNotificationsCount]);
 
     const handleFollowBack = async (userId: string) => {
         if (!currentUser?.id || !userId) return;

@@ -270,7 +270,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                 right: 0,
                                                 top: "0",
                                                 bottom: "0",
-                                                width: "3px",
+                                                width: "4px",
                                                 backgroundColor: "#1976D2",
                                                 visibility: selectedUser?.id === user.id ? "visible" : "hidden",
                                             }}
@@ -416,7 +416,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             right: 0,
                                             top: "0",
                                             bottom: "0",
-                                            width: "3px",
+                                            width: "4px",
                                             backgroundColor: "#1976D2",
                                             visibility: selectedUser?.id === user.id ? "visible" : "hidden",
                                         }}
