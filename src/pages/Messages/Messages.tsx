@@ -447,7 +447,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     flexDirection: "column",
                     color: "white",
                     width: "100px",
-                    backgroundImage: chatTheme,
+                    backgroundImage: selectedUser ? chatTheme : "none",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                 }}

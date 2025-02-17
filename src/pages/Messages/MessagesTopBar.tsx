@@ -143,10 +143,6 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                                         borderRadius: "4px", // Square with slight rounding for aesthetic
                                         border: chatTheme === background ? "3px solid #fff" : "1px solid #444",
                                         boxShadow: chatTheme === background ? "0 0 8px rgba(255,255,255,0.5)" : "none",
-                                        transition: "all 0.3s ease",
-                                        "&:hover": {
-                                            transform: "scale(1.1)",
-                                        },
                                     }}
                                     onClick={() => {
                                         localStorage.setItem("chatTheme", background); // Save to localStorage

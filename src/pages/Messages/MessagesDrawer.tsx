@@ -207,8 +207,9 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                         right: 10,
                                                         backgroundColor: "#000000",
                                                         borderRadius: "50%",
-                                                        width: "13.33px",
-                                                        height: "13.33px",
+                                                        width: "12px",
+                                                        height: "12px",
+                                                        padding: "2px",
                                                     }}
                                                 />
                                             )}
@@ -315,8 +316,9 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                     right: 10,
                                                     backgroundColor: "#000000",
                                                     borderRadius: "50%",
-                                                    width: "13.33px",
-                                                    height: "13.33px",
+                                                    width: "12px",
+                                                    height: "12px",
+                                                    padding: "2px",
                                                 }}
                                             />
                                         )}
