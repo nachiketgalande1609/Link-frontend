@@ -22,7 +22,7 @@ export const timeAgo = (timestamp: string) => {
     const past = new Date(timestamp);
     const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
 
-    if (diffInSeconds < 60) return `${diffInSeconds}s`;
+    if (diffInSeconds < 60) return "Just Now"; // Change here
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) return `${diffInMinutes}m`;
     const diffInHours = Math.floor(diffInMinutes / 60);
