@@ -1,12 +1,14 @@
-import React, { useEffect, useRef } from "react";
-import { Box, TextField, IconButton, CircularProgress, useMediaQuery, useTheme, Typography } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, TextField, IconButton, CircularProgress, useMediaQuery, useTheme, Typography, Popover } from "@mui/material";
 import {
     Send as SendIcon,
     AttachFileOutlined as AttachFileIcon,
     CancelOutlined as DeleteIcon,
     InsertDriveFile as FileIcon,
     Close as CloseIcon,
+    EmojiEmotionsOutlined as EmojiIcon,
 } from "@mui/icons-material";
+import EmojiPicker from "emoji-picker-react";
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
@@ -62,6 +64,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const inputRef = useRef<HTMLInputElement>(null);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -70,6 +73,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
             inputRef.current.focus();
         }
     }, [selectedUser]);
+
+    const handleEmojiClick = (emojiObject: any) => {
+        setInputMessage((prev) => prev + emojiObject.emoji);
+        handleTyping();
+    };
 
     // Function to determine file type
     const getFilePreview = () => {
@@ -184,8 +192,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
                         handleTyping();
                     }}
                     onKeyDown={(e) => {
-                        if (e.key === "Enter" && (inputMessage.trim() || selectedFile)) {
-                            handleSendMessage();
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault(); // Prevents cursor from moving to the next line
+                            if (inputMessage.trim() || selectedFile) {
+                                handleSendMessage();
+                            }
                         }
                     }}
                     multiline
@@ -203,7 +214,18 @@ const MessageInput: React.FC<MessageInputProps> = ({
                         },
                     }}
                 />
-
+                <IconButton onClick={(e) => setEmojiAnchorEl(e.currentTarget)} color="primary">
+                    <EmojiIcon />
+                </IconButton>
+                <Popover
+                    open={Boolean(emojiAnchorEl)}
+                    anchorEl={emojiAnchorEl}
+                    onClose={() => setEmojiAnchorEl(null)}
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                    transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+                >
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                </Popover>
                 <input
                     type="file"
                     onChange={handleFileChange}
