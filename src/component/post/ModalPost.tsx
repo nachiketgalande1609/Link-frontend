@@ -356,12 +356,14 @@ const ModalPost: React.FC<PostProps> = ({
                                                     "& .MuiInput-underline:hover:before": { borderBottom: "none !important" },
                                                 }}
                                             />
-                                            <IconButton
+                                            <Button
                                                 onClick={handleComment}
-                                                sx={{ color: "#ffffff", ml: 1, "&:hover": { backgroundColor: "transparent" } }}
+                                                size="small"
+                                                sx={{ color: "#1976d2", borderRadius: "15px" }}
+                                                disabled={!commentText}
                                             >
-                                                <Send fontSize="small" />
-                                            </IconButton>
+                                                Post
+                                            </Button>
                                         </>
                                     )}
                                 </Box>
