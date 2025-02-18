@@ -44,6 +44,7 @@ interface Post {
     user_id: number;
     comment_count: number;
     saved_by_current_user: boolean;
+    location: string;
     comments: Array<{
         id: number;
         post_id: string;
@@ -62,9 +63,10 @@ interface PostProps {
     post: Post;
     fetchPosts: () => Promise<void>;
     borderRadius: string;
+    isSaved: boolean;
 }
 
-const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
+const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -250,9 +252,9 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                     </Box>
                 )}
             </CardContent>
-
-            <Typography>{}</Typography>
-
+            <Box sx={{ padding: "12px 8px 0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
+                <Typography sx={{ fontSize: isMobile ? "0.85rem" : "0.9rem" }}>{post.location}</Typography>
+            </Box>
             <CardActions
                 sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
             >
@@ -274,7 +276,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>
-                            {post.saved_by_current_user ? (
+                            {post.saved_by_current_user || isSaved ? (
                                 <Bookmark sx={{ fontSize: isMobile ? "26px" : "30px" }} />
                             ) : (
                                 <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
