@@ -20,7 +20,7 @@ import {
     CircularProgress,
 } from "@mui/material";
 
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn } from "@mui/icons-material";
 
 import { deletePost, likePost, addComment, updatePost, savePost } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
@@ -252,9 +252,15 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     </Box>
                 )}
             </CardContent>
-            <Box sx={{ padding: "12px 8px 0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
-                <Typography sx={{ fontSize: isMobile ? "0.85rem" : "0.9rem" }}>{post.location}</Typography>
-            </Box>
+            <Box
+                sx={{
+                    padding: "12px 16px 0px 16px",
+                    backgroundColor: isMobile ? "#000000" : "#101114",
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            ></Box>
+
             <CardActions
                 sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
             >
@@ -334,8 +340,14 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 </Grid>
             </Box>
 
-            <Box sx={{ padding: "16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
+            <Box sx={{ padding: "16px", backgroundColor: isMobile ? "#000000" : "#101114", display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{post.timeAgo}</Typography>
+                {post.location && (
+                    <Box sx={{ display: "flex" }}>
+                        <LocationOn sx={{ fontSize: isMobile ? "0.8rem" : "1.1rem", color: "#666666", mr: 0.5 }} />
+                        <Typography sx={{ fontSize: "0.8rem", color: "#666666" }}>{post.location}</Typography>
+                    </Box>
+                )}
             </Box>
 
             {/* Confirmation Dialog */}

@@ -30,13 +30,13 @@ interface PostProps {
     fileUrl?: string;
     timeAgo: string;
     postId: string;
-    userId: string;
+    userId: number;
     fetchPosts: () => Promise<void>;
     hasUserLikedPost: boolean;
     initialComments: Array<{
         id: number;
         post_id: string;
-        user_id: string;
+        user_id: number;
         content: string;
         parent_comment_id: null | number;
         created_at: string;
