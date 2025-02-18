@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, Send } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost } from "../../services/api";
+import ImageDialog from "../ImageDialog";
 
 interface PostProps {
     username: string;
@@ -77,6 +78,7 @@ const ModalPost: React.FC<PostProps> = ({
     const [editedContent, setEditedContent] = useState(content);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+    const [openImageDialog, setOpenImageDialog] = useState(false);
 
     const [showAllComments, setShowAllComments] = useState(false);
 
@@ -163,6 +165,10 @@ const ModalPost: React.FC<PostProps> = ({
         setDialogOpen(false);
     };
 
+    const handleCloseDialog = () => {
+        setOpenImageDialog(false);
+    };
+
     const handleSaveEdit = async () => {
         try {
             const response = await updatePost(postId, editedContent);
@@ -204,7 +210,9 @@ const ModalPost: React.FC<PostProps> = ({
                                         width: "100%",
                                         height: "100%",
                                         objectFit: "cover",
+                                        cursor: "pointer",
                                     }}
+                                    onClick={() => setOpenImageDialog(true)}
                                 />
                             )}
                         </Grid>
@@ -446,6 +454,7 @@ const ModalPost: React.FC<PostProps> = ({
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ImageDialog openDialog={openImageDialog} handleCloseDialog={handleCloseDialog} selectedImage={fileUrl || ""} />
         </Card>
     );
 };

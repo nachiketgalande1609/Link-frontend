@@ -55,7 +55,6 @@ const ImageDialog: React.FC<DialogProps> = ({ openDialog, handleCloseDialog, sel
                     padding: 0,
                     position: "relative",
                     overflow: "hidden",
-                    cursor: "zoom-in",
                 }}
                 onWheel={handleWheel}
             >
