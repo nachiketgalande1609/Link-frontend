@@ -103,12 +103,11 @@ export default function ScrollableCommentsDrawer({
                             flex: 1,
                             display: "flex",
                             flexDirection: "column",
+                            gap: "6px",
                         }}
                     >
-                        <Box sx={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                            <Typography sx={{ fontSize: "0.9rem", fontWeight: "500", color: "#cccccc" }}>{username}</Typography>
-                            <Typography variant="body2">{content}</Typography>
-                        </Box>
+                        <Typography sx={{ fontSize: "0.9rem", fontWeight: "500", color: "#cccccc" }}>{username}</Typography>
+                        <Typography variant="body2">{content}</Typography>
                     </Box>
                 </Box>
 
