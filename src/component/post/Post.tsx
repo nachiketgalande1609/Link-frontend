@@ -20,12 +20,13 @@ import {
     CircularProgress,
 } from "@mui/material";
 
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn, OpenInFull } from "@mui/icons-material";
 
 import { deletePost, likePost, addComment, updatePost, savePost } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import ImageDialog from "../ImageDialog";
 
 interface Post {
     username: string;
@@ -77,6 +78,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     const [postComments, setPostComments] = useState(post.comments);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
+    const [openImageDialog, setOpenImageDialog] = useState(false);
 
     const [isLiked, setIsLiked] = useState(post.liked_by_current_user);
     const [isEditing, setIsEditing] = useState(false);
@@ -174,6 +176,10 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
         setIsEditing(true);
     };
 
+    const handleCloseDialog = () => {
+        setOpenImageDialog(false);
+    };
+
     const handleSavePost = async () => {
         try {
             const res = await savePost(currentUser?.id, post.id);
@@ -221,8 +227,10 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                             position: "relative",
                             width: "100%",
                             height: postWidth ? (post.image_height / post.image_width) * postWidth : postWidth,
+                            cursor: "pointer",
                         }}
                         onDoubleClick={handleDoubleClickLike}
+                        onClick={() => setOpenImageDialog(true)}
                     >
                         {isImageLoading && (
                             <Box
@@ -237,6 +245,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                                 <CircularProgress color="inherit" />
                             </Box>
                         )}
+
                         <CardMedia
                             component="img"
                             image={post.file_url}
@@ -247,7 +256,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                                 objectFit: "cover",
                                 borderRadius: "20px",
                             }}
-                            onLoad={handleImageLoad} // Set image loaded
+                            onLoad={handleImageLoad}
                         />
                     </Box>
                 )}
@@ -496,6 +505,8 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 username={post.username}
                 avatarUrl={post.profile_picture}
             />
+
+            <ImageDialog openDialog={openImageDialog} handleCloseDialog={handleCloseDialog} selectedImage={post.file_url || ""} />
         </Card>
     );
 };

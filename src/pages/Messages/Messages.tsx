@@ -7,7 +7,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
 import { useUser } from "../../context/userContext";
 import { getAllMessagesData, shareChatMedia } from "../../services/api";
-import ImageDialog from "./ImageDialog";
+import ImageDialog from "../../component/ImageDialog";
 import MessagesContainer from "./messageContainer/MessagesContainer";
 import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
