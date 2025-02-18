@@ -23,6 +23,7 @@ import {
     FOLLOWING_USERS_LIST_ENDPOINT,
     GET_SAVED_POSTS_ENDPOINT,
     SAVE_POST_ENDPOINT,
+    UNFOLLOW_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -280,6 +281,22 @@ export const addComment = async (userId: string, postId: string, comment: string
 export const followUser = async (followerId: string, followingId: string) => {
     try {
         const response = await api.post(FOLLOW_ENDPOINT, { followerId, followingId });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to send follow request:", error.message);
+        } else {
+            console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const unfollowUser = async (followerId: string, followingId: string) => {
+    try {
+        const response = await api.delete(UNFOLLOW_ENDPOINT, {
+            data: { followerId, followingId },
+        });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {

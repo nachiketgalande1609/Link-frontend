@@ -2,13 +2,17 @@ import { Dialog, Button, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import socket from "../../services/socket";
+import { unfollowUser } from "../../services/api";
 
 interface MoreOptionsDialogProps {
     openDialog: boolean;
     handleCloseDialog: () => void;
+    userId: string | undefined;
+    fetchProfile: () => void; // Add this
+    fetchUserPosts: () => void;
 }
 
-export default function MoreOptionsDialog({ openDialog, handleCloseDialog }: MoreOptionsDialogProps) {
+export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userId, fetchProfile, fetchUserPosts }: MoreOptionsDialogProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const notifications = useNotifications();
@@ -47,6 +51,23 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog }: Mor
         navigate("/login");
     };
 
+    const handleUnfollow = async () => {
+        try {
+            const res = await unfollowUser(currentUser.id, userId || "");
+            if (res.success) {
+                handleCloseDialog();
+                notifications.show("User Unfollowed", {
+                    severity: "success",
+                    autoHideDuration: 3000,
+                });
+                fetchProfile();
+                fetchUserPosts();
+            }
+        } catch (err) {
+            console.error("Unfollow reuest failed:", err);
+        }
+    };
+
     return (
         <Dialog
             open={openDialog}
@@ -67,7 +88,24 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog }: Mor
                 },
             }}
         >
-            {currentUser?.id && (
+            {currentUser?.id != userId && (
+                <Button
+                    fullWidth
+                    onClick={handleUnfollow}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Unfollow
+                </Button>
+            )}
+            {currentUser?.id == userId && (
                 <Button
                     fullWidth
                     onClick={handleEditProfile}

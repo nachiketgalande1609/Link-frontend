@@ -96,10 +96,11 @@ export default function SearchPage() {
                 sx={{
                     "& .MuiOutlinedInput-root": {
                         borderRadius: "20px",
+                        mb: 1,
                     },
                 }}
                 fullWidth
-                label="Search Users"
+                placeholder="Search Users"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 inputRef={searchInputRef} // Attach ref here

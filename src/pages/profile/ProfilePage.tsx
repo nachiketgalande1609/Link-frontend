@@ -213,7 +213,7 @@ const ProfilePage = () => {
                             }}
                         >
                             <Grid item xs={4}>
-                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
                                     {profileData?.posts_count}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
@@ -221,7 +221,7 @@ const ProfilePage = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
                                     {profileData?.followers_count}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
@@ -229,7 +229,7 @@ const ProfilePage = () => {
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 1 }}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
                                     {profileData?.following_count}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
@@ -308,7 +308,13 @@ const ProfilePage = () => {
                     />
                 )}
             </Dialog>
-            <MoreOptionsDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} />
+            <MoreOptionsDialog
+                openDialog={openDialog}
+                handleCloseDialog={handleCloseDialog}
+                userId={userId}
+                fetchProfile={fetchProfile}
+                fetchUserPosts={fetchUserPosts}
+            />
         </Container>
     );
 };

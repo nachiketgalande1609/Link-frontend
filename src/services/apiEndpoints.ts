@@ -10,6 +10,7 @@ export const UPDATE_PROFILE_ENDPOINT: string = "/api/users/profile/update";
 
 // Follow Endpoints
 export const FOLLOW_ENDPOINT: string = "/api/follow";
+export const UNFOLLOW_ENDPOINT: string = "/api/follow/unfollow";
 export const FOLLOW_RESPONSE_ENDPOINT: string = "/api/follow/response";
 export const FOLLOWING_USERS_LIST_ENDPOINT: string = "/api/follow/following";
 

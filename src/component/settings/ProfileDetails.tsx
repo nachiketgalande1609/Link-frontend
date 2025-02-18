@@ -134,7 +134,7 @@ const ProfileDetails = () => {
             localStorage.setItem("user", JSON.stringify(updatedUser));
             notifications.show("Profile details updated successfully!", {
                 severity: "success",
-                autoHideDuration: 3000,
+                autoHideDuration: 30000000,
             });
         } catch (error) {
             console.error("Failed to update username:", error);
