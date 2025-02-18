@@ -18,6 +18,8 @@ export const POSTS_ENDPOINT: string = "/api/posts";
 export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
 export const ADD_POST_COMMENT_ENDPOINT: string = "/api/posts/comment";
+export const GET_SAVED_POSTS_ENDPOINT: string = "/api/posts/saved";
+export const SAVE_POST_ENDPOINT: string = "/api/posts/save";
 
 // Notifications Endpoints
 export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";

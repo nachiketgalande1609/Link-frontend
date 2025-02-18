@@ -20,6 +20,7 @@ import Notifications from "./pages/notifications/Notifications";
 import SettingsPage from "./pages/SettingsPage";
 import { getNotificationsCount } from "./services/api";
 import NavDrawer from "./component/navbar/NavDrawer";
+import SavedPage from "./pages/SavedPage";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
@@ -168,6 +169,14 @@ const AppContent = () => {
                         element={
                             <PrivateRoute>
                                 <SearchPage />
+                            </PrivateRoute>
+                        }
+                    />{" "}
+                    <Route
+                        path="/saved"
+                        element={
+                            <PrivateRoute>
+                                <SavedPage />
                             </PrivateRoute>
                         }
                     />

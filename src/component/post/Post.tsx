@@ -19,11 +19,12 @@ import {
     useTheme,
 } from "@mui/material";
 
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark } from "@mui/icons-material";
 
-import { deletePost, likePost, addComment, updatePost } from "../../services/api"; // Assuming you have an updatePost function in your API
+import { deletePost, likePost, addComment, updatePost, savePost } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 import { useNavigate } from "react-router-dom";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 interface PostProps {
     username: string;
@@ -52,6 +53,7 @@ interface PostProps {
     borderRadius: string;
     imageHeight: number;
     imageWidth: number;
+    savedByCurrentUser: boolean;
 }
 
 const Post: React.FC<PostProps> = ({
@@ -70,10 +72,13 @@ const Post: React.FC<PostProps> = ({
     borderRadius,
     imageHeight,
     imageWidth,
+    savedByCurrentUser,
 }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const notifications = useNotifications();
+
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
     const [postComments, setPostComments] = useState(initialComments);
@@ -163,12 +168,30 @@ const Post: React.FC<PostProps> = ({
 
     const handleCancelEdit = () => {
         setIsEditing(false);
-        setEditedContent(""); // Reset the content if cancelled
+        setEditedContent("");
     };
 
     const handleEditClick = () => {
-        setEditedContent(content); // Pre-fill the content for editing
-        setIsEditing(true); // You can also manage state to show modal
+        setEditedContent(content);
+        setIsEditing(true);
+    };
+
+    const handleSavePost = async () => {
+        try {
+            const res = await savePost(currentUser?.id, postId);
+            if (res.success) {
+                fetchPosts();
+                if (!savedByCurrentUser) {
+                    notifications.show(`Post has been saved!`, {
+                        severity: "success",
+                        autoHideDuration: 3000,
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error saving post:", error);
+            alert("An error occurred while saving the post.");
+        }
     };
 
     const handleSaveEdit = async () => {
@@ -234,8 +257,12 @@ const Post: React.FC<PostProps> = ({
                         </Typography>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }}>
-                            <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
+                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>
+                            {savedByCurrentUser ? (
+                                <Bookmark sx={{ fontSize: isMobile ? "26px" : "30px" }} />
+                            ) : (
+                                <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
+                            )}
                         </IconButton>
                         <IconButton onClick={handleOptionsDialogOpen} sx={{ padding: "0" }}>
                             <MoreVert />

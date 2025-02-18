@@ -2,9 +2,9 @@ import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typogr
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
-import { getPosts } from "../services/api";
+import { getSavedPosts } from "../services/api";
 
-const HomePage = () => {
+const SavedPage = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const user = JSON.parse(localStorage.getItem("user") || "");
@@ -14,7 +14,7 @@ const HomePage = () => {
     const fetchPosts = async () => {
         try {
             if (user) {
-                const res = await getPosts(user?.id);
+                const res = await getSavedPosts(user?.id);
                 setPosts(res.data);
             }
         } catch (error) {
@@ -67,7 +67,7 @@ const HomePage = () => {
                                 borderRadius="20px"
                                 imageHeight={post.image_height}
                                 imageWidth={post.image_width}
-                                savedByCurrentUser={post.saved_by_current_user}
+                                savedByCurrentUser={true}
                             />
                         </Grid>
                     ))}
@@ -76,10 +76,10 @@ const HomePage = () => {
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
                     <SentimentDissatisfied sx={{ fontSize: 60, color: "gray" }} />
                     <Typography variant="h6" color="textSecondary" mt={2}>
-                        No posts available
+                        You haven't saved any posts yet
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                        Be the first to share something!
+                        Browse and save posts to see them here.
                     </Typography>
                 </Box>
             )}
@@ -87,4 +87,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default SavedPage;

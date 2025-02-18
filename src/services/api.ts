@@ -21,6 +21,8 @@ import {
     GET_ALL_MESSAGES_ENDPOINT,
     SHARE_MEDIA_ENDPOINT,
     FOLLOWING_USERS_LIST_ENDPOINT,
+    GET_SAVED_POSTS_ENDPOINT,
+    SAVE_POST_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -95,6 +97,39 @@ export const googleLogin = async (data: { token: string }) => {
 export const getPosts = async (userId: string) => {
     try {
         const response = await api.get(`${POSTS_ENDPOINT}?userId=${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getSavedPosts = async (userId: string) => {
+    try {
+        const response = await api.get(`${GET_SAVED_POSTS_ENDPOINT}?userId=${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const savePost = async (userId: string, postId: string) => {
+    try {
+        const response = await api.post(SAVE_POST_ENDPOINT, {
+            userId,
+            postId,
+        });
 
         return response.data;
     } catch (error: unknown) {

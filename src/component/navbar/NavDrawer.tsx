@@ -34,6 +34,8 @@ import {
     ChevronLeft,
     Login,
     AccountCircleOutlined,
+    BookmarkBorderOutlined,
+    Bookmark,
 } from "@mui/icons-material";
 
 const DrawerWidth = 240;
@@ -111,6 +113,13 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                           <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />
                       </Badge>
                   ),
+              },
+              {
+                  kind: "item",
+                  segment: "saved",
+                  title: "Saved",
+                  icon: <BookmarkBorderOutlined sx={{ fontSize: "2rem" }} />,
+                  filledIcon: <Bookmark sx={{ fontSize: "2rem", color: "#000000" }} />,
               },
               {
                   kind: "item",
