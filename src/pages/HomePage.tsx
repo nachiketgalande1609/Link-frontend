@@ -65,6 +65,8 @@ const HomePage = () => {
                                 hasUserLikedPost={post.liked_by_current_user}
                                 initialComments={post.comments}
                                 borderRadius="20px"
+                                imageHeight={post.image_height}
+                                imageWidth={post.image_width}
                             />
                         </Grid>
                     ))}

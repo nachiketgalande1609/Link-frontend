@@ -224,7 +224,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
         navigate(`/messages/${userId}`);
-        console.log("Running");
     };
 
     // Socket to send messages and emit stop typing

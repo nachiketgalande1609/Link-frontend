@@ -54,8 +54,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     handleImageClick,
     messagesEndRef,
     handleReply,
-    chatTheme,
-    anchorEl,
     setAnchorEl,
 }) => {
     const theme = useTheme();

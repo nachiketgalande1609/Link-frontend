@@ -50,6 +50,8 @@ interface PostProps {
         timeAgo: string;
     }>;
     borderRadius: string;
+    imageHeight: number;
+    imageWidth: number;
 }
 
 const Post: React.FC<PostProps> = ({
@@ -66,6 +68,8 @@ const Post: React.FC<PostProps> = ({
     hasUserLikedPost,
     initialComments,
     borderRadius,
+    imageHeight,
+    imageWidth,
 }) => {
     const theme = useTheme();
     const navigate = useNavigate();
@@ -80,7 +84,8 @@ const Post: React.FC<PostProps> = ({
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [showLikeAnimation, setShowLikeAnimation] = useState(false);
+    const postRef = useRef<HTMLDivElement>(null);
+    const postWidth = postRef?.current?.offsetWidth || 0;
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -183,45 +188,28 @@ const Post: React.FC<PostProps> = ({
         if (!isLiked) {
             await handleLike();
         }
-        setShowLikeAnimation(true);
-        setTimeout(() => {
-            setShowLikeAnimation(false);
-        }, 1000); // Adjust timing if needed
     };
 
     return (
         <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius, width: "100%" }}>
             <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 {fileUrl && (
-                    <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }} onDoubleClick={handleDoubleClickLike}>
+                    <Box
+                        ref={postRef}
+                        sx={{ position: "relative", width: "100%", height: postWidth ? (imageHeight / imageWidth) * postWidth : postWidth }}
+                        onDoubleClick={handleDoubleClickLike}
+                    >
                         <CardMedia
                             component="img"
                             image={fileUrl}
                             alt="Post Image"
                             sx={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
                                 width: "100%",
                                 height: "100%",
                                 objectFit: "cover",
                                 borderRadius: "20px",
                             }}
                         />
-                        {showLikeAnimation && (
-                            <Favorite
-                                sx={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%, -50%) scale(1.5)",
-                                    color: "red",
-                                    opacity: 1,
-                                    fontSize: "80px",
-                                    transition: "opacity 0.5s ease-in-out",
-                                }}
-                            />
-                        )}
                     </Box>
                 )}
             </CardContent>
