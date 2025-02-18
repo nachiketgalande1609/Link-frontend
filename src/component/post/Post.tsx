@@ -17,6 +17,7 @@ import {
     Button,
     useMediaQuery,
     useTheme,
+    CircularProgress,
 } from "@mui/material";
 
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark } from "@mui/icons-material";
@@ -91,10 +92,15 @@ const Post: React.FC<PostProps> = ({
     const [drawerOpen, setDrawerOpen] = useState(false);
     const postRef = useRef<HTMLDivElement>(null);
     const postWidth = postRef?.current?.offsetWidth || 0;
+    const [isImageLoading, setIsImageLoading] = useState(true); // Track image loading state
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     const commentInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImageLoad = () => {
+        setIsImageLoading(false);
+    };
 
     const handleFocusCommentField = () => {
         if (commentInputRef.current) {
@@ -222,6 +228,19 @@ const Post: React.FC<PostProps> = ({
                         sx={{ position: "relative", width: "100%", height: postWidth ? (imageHeight / imageWidth) * postWidth : postWidth }}
                         onDoubleClick={handleDoubleClickLike}
                     >
+                        {isImageLoading && (
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%)",
+                                    zIndex: 1,
+                                }}
+                            >
+                                <CircularProgress color="inherit" />
+                            </Box>
+                        )}
                         <CardMedia
                             component="img"
                             image={fileUrl}
@@ -232,6 +251,7 @@ const Post: React.FC<PostProps> = ({
                                 objectFit: "cover",
                                 borderRadius: "20px",
                             }}
+                            onLoad={handleImageLoad} // Set image loaded
                         />
                     </Box>
                 )}
