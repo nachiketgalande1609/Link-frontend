@@ -64,7 +64,7 @@ interface PostProps {
     post: Post;
     fetchPosts: () => Promise<void>;
     borderRadius: string;
-    isSaved: boolean;
+    isSaved?: boolean;
 }
 
 const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) => {
