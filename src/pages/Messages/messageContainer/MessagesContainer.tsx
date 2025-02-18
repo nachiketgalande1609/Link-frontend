@@ -428,7 +428,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                         Select a user to start chatting
                     </Typography>
                     <Button
-                        variant="contained"
+                        variant="outlined"
                         size="medium"
                         sx={{ display: "block", margin: "20px auto", textAlign: "center", borderRadius: "15px" }}
                         onClick={(e) => setAnchorEl(e.currentTarget)}

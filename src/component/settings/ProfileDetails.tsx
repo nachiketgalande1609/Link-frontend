@@ -221,7 +221,7 @@ const ProfileDetails = () => {
                 />
                 <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
                     <Button
-                        variant="contained"
+                        variant="outlined"
                         color="primary"
                         onClick={handleUpdateProfile}
                         disabled={!isModified || profileUpdating}

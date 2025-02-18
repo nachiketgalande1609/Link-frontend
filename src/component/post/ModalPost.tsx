@@ -319,7 +319,7 @@ const ModalPost: React.FC<PostProps> = ({
                                             <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "15px" }}>
                                                 Cancel
                                             </Button>
-                                            <Button onClick={handleSaveEdit} variant="contained" color="primary" sx={{ borderRadius: "15px" }}>
+                                            <Button onClick={handleSaveEdit} variant="outlined" color="primary" sx={{ borderRadius: "15px" }}>
                                                 Save
                                             </Button>
                                         </Box>
@@ -438,10 +438,10 @@ const ModalPost: React.FC<PostProps> = ({
                     <Typography variant="body2">Are you sure you want to delete this post? This action cannot be undone.</Typography>
                 </DialogContent>
                 <DialogActions sx={{ padding: "16px" }}>
-                    <Button onClick={handleCancel} size="large" sx={{ color: "#ffffff", borderRadius: "15px" }}>
+                    <Button onClick={handleCancel} size="medium" sx={{ color: "#ffffff", borderRadius: "15px" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleDelete} size="large" variant="contained" color="error" sx={{ borderRadius: "15px" }}>
+                    <Button onClick={handleDelete} size="medium" variant="outlined" color="error" sx={{ borderRadius: "15px" }}>
                         Delete
                     </Button>
                 </DialogActions>

@@ -27,19 +27,24 @@ import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@toolpad/core/useNotifications";
 
-interface PostProps {
+interface Post {
     username: string;
     content: string;
-    likes: number;
-    comments: number;
+    like_count: number;
     avatarUrl?: string;
-    fileUrl?: string;
+    file_url?: string;
     timeAgo: string;
-    postId: string;
+    id: string;
     userId: string;
-    fetchPosts: () => Promise<void>;
-    hasUserLikedPost: boolean;
-    initialComments: Array<{
+    liked_by_current_user: boolean;
+    image_height: number;
+    image_width: number;
+    savedByCurrentUser: boolean;
+    profile_picture: string;
+    user_id: number;
+    comment_count: number;
+    saved_by_current_user: boolean;
+    comments: Array<{
         id: number;
         post_id: string;
         user_id: string;
@@ -51,44 +56,29 @@ interface PostProps {
         commenter_profile_picture: string;
         timeAgo: string;
     }>;
-    borderRadius: string;
-    imageHeight: number;
-    imageWidth: number;
-    savedByCurrentUser: boolean;
 }
 
-const Post: React.FC<PostProps> = ({
-    username,
-    content,
-    likes,
-    comments,
-    avatarUrl,
-    fileUrl,
-    timeAgo,
-    postId,
-    userId,
-    fetchPosts,
-    hasUserLikedPost,
-    initialComments,
-    borderRadius,
-    imageHeight,
-    imageWidth,
-    savedByCurrentUser,
-}) => {
+interface PostProps {
+    post: Post;
+    fetchPosts: () => Promise<void>;
+    borderRadius: string;
+}
+
+const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const notifications = useNotifications();
 
     const [commentText, setCommentText] = useState("");
-    const [commentCount, setCommentCount] = useState(comments);
-    const [postComments, setPostComments] = useState(initialComments);
+    const [comment_count, setCommentCount] = useState(post.comment_count);
+    const [postComments, setPostComments] = useState(post.comments);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
 
-    const [isLiked, setIsLiked] = useState(hasUserLikedPost);
+    const [isLiked, setIsLiked] = useState(post.liked_by_current_user);
     const [isEditing, setIsEditing] = useState(false);
-    const [editedContent, setEditedContent] = useState(content);
+    const [editedContent, setEditedContent] = useState(post.content);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const postRef = useRef<HTMLDivElement>(null);
     const postWidth = postRef?.current?.offsetWidth || 0;
@@ -122,7 +112,7 @@ const Post: React.FC<PostProps> = ({
 
     const handleLike = async () => {
         try {
-            await likePost(currentUser.id, postId);
+            await likePost(currentUser.id, post.id);
             setIsLiked(!isLiked);
             fetchPosts();
         } catch (error) {
@@ -133,11 +123,11 @@ const Post: React.FC<PostProps> = ({
     const handleComment = async () => {
         if (commentText) {
             try {
-                const response = await addComment(currentUser.id, postId, commentText);
+                const response = await addComment(currentUser.id, post.id, commentText);
                 if (response?.success) {
                     const newComment = {
                         id: Date.now(),
-                        post_id: postId,
+                        post_id: post.id,
                         user_id: currentUser.id,
                         content: commentText,
                         parent_comment_id: null,
@@ -149,7 +139,7 @@ const Post: React.FC<PostProps> = ({
                     };
                     setPostComments([newComment, ...postComments]);
                     setCommentText("");
-                    setCommentCount(commentCount + 1);
+                    setCommentCount(comment_count + 1);
                     fetchPosts();
                 }
             } catch (error) {
@@ -160,7 +150,7 @@ const Post: React.FC<PostProps> = ({
 
     const handleDelete = async () => {
         try {
-            const res = await deletePost(userId, postId);
+            const res = await deletePost(post.user_id, post.id);
             if (res?.success) {
                 fetchPosts();
             }
@@ -178,16 +168,16 @@ const Post: React.FC<PostProps> = ({
     };
 
     const handleEditClick = () => {
-        setEditedContent(content);
+        setEditedContent(post.content);
         setIsEditing(true);
     };
 
     const handleSavePost = async () => {
         try {
-            const res = await savePost(currentUser?.id, postId);
+            const res = await savePost(currentUser?.id, post.id);
             if (res.success) {
                 fetchPosts();
-                if (!savedByCurrentUser) {
+                if (!post.saved_by_current_user) {
                     notifications.show(`Post has been saved!`, {
                         severity: "success",
                         autoHideDuration: 3000,
@@ -202,7 +192,7 @@ const Post: React.FC<PostProps> = ({
 
     const handleSaveEdit = async () => {
         try {
-            const response = await updatePost(postId, editedContent);
+            const response = await updatePost(post.id, editedContent);
             if (response?.success) {
                 setIsEditing(false);
                 fetchPosts();
@@ -222,10 +212,14 @@ const Post: React.FC<PostProps> = ({
     return (
         <Card sx={{ position: "relative", borderRadius: isMobile ? 0 : borderRadius, width: "100%" }}>
             <CardContent sx={{ padding: 0, backgroundColor: isMobile ? "#000000" : "#101114" }}>
-                {fileUrl && (
+                {post.file_url && (
                     <Box
                         ref={postRef}
-                        sx={{ position: "relative", width: "100%", height: postWidth ? (imageHeight / imageWidth) * postWidth : postWidth }}
+                        sx={{
+                            position: "relative",
+                            width: "100%",
+                            height: postWidth ? (post.image_height / post.image_width) * postWidth : postWidth,
+                        }}
                         onDoubleClick={handleDoubleClickLike}
                     >
                         {isImageLoading && (
@@ -243,7 +237,7 @@ const Post: React.FC<PostProps> = ({
                         )}
                         <CardMedia
                             component="img"
-                            image={fileUrl}
+                            image={post.file_url}
                             alt="Post Image"
                             sx={{
                                 width: "100%",
@@ -257,6 +251,8 @@ const Post: React.FC<PostProps> = ({
                 )}
             </CardContent>
 
+            <Typography>{}</Typography>
+
             <CardActions
                 sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
             >
@@ -266,19 +262,19 @@ const Post: React.FC<PostProps> = ({
                             {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                         </IconButton>
                         <Typography variant="body2" component="span" sx={{ mr: 2 }}>
-                            {likes}
+                            {post.like_count}
                         </Typography>
 
                         <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
                             <ChatBubbleOutline sx={{ fontSize: isMobile ? "26px" : "30px" }} onClick={() => setDrawerOpen(true)} />
                         </IconButton>
                         <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                            {commentCount}
+                            {post.comment_count}
                         </Typography>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>
-                            {savedByCurrentUser ? (
+                            {post.saved_by_current_user ? (
                                 <Bookmark sx={{ fontSize: isMobile ? "26px" : "30px" }} />
                             ) : (
                                 <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
@@ -297,12 +293,12 @@ const Post: React.FC<PostProps> = ({
                     <Grid item>
                         <Avatar
                             src={
-                                avatarUrl ||
+                                post.profile_picture ||
                                 "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
                             }
-                            alt={username}
+                            alt={post.username}
                             sx={{ width: 52, height: 52, cursor: "pointer" }}
-                            onClick={() => navigate(`/profile/${userId}`)}
+                            onClick={() => navigate(`/profile/${post.user_id}`)}
                         />
                     </Grid>
 
@@ -316,9 +312,9 @@ const Post: React.FC<PostProps> = ({
                                 textOverflow: "ellipsis",
                                 cursor: "pointer",
                             }}
-                            onClick={() => navigate(`/profile/${userId}`)}
+                            onClick={() => navigate(`/profile/${post.user_id}`)}
                         >
-                            {username}
+                            {post.username}
                         </Typography>
                         <Typography
                             sx={{
@@ -327,17 +323,17 @@ const Post: React.FC<PostProps> = ({
                                 backgroundColor: isMobile ? "#000000" : "#101114",
                             }}
                         >
-                            {content}
+                            {post.content}
                         </Typography>
                     </Grid>
 
                     {/* More Options (Only for post owner) */}
-                    {currentUser?.id === userId && <Grid item></Grid>}
+                    {currentUser?.id === post.user_id && <Grid item></Grid>}
                 </Grid>
             </Box>
 
             <Box sx={{ padding: "16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
-                <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{timeAgo}</Typography>
+                <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{post.timeAgo}</Typography>
             </Box>
 
             {/* Confirmation Dialog */}
@@ -355,10 +351,10 @@ const Post: React.FC<PostProps> = ({
                     <Typography variant="body2">Are you sure you want to delete this post? This action cannot be undone.</Typography>
                 </DialogContent>
                 <DialogActions sx={{ padding: "16px" }}>
-                    <Button onClick={handleCancel} size="large" sx={{ color: "#ffffff", borderRadius: "15px" }}>
+                    <Button onClick={handleCancel} size="medium" sx={{ color: "#ffffff", borderRadius: "15px" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleDelete} size="large" variant="contained" color="error" sx={{ borderRadius: "15px" }}>
+                    <Button onClick={handleDelete} size="medium" variant="outlined" color="error" sx={{ borderRadius: "15px" }}>
                         Delete
                     </Button>
                 </DialogActions>
@@ -392,10 +388,10 @@ const Post: React.FC<PostProps> = ({
                     />
                 </DialogContent>
                 <DialogActions sx={{ padding: "0" }}>
-                    <Button onClick={handleCancelEdit} size="small" sx={{ color: "#ffffff", borderRadius: "15px" }}>
+                    <Button onClick={handleCancelEdit} size="medium" sx={{ color: "#ffffff", borderRadius: "15px" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSaveEdit} size="small" variant="contained" color="primary" sx={{ borderRadius: "15px" }}>
+                    <Button onClick={handleSaveEdit} size="medium" variant="outlined" color="primary" sx={{ borderRadius: "15px" }}>
                         Save
                     </Button>
                 </DialogActions>
@@ -482,9 +478,9 @@ const Post: React.FC<PostProps> = ({
                 commentText={commentText}
                 setCommentText={setCommentText}
                 commentInputRef={commentInputRef}
-                content={content}
-                username={username}
-                avatarUrl={avatarUrl}
+                content={post.content}
+                username={post.username}
+                avatarUrl={post.profile_picture}
             />
         </Card>
     );

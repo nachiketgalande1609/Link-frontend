@@ -51,24 +51,7 @@ const HomePage = () => {
                                 marginBottom: isMobile && index !== posts.length - 1 ? "2px" : "none", // Apply border except for last item
                             }}
                         >
-                            <Post
-                                username={post.username}
-                                content={post.content}
-                                likes={post.like_count}
-                                comments={post.comment_count}
-                                fileUrl={post.file_url}
-                                avatarUrl={post.profile_picture}
-                                timeAgo={post.timeAgo}
-                                postId={post.id}
-                                userId={post.user_id}
-                                fetchPosts={fetchPosts}
-                                hasUserLikedPost={post.liked_by_current_user}
-                                initialComments={post.comments}
-                                borderRadius="20px"
-                                imageHeight={post.image_height}
-                                imageWidth={post.image_width}
-                                savedByCurrentUser={post.saved_by_current_user}
-                            />
+                            <Post post={post} fetchPosts={fetchPosts} borderRadius="20px" />
                         </Grid>
                     ))}
                 </Grid>

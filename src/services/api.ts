@@ -235,7 +235,7 @@ export const updatePost = async (postId: string, editContent: string) => {
     }
 };
 
-export const deletePost = async (userId: string, postId: string) => {
+export const deletePost = async (userId: number, postId: string) => {
     try {
         const response = await api.delete(`${POSTS_ENDPOINT}?userId=${userId}&postId=${postId}`);
         return response.data;
