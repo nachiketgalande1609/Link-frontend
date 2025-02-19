@@ -226,7 +226,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         sx={{
                             position: "relative",
                             width: "100%",
-                            height: postWidth ? (post.image_height / post.image_width) * postWidth : postWidth,
+                            height: postWidth ? (post.image_height / post.image_width) * postWidth : postWidth || "400px",
                             cursor: "pointer",
                         }}
                         onDoubleClick={handleDoubleClickLike}
