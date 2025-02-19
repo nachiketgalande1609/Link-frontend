@@ -141,14 +141,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                     src={msg.file_url}
                                                     alt="Sent Image"
                                                     sx={{
-                                                        height: { xs: "200px", md: "250px", lg: "300px" },
-                                                        width:
+                                                        width: isMobile ? "200" : "300px",
+                                                        height:
                                                             msg.media_width && msg.media_height
-                                                                ? {
-                                                                      xs: "auto",
-                                                                      md: `${(msg.media_width / msg.media_height) * 250}px`,
-                                                                      lg: `${(msg.media_width / msg.media_height) * 300}px`,
-                                                                  }
+                                                                ? `${(msg.media_height / msg.media_width) * (isMobile ? 200 : 300)}px`
                                                                 : "auto",
                                                         objectFit: "contain",
                                                         borderRadius: "10px",
@@ -168,8 +164,12 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                             <video
                                                 controls
                                                 style={{
+                                                    width: isMobile ? "200px" : "300px",
+                                                    height:
+                                                        msg.media_width && msg.media_height
+                                                            ? `${(msg.media_height / msg.media_width) * (isMobile ? 200 : 300)}px`
+                                                            : "100%",
                                                     maxWidth: "100%",
-                                                    height: "auto",
                                                     borderRadius: "10px",
                                                 }}
                                             >
