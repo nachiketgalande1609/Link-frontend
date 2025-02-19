@@ -38,8 +38,8 @@ interface Post {
     id: string;
     userId: string;
     liked_by_current_user: boolean;
-    image_height: number;
-    image_width: number;
+    media_height: number;
+    media_width: number;
     savedByCurrentUser: boolean;
     profile_picture: string;
     user_id: number;
@@ -226,7 +226,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         sx={{
                             position: "relative",
                             width: "100%",
-                            height: postWidth ? (post.image_height / post.image_width) * postWidth : postWidth || "400px",
+                            height: postWidth ? (post.media_height / post.media_width) * postWidth : postWidth || "400px",
                             cursor: "pointer",
                         }}
                         onDoubleClick={handleDoubleClickLike}

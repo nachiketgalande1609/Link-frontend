@@ -39,8 +39,8 @@ type Message = {
     file_name: string | null;
     file_size: string | null;
     reply_to: number | null;
-    image_height: number | null;
-    image_width: number | null;
+    media_height: number | null;
+    media_width: number | null;
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -143,11 +143,11 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                     sx={{
                                                         height: { xs: "200px", md: "250px", lg: "300px" },
                                                         width:
-                                                            msg.image_width && msg.image_height
+                                                            msg.media_width && msg.media_height
                                                                 ? {
                                                                       xs: "auto",
-                                                                      md: `${(msg.image_width / msg.image_height) * 250}px`,
-                                                                      lg: `${(msg.image_width / msg.image_height) * 300}px`,
+                                                                      md: `${(msg.media_width / msg.media_height) * 250}px`,
+                                                                      lg: `${(msg.media_width / msg.media_height) * 300}px`,
                                                                   }
                                                                 : "auto",
                                                         objectFit: "contain",
