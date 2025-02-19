@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, useMediaQuery, useTheme, Box } from "@mui/material";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, useMediaQuery, useTheme, Box, LinearProgress } from "@mui/material";
 import ProfilePagePost from "../../component/post/ProfilePagePost";
 import ModalPost from "../../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../../services/api";
@@ -7,6 +7,7 @@ import { MoreVert } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import LockIcon from "@mui/icons-material/Lock";
 import MoreOptionsDialog from "./MoreOptionsDialog";
+import { useGlobalStore } from "../../store/store";
 
 interface Profile {
     username: string;
@@ -28,6 +29,7 @@ const ProfilePage = () => {
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const { postUploading } = useGlobalStore();
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -72,6 +74,12 @@ const ProfilePage = () => {
             fetchUserPosts();
         }
     }, [profileData, userId, currentUser?.id]);
+
+    useEffect(() => {
+        if (!postUploading) {
+            fetchUserPosts();
+        }
+    }, [postUploading]);
 
     const handleOpenModal = (post: any) => {
         setSelectedPost(post);
@@ -118,7 +126,6 @@ const ProfilePage = () => {
             <Paper
                 sx={{
                     padding: { xs: 2, sm: 3 },
-                    mb: isMobile ? 2 : 3,
                     borderRadius: "20px",
                     boxShadow: 3,
                     background: "linear-gradient(0deg, hsl(214, 10%, 20%),rgb(0, 0, 0))",
@@ -240,6 +247,31 @@ const ProfilePage = () => {
                     </Grid>
                 </Grid>
             </Paper>
+
+            <Box
+                sx={{
+                    position: "relative",
+                    display: "flex",
+                    height: "20px",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                }}
+            >
+                {postUploading && (
+                    <LinearProgress
+                        sx={{
+                            position: "absolute",
+                            width: "100%",
+                            height: "4px",
+                            borderRadius: "5px",
+                            background: "linear-gradient(90deg, #7a60ff, #ff8800)", // Gradient effect
+                            "& .MuiLinearProgress-bar": {
+                                background: "linear-gradient(90deg, #7a60ff, #ff8800)", // Gradient for the moving bar
+                            },
+                        }}
+                    />
+                )}
+            </Box>
 
             {/* Profile Posts */}
             {profileData?.is_private && !profileData?.is_following && currentUser?.id != userId ? (

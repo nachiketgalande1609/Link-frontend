@@ -4,6 +4,7 @@ import { Close } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import { createPost } from "../../services/api";
 import { useGlobalStore } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 interface CreatePostModalProps {
     open: boolean;
@@ -11,12 +12,15 @@ interface CreatePostModalProps {
 }
 
 const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) => {
+    const navigate = useNavigate();
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+
     const [postContent, setPostContent] = useState<string>("");
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [location, setLocation] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
-    const { user } = useGlobalStore();
+    const { user, setPostUploading } = useGlobalStore();
 
     const onDrop = (acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
@@ -31,23 +35,32 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     });
 
     const handleSubmit = async () => {
-        setLoading(true);
+        try {
+            setLoading(true);
+            setPostUploading(true);
+            navigate(`/profile/${currentUser?.id}`);
 
-        if (postContent.trim() && user) {
-            const res = await createPost({
-                user_id: user.id,
-                content: postContent,
-                image: imageFile || undefined,
-                location,
-            });
+            if (postContent.trim() && user) {
+                const res = await createPost({
+                    user_id: user.id,
+                    content: postContent,
+                    image: imageFile || undefined,
+                    location,
+                });
 
-            setLoading(false);
-            if (res?.success) {
-                setPostContent("");
-                setImageFile(null);
-                setLocation("");
-                handleClose();
+                if (res?.success) {
+                    setPostContent("");
+                    setImageFile(null);
+                    setLocation("");
+                    handleClose();
+                }
             }
+        } catch (error) {
+            console.error("Error creating post:", error);
+            alert("Failed to create post. Please try again.");
+        } finally {
+            setLoading(false);
+            setPostUploading(false);
         }
     };
 
