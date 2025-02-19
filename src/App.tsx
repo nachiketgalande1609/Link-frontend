@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Box, ThemeProvider } from "@mui/material";
 
-import { useUser } from "./context/userContext";
+import { useGlobalStore } from "./store/store";
+
 import socket from "./services/socket";
 
 import PrivateRoute from "./component/PrivateRoute";
@@ -53,7 +54,7 @@ const App = () => {
 };
 
 const AppContent = () => {
-    const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount } = useUser();
+    const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount } = useGlobalStore();
     const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 

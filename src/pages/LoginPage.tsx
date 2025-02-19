@@ -3,11 +3,11 @@ import { TextField, Button, Container, Typography, Box, Alert, Link, Fade } from
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { loginUser, googleLogin } from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/userContext";
+import { useGlobalStore } from "../store/store";
 import socket from "../services/socket";
 
 const LoginPage: React.FC = () => {
-    const { setUser } = useUser();
+    const { setUser } = useGlobalStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);

@@ -5,7 +5,7 @@ import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
 
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
-import { useUser } from "../../context/userContext";
+import { useGlobalStore } from "../../store/store";
 import { getAllMessagesData, shareChatMedia } from "../../services/api";
 import ImageDialog from "../../component/ImageDialog";
 import MessagesContainer from "./messageContainer/MessagesContainer";
@@ -40,7 +40,7 @@ interface MessageProps {
 
 const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const { userId } = useParams();
-    const { unreadMessagesCount, setUnreadMessagesCount } = useUser();
+    const { unreadMessagesCount, setUnreadMessagesCount } = useGlobalStore();
 
     const navigate = useNavigate();
     const location = useLocation();

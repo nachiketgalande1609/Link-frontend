@@ -3,7 +3,7 @@ import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton, 
 import { Close } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import { createPost } from "../../services/api";
-import { useUser } from "../../context/userContext";
+import { useGlobalStore } from "../../store/store";
 
 interface CreatePostModalProps {
     open: boolean;
@@ -16,7 +16,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     const [location, setLocation] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
 
-    const { user } = useUser();
+    const { user } = useGlobalStore();
 
     const onDrop = (acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {

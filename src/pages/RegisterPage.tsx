@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Link, Fade } from "@mui/material";
 import { registerUser } from "../services/api";
-import { useUser } from "../context/userContext";
+import { useGlobalStore } from "../store/store";
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage: React.FC = () => {
-    const { setUser } = useUser();
+    const { setUser } = useGlobalStore();
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");

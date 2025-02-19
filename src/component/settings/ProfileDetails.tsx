@@ -5,7 +5,7 @@ import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { useDropzone } from "react-dropzone";
 import { uploadProfilePicture } from "../../services/api";
-import { useUser } from "../../context/userContext";
+import { useGlobalStore } from "../../store/store";
 import { updateProfileDetails } from "../../services/api";
 import { getProfile } from "../../services/api";
 import { useNotifications } from "@toolpad/core/useNotifications";
@@ -26,7 +26,7 @@ interface Profile {
 }
 
 const ProfileDetails = () => {
-    const { setUser } = useUser();
+    const { setUser } = useGlobalStore();
     const notifications = useNotifications();
 
     const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};

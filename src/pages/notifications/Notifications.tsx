@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, List, CircularProgress, Typography } from "@mui/material";
 import { followUser, getNotifications, respondToFollowRequest } from "../../services/api";
-import { useUser } from "../../context/userContext";
+import { useGlobalStore } from "../../store/store";
 import NotificationCard from "./NotificationCard";
 
 interface Notification {
@@ -20,7 +20,7 @@ interface Notification {
 }
 
 const NotificationsPage = () => {
-    const { unreadNotificationsCount, resetNotificationsCount } = useUser();
+    const { unreadNotificationsCount, resetNotificationsCount } = useGlobalStore();
 
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
