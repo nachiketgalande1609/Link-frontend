@@ -63,58 +63,71 @@ const HomePage = () => {
 
     return (
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-            <Box display="flex" gap={1} sx={{ padding: "10px 0" }}>
+            <Box display="flex" gap="16px" sx={{ padding: isMobile ? "10px 10px 0px 10px" : "10px 0 10px 0" }}>
                 {/* Current User Story Upload */}
                 <Box
                     sx={{
-                        width: 75,
-                        height: 75,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        position: "relative",
+                        width: 70,
+                        height: 70,
+                        padding: "3px",
+                        border: "3px solid red",
                         borderRadius: "50%",
-                        "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            borderRadius: "50%",
-                            padding: "2px",
-                            background: "linear-gradient(to right,#7a60ff,#ff8800)",
-                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "destination-out",
-                            maskComposite: "exclude",
-                        },
                     }}
                 >
                     <Avatar
                         src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
                         onClick={() => setOpenUploadDialog(true)}
-                        sx={{ width: 70, height: 70, cursor: "pointer" }}
+                        sx={{ width: "100%", height: "100%", cursor: "pointer" }}
                     />
                 </Box>
 
-                {/* User Stories */}
-                {loadingStories ? (
-                    <CircularProgress size={24} />
-                ) : (
-                    stories.map((userStory, index) => (
-                        <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center">
-                            <Avatar
-                                src={userStory.profile_picture || "https://via.placeholder.com/50"}
-                                onClick={() => {
-                                    setSelectedStoryIndex(index);
-                                    setOpenStoryDialog(true);
-                                }}
-                                sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid red" }}
-                            />
-                            <Typography variant="caption">{userStory.username}</Typography>
-                        </Box>
-                    ))
-                )}
+                <Box sx={{ display: "flex", gap: "16px" }}>
+                    {/* User Stories */}
+                    {loadingStories ? (
+                        <CircularProgress size={24} />
+                    ) : (
+                        stories.map((userStory, index) => (
+                            <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        width: 70,
+                                        height: 70,
+                                        padding: "3px",
+                                        border: "3px solid red",
+                                        borderRadius: "50%",
+                                    }}
+                                >
+                                    <Avatar
+                                        src={userStory.profile_picture || "https://via.placeholder.com/50"}
+                                        onClick={() => {
+                                            setSelectedStoryIndex(index);
+                                            setOpenStoryDialog(true);
+                                        }}
+                                        sx={{ width: "100%", height: "100%", cursor: "pointer" }}
+                                    />
+                                </Box>
+                                <Typography
+                                    sx={{
+                                        fontSize: "0.75rem",
+                                        maxWidth: 70,
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    {userStory.username}
+                                </Typography>
+                            </Box>
+                        ))
+                    )}
+                </Box>
             </Box>
 
             {loadingPosts ? (

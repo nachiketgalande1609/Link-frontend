@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos, Close } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Story {
     id: number;
@@ -25,6 +26,7 @@ interface StoryDialogProps {
 const STORY_DURATION = 5000; // 5 seconds per story
 
 const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selectedStoryIndex }) => {
+    const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const animationFrameRef = useRef<number | null>(null);
@@ -114,6 +116,10 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
+                            cursor: "pointer",
+                        }}
+                        onClick={() => {
+                            navigate(`/profile/${stories[selectedStoryIndex].user_id}`);
                         }}
                     >
                         <Avatar src={stories[selectedStoryIndex].profile_picture} />

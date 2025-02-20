@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, useMediaQuery, useTheme, Box, LinearProgress } from "@mui/material";
+import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, useMediaQuery, useTheme, Box } from "@mui/material";
 import ProfilePagePost from "../../component/post/ProfilePagePost";
 import ModalPost from "../../component/post/ModalPost";
 import { getProfile, getUserPosts, followUser } from "../../services/api";
@@ -126,9 +126,10 @@ const ProfilePage = () => {
             <Paper
                 sx={{
                     padding: { xs: 2, sm: 3 },
-                    borderRadius: "10px",
+                    borderRadius: "0px",
                     boxShadow: 3,
                     background: "linear-gradient(0deg, hsl(214, 10%, 20%),rgb(0, 0, 0))",
+                    mb: 1,
                 }}
             >
                 <Grid container spacing={3} alignItems="start" sx={{ position: "relative" }}>
@@ -248,31 +249,6 @@ const ProfilePage = () => {
                 </Grid>
             </Paper>
 
-            <Box
-                sx={{
-                    position: "relative",
-                    display: "flex",
-                    height: "20px",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                }}
-            >
-                {postUploading && (
-                    <LinearProgress
-                        sx={{
-                            position: "absolute",
-                            width: "100%",
-                            height: "4px",
-                            borderRadius: "5px",
-                            background: "linear-gradient(90deg, #7a60ff, #ff8800)", // Gradient effect
-                            "& .MuiLinearProgress-bar": {
-                                background: "linear-gradient(90deg, #7a60ff, #ff8800)", // Gradient for the moving bar
-                            },
-                        }}
-                    />
-                )}
-            </Box>
-
             {/* Profile Posts */}
             {profileData?.is_private && !profileData?.is_following && currentUser?.id != userId ? (
                 <Grid item xs={12} sx={{ textAlign: "center", mt: 5 }}>
@@ -337,6 +313,7 @@ const ProfilePage = () => {
                         initialComments={selectedPost.comments}
                         borderRadius="20px"
                         isMobile={isMobile}
+                        handleCloseModal={handleCloseModal}
                     />
                 )}
             </Dialog>

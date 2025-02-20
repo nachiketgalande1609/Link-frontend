@@ -110,11 +110,8 @@ export default function SearchPage() {
             {results.length > 0 && (
                 <List sx={{ padding: 0 }}>
                     {results.map((user) => (
-                        <ListItem key={user.id} sx={{ padding: "5px 0" }}>
-                            <ListItemButton
-                                onClick={() => handleUserClick(user)}
-                                sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}
-                            >
+                        <ListItem key={user.id} sx={{ padding: "5px 0" }} onClick={() => handleUserClick(user)}>
+                            <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
                                 <ListItemAvatar>
                                     <Avatar src={user.profile_picture} />
                                 </ListItemAvatar>
@@ -128,12 +125,12 @@ export default function SearchPage() {
             {!debouncedQuery && history?.length > 0 && (
                 <List sx={{ padding: 0 }}>
                     {history.map((item) => (
-                        <ListItem key={item.history_id} sx={{ padding: "5px 0" }}>
+                        <ListItem key={item.history_id} sx={{ padding: "5px 0" }} onClick={() => navigate(`/profile/${item.id}`)}>
                             <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
                                 <ListItemAvatar>
                                     <Avatar src={item.profile_picture} />
                                 </ListItemAvatar>
-                                <ListItemText primary={item.username} secondary={item.email} onClick={() => navigate(`/profile/${item.id}`)} />
+                                <ListItemText primary={item.username} secondary={item.email} />
                                 <IconButton
                                     edge="end"
                                     onClick={(e) => {

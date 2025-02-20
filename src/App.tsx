@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Box, ThemeProvider } from "@mui/material";
+import { Box, LinearProgress, ThemeProvider } from "@mui/material";
 
 import { useGlobalStore } from "./store/store";
 
@@ -57,6 +57,7 @@ const AppContent = () => {
     const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount } = useGlobalStore();
     const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+    const { postUploading } = useGlobalStore();
 
     useEffect(() => {
         socket.on("onlineUsers", (data) => {
@@ -207,7 +208,29 @@ const AppContent = () => {
                     />
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
-            </Box>
+            </Box>{" "}
+            {postUploading && (
+                <Box
+                    sx={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        zIndex: 1000,
+                    }}
+                >
+                    <LinearProgress
+                        sx={{
+                            width: "100%",
+                            height: "5px",
+                            background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                            "& .MuiLinearProgress-bar": {
+                                background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                            },
+                        }}
+                    />
+                </Box>
+            )}
         </Box>
     );
 };

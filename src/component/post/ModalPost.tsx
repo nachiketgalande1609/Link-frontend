@@ -48,6 +48,7 @@ interface PostProps {
     }>;
     borderRadius: string;
     isMobile: boolean;
+    handleCloseModal: () => void;
 }
 
 const ModalPost: React.FC<PostProps> = ({
@@ -65,6 +66,7 @@ const ModalPost: React.FC<PostProps> = ({
     initialComments,
     borderRadius,
     isMobile,
+    handleCloseModal,
 }) => {
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
@@ -158,9 +160,11 @@ const ModalPost: React.FC<PostProps> = ({
             const res = await deletePost(userId, postId);
             if (res?.success) {
                 fetchPosts();
+                handleCloseModal();
             }
-            setDialogOpen(false);
-        } catch (error) {}
+        } catch (error) {
+            console.error("Error deleting post:", error);
+        }
     };
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
