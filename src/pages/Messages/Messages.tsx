@@ -30,6 +30,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
+    reactions?: Record<number, string> | null;
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -432,6 +433,55 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         };
     }, []);
 
+    const handleReaction = (messageId: number, reaction: string) => {
+        if (!selectedUser) return;
+
+        setMessages((prevMessages) => {
+            const updatedMessages = { ...prevMessages };
+
+            if (updatedMessages[selectedUser.id]) {
+                updatedMessages[selectedUser.id] = updatedMessages[selectedUser.id].map((msg) =>
+                    msg.message_id === messageId
+                        ? {
+                              ...msg,
+                              reactions: {
+                                  ...msg.reactions,
+                                  [currentUser.id]: reaction,
+                              },
+                          }
+                        : msg
+                );
+            }
+
+            return updatedMessages;
+        });
+
+        // Emit the reaction to the server
+        socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
+    };
+
+    socket.on("reaction-received", ({ messageId, senderUserId, reaction }) => {
+        console.log("Reaction received", messageId, senderUserId, reaction);
+
+        setMessages((prevMessages) => {
+            const updatedMessages = { ...prevMessages };
+            Object.keys(updatedMessages).forEach((senderUserId) => {
+                updatedMessages[senderUserId] = updatedMessages[senderUserId].map((msg) =>
+                    msg.message_id === messageId
+                        ? {
+                              ...msg,
+                              reactions: {
+                                  ...msg.reactions,
+                                  [senderUserId]: reaction,
+                              },
+                          }
+                        : msg
+                );
+            });
+            return updatedMessages;
+        });
+    });
+
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
@@ -500,6 +550,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     anchorEl={anchorEl}
                     setAnchorEl={setAnchorEl}
                     handleDeleteMessage={handleDeleteMessage}
+                    handleReaction={handleReaction}
                 />
 
                 {/* Typing indicator */}

@@ -9,7 +9,9 @@ import {
     Reply as ReplyIcon,
     AddCommentOutlined as AddCommentOutlined,
     MoreHoriz,
+    EmojiEmotions,
 } from "@mui/icons-material";
+import EmojiPicker from "emoji-picker-react";
 import BlurBackgroundImage from "../../../static/blur.jpg";
 
 import MessageDetailsDrawer from "./MessageDetailsDrawer";
@@ -26,6 +28,7 @@ interface MessagesContainerProps {
     anchorEl: HTMLElement | null;
     setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     handleDeleteMessage: (message: Message | null) => void;
+    handleReaction: (messageId: number, reaction: string) => void; // New prop for handling reactions
 }
 
 type Message = {
@@ -44,6 +47,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
+    reactions?: Record<number, string> | null;
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -59,6 +63,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     handleReply,
     setAnchorEl,
     handleDeleteMessage,
+    handleReaction, // New prop for handling reactions
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -72,6 +77,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const [moreMenuOpen, setMoreMenuOpen] = useState(false);
     const [selectedMessageForAction, setSelectedMessageForAction] = useState<Message | null>(null);
 
+    // State for emoji picker
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+    const [selectedMessageForReaction, setSelectedMessageForReaction] = useState<Message | null>(null);
+
     // Handle double click on a message
     const handleDoubleClick = (msg: Message) => {
         setSelectedMessage(msg);
@@ -82,6 +91,14 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
         return Object.values(messages)
             .flat()
             .find((m) => m.message_id === replyToId);
+    };
+
+    // Handle emoji selection
+    const handleEmojiClick = (emojiObject: { emoji: string }) => {
+        if (selectedMessageForReaction) {
+            handleReaction(selectedMessageForReaction.message_id, emojiObject.emoji);
+            setEmojiPickerOpen(false);
+        }
     };
 
     return (
@@ -396,8 +413,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                         position: "absolute",
                                                         top: "50%",
                                                         transform: "translateY(-50%)",
-                                                        left: msg.sender_id === currentUser.id ? "-90px" : "auto",
-                                                        right: msg.sender_id === currentUser.id ? "auto" : "-50px",
+                                                        left: msg.sender_id === currentUser.id ? "-104px" : "auto",
+                                                        right: msg.sender_id === currentUser.id ? "auto" : "-70px",
                                                         display: "flex",
                                                         gap: "8px",
                                                     }}
@@ -417,7 +434,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                 setMoreMenuOpen(true);
                                                             }}
                                                         >
-                                                            <MoreHoriz />
+                                                            <MoreHoriz sx={{ fontSize: "20px" }} />
                                                         </IconButton>
                                                     )}
                                                     <IconButton
@@ -427,16 +444,59 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                 backgroundColor: "transparent",
                                                             },
                                                             paddingLeft: 0,
+                                                            paddingRight: 0,
                                                         }}
                                                         onClick={() => handleReply(msg)}
                                                     >
-                                                        <ReplyIcon />
+                                                        <ReplyIcon sx={{ fontSize: "20px" }} />
+                                                    </IconButton>
+                                                    <IconButton
+                                                        sx={{
+                                                            color: "white",
+                                                            "&:hover": {
+                                                                backgroundColor: "transparent",
+                                                            },
+                                                            paddingLeft: 0,
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedMessageForReaction(msg);
+                                                            setEmojiPickerOpen(true);
+                                                        }}
+                                                    >
+                                                        <EmojiEmotions sx={{ fontSize: "20px" }} />
                                                     </IconButton>
                                                 </Box>
                                             )}
                                         </Typography>
                                     )}
                                 </Box>
+                                {msg.reactions && (
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            gap: "4px",
+                                            justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
+                                            position: "relative",
+                                            marginTop: "-5px",
+                                            paddingLeft: msg.sender_id === currentUser.id ? "0px" : "10px",
+                                            paddingRight: msg.sender_id === currentUser.id ? "10px" : "0px",
+                                            zIndex: 1,
+                                        }}
+                                    >
+                                        {Object.entries(msg.reactions).map(([userId, reaction]) => (
+                                            <Typography
+                                                key={userId}
+                                                sx={{
+                                                    fontSize: "1rem",
+                                                    borderRadius: "12px",
+                                                }}
+                                            >
+                                                {reaction}
+                                            </Typography>
+                                        ))}
+                                    </Box>
+                                )}
                             </Box>
                             <Box sx={{ paddingBottom: "2px" }}>
                                 {msg.sender_id === currentUser.id &&
@@ -487,6 +547,20 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
             />
 
             <MessageDetailsDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} selectedMessage={selectedMessage} />
+
+            {/* Emoji Picker */}
+            {emojiPickerOpen && (
+                <Box
+                    sx={{
+                        position: "fixed",
+                        bottom: "80px",
+                        right: "20px",
+                        zIndex: 1000,
+                    }}
+                >
+                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                </Box>
+            )}
         </Box>
     );
 };

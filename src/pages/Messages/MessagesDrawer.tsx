@@ -21,7 +21,6 @@ import {
     VideoLibrary,
     MusicNote,
     Description,
-    CloseOutlined,
 } from "@mui/icons-material";
 import { getFollowingUsers } from "../../services/api";
 import NewChatUsersList from "./NewChatUsersList";
@@ -57,6 +56,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
+    reactions?: Record<number, string> | null;
 };
 
 type MessagesType = Record<string, Message[]>;

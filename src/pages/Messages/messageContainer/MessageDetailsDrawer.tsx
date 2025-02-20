@@ -17,6 +17,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
+    reactions?: Record<number, string> | null;
 };
 
 interface MessageDetailsDrawerProps {
