@@ -215,15 +215,42 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                     </IconButton>
 
                     {/* Previous Story Button */}
+                    {/* Previous Story Button */}
                     {currentIndex > 0 && (
-                        <IconButton sx={{ position: "absolute", left: 20, color: "white" }} onClick={handlePrev}>
+                        <IconButton
+                            sx={{
+                                position: "absolute",
+                                left: -50, // Move outside the story container
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                color: "white",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.7)" },
+                                width: 48,
+                                height: 48,
+                            }}
+                            onClick={handlePrev}
+                        >
                             <ArrowBackIos />
                         </IconButton>
                     )}
 
                     {/* Next Story Button */}
                     {currentIndex < selectedUserStories.length - 1 && (
-                        <IconButton sx={{ position: "absolute", right: 20, color: "white" }} onClick={handleNext}>
+                        <IconButton
+                            sx={{
+                                position: "absolute",
+                                right: -50, // Move outside the story container
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                color: "white",
+                                backgroundColor: "transparent",
+                                "&:hover": { backgroundColor: "transparent" },
+                                width: 48,
+                                height: 48,
+                            }}
+                            onClick={handleNext}
+                        >
                             <ArrowForwardIos />
                         </IconButton>
                     )}
