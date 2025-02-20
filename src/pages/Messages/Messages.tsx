@@ -6,12 +6,13 @@ import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
 import { useGlobalStore } from "../../store/store";
-import { getAllMessagesData, shareChatMedia } from "../../services/api";
+import { deleteMessage, getAllMessagesData, shareChatMedia } from "../../services/api";
 import ImageDialog from "../../component/ImageDialog";
 import MessagesContainer from "./messageContainer/MessagesContainer";
 import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 type Message = {
     message_id: number;
@@ -40,6 +41,7 @@ interface MessageProps {
 
 const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const { userId } = useParams();
+    const notifications = useNotifications();
     const { unreadMessagesCount, setUnreadMessagesCount } = useGlobalStore();
 
     const navigate = useNavigate();
@@ -311,6 +313,35 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         setIsSendingMessage(false);
     };
 
+    const handleDeleteMessage = async (message: Message | null) => {
+        if (!message) {
+            console.error("No message to delete.");
+            return;
+        }
+
+        try {
+            const response = await deleteMessage(message.message_id, currentUser?.id);
+            if (response?.success) {
+                setMessages((prevMessages) => {
+                    const updatedMessages = { ...prevMessages };
+                    const chatPartnerId = message.sender_id === currentUser.id ? selectedUser?.id : message.sender_id;
+
+                    if (chatPartnerId && updatedMessages[chatPartnerId]) {
+                        updatedMessages[chatPartnerId] = updatedMessages[chatPartnerId].filter((msg) => msg.message_id !== message.message_id);
+                    }
+
+                    return updatedMessages;
+                });
+                notifications.show(`Message deleted successfully!`, {
+                    severity: "success",
+                    autoHideDuration: 3000,
+                });
+            }
+        } catch (error) {
+            console.error("Failed to delete message:", error);
+        }
+    };
+
     useEffect(() => {
         socket.on("messageSaved", (data: { tempId: number; messageId: number }) => {
             setMessages((prevMessages) => {
@@ -468,6 +499,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     chatTheme={chatTheme}
                     anchorEl={anchorEl}
                     setAnchorEl={setAnchorEl}
+                    handleDeleteMessage={handleDeleteMessage}
                 />
 
                 {/* Typing indicator */}

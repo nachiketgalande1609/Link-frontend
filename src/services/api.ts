@@ -26,6 +26,7 @@ import {
     UNFOLLOW_ENDPOINT,
     UPLOAD_STORY_ENDPOINT,
     FETCH_USER_STORIES_ENDPOINT,
+    DELETE_MESSAGE_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -574,6 +575,23 @@ export const getStories = async (userId: number) => {
             console.error(error.message);
         } else {
             console.error("Unknown error occurred");
+        }
+        throw error;
+    }
+};
+
+export const deleteMessage = async (messageId: number, currentUserId: number) => {
+    try {
+        const response = await api.delete(`${DELETE_MESSAGE_ENDPOINT}/${messageId}`, {
+            params: { currentUserId },
+        });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
         }
         throw error;
     }

@@ -8,10 +8,12 @@ import {
     InsertDriveFile as FolderIcon,
     Reply as ReplyIcon,
     AddCommentOutlined as AddCommentOutlined,
+    MoreHoriz,
 } from "@mui/icons-material";
 import BlurBackgroundImage from "../../../static/blur.jpg";
 
 import MessageDetailsDrawer from "./MessageDetailsDrawer";
+import MessageOptionsDialog from "./MessageOptionsDialog";
 
 interface MessagesContainerProps {
     selectedUser: User | null;
@@ -23,6 +25,7 @@ interface MessagesContainerProps {
     chatTheme: string;
     anchorEl: HTMLElement | null;
     setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+    handleDeleteMessage: (message: Message | null) => void;
 }
 
 type Message = {
@@ -55,6 +58,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     messagesEndRef,
     handleReply,
     setAnchorEl,
+    handleDeleteMessage,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -64,6 +68,9 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
     const [hoveredMessage, setHoveredMessage] = useState<number | null>(null);
     const [highlightedMessageId, setHighlightedMessageId] = useState<number | null>(null);
+
+    const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+    const [selectedMessageForAction, setSelectedMessageForAction] = useState<Message | null>(null);
 
     // Handle double click on a message
     const handleDoubleClick = (msg: Message) => {
@@ -385,22 +392,48 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                 {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
                                             </span>
                                             {hoveredMessage === msg.message_id && (
-                                                <IconButton
+                                                <Box
                                                     sx={{
                                                         position: "absolute",
                                                         top: "50%",
                                                         transform: "translateY(-50%)",
-                                                        left: msg.sender_id === currentUser.id ? "-40px" : "auto",
-                                                        right: msg.sender_id === currentUser.id ? "auto" : "-40px",
-                                                        color: "white",
-                                                        "&:hover": {
-                                                            backgroundColor: "transparent",
-                                                        },
+                                                        left: msg.sender_id === currentUser.id ? "-90px" : "auto",
+                                                        right: msg.sender_id === currentUser.id ? "auto" : "-50px",
+                                                        display: "flex",
+                                                        gap: "8px",
                                                     }}
-                                                    onClick={() => handleReply(msg)}
                                                 >
-                                                    <ReplyIcon />
-                                                </IconButton>
+                                                    {msg.sender_id === currentUser.id && (
+                                                        <IconButton
+                                                            sx={{
+                                                                color: "white",
+                                                                "&:hover": {
+                                                                    backgroundColor: "transparent",
+                                                                },
+                                                                paddingRight: 0,
+                                                            }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedMessageForAction(msg);
+                                                                setMoreMenuOpen(true);
+                                                            }}
+                                                        >
+                                                            <MoreHoriz />
+                                                        </IconButton>
+                                                    )}
+                                                    <IconButton
+                                                        sx={{
+                                                            color: "white",
+                                                            "&:hover": {
+                                                                backgroundColor: "transparent",
+                                                            },
+                                                            paddingLeft: 0,
+                                                        }}
+                                                        onClick={() => handleReply(msg)}
+                                                    >
+                                                        <ReplyIcon />
+                                                    </IconButton>
+                                                </Box>
                                             )}
                                         </Typography>
                                     )}
@@ -441,6 +474,19 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
 
             {/* Drawer for Message Details */}
             <MessageDetailsDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} selectedMessage={selectedMessage} />
+            <MessageOptionsDialog
+                open={moreMenuOpen}
+                onClose={() => setMoreMenuOpen(false)}
+                onDelete={() => {
+                    handleDeleteMessage(selectedMessageForAction);
+                    setMoreMenuOpen(false);
+                }}
+                onInfo={() => {
+                    setSelectedMessage(selectedMessageForAction);
+                    setDrawerOpen(true);
+                    setMoreMenuOpen(false);
+                }}
+            />
         </Box>
     );
 };
