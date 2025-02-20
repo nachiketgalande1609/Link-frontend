@@ -5,7 +5,7 @@ import {
     POSTS_ENDPOINT,
     GET_PROFILE_ENDPOINT,
     LIKE_POST_ENDPOINT,
-    ADD_POST_COMMENT_ENDPOINT,
+    COMMENT_ENDPOINT,
     FOLLOW_ENDPOINT,
     SEARCH_ENDPOINT,
     CHAT_USER_DETAILS_ENDPOINT,
@@ -260,13 +260,13 @@ export const likePost = async (userId: string, postId: string) => {
         } else {
             console.error("Unknown error while liking the post");
         }
-        throw error; // Re-throws the error to be handled by the caller
+        throw error;
     }
 };
 
 export const addComment = async (userId: string, postId: string, comment: string) => {
     try {
-        const response = await api.post(ADD_POST_COMMENT_ENDPOINT, { userId, postId, comment });
+        const response = await api.post(COMMENT_ENDPOINT, { userId, postId, comment });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -274,7 +274,21 @@ export const addComment = async (userId: string, postId: string, comment: string
         } else {
             console.error("Unknown error while adding the comment");
         }
-        throw error; // Re-throws the error to be handled by the caller
+        throw error;
+    }
+};
+
+export const deleteComment = async (userId: string, commentId: number) => {
+    try {
+        const response = await api.delete(COMMENT_ENDPOINT, { data: { userId, commentId } });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error deleting the comment:", error.message);
+        } else {
+            console.error("Unknown error while deleting the comment");
+        }
+        throw error;
     }
 };
 

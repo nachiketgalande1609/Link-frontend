@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { Typography, IconButton, Avatar, Box, TextField, SwipeableDrawer, useMediaQuery, useTheme, styled } from "@mui/material";
-import { Send } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import { Typography, IconButton, Avatar, Box, TextField, SwipeableDrawer, useMediaQuery, useTheme, styled, Dialog, Button } from "@mui/material";
+import { MoreHoriz, Send } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
+import { deleteComment } from "../../services/api";
 
 interface ScrollableCommentsDrawerProps {
     drawerOpen: boolean;
@@ -25,6 +26,8 @@ interface ScrollableCommentsDrawerProps {
     content: string;
     username: string;
     avatarUrl: string | undefined;
+    setSelectedCommentId: (id: number | null) => void;
+    handleDeleteComment: () => void;
 }
 
 export default function ScrollableCommentsDrawer({
@@ -38,9 +41,26 @@ export default function ScrollableCommentsDrawer({
     content,
     username,
     avatarUrl,
+    setSelectedCommentId,
+    handleDeleteComment,
 }: ScrollableCommentsDrawerProps) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
+
+    const handleOpenDialog = (commentId: number) => {
+        setSelectedCommentId(commentId);
+        setDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+        setSelectedCommentId(null);
+        setConfirmDeleteButtonVisibile(false);
+    };
 
     // Focus input when drawer opens
     useEffect(() => {
@@ -137,9 +157,14 @@ export default function ScrollableCommentsDrawer({
                                         justifyContent: "space-between",
                                     }}
                                 >
-                                    <Typography sx={{ fontSize: "0.9rem", fontWeight: "500", color: "#aaaaaa" }}>
-                                        {comment.commenter_username}
-                                    </Typography>
+                                    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 1 }}>
+                                        <Typography sx={{ fontSize: "0.9rem", fontWeight: "500", color: "#aaaaaa" }}>
+                                            {comment.commenter_username}
+                                        </Typography>
+                                        <IconButton onClick={() => handleOpenDialog(comment.id)} sx={{ color: "#aaaaaa", padding: 0 }}>
+                                            <MoreHoriz sx={{ fontSize: 20 }} />
+                                        </IconButton>
+                                    </Box>
                                     <Typography variant="caption" color="gray" sx={{ ml: "auto" }}>
                                         {comment.timeAgo}
                                     </Typography>
@@ -189,6 +214,74 @@ export default function ScrollableCommentsDrawer({
                     <Send />
                 </IconButton>
             </Box>
+            <Dialog
+                open={dialogOpen}
+                onClose={handleCloseDialog}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(32, 35, 39, 0.9)",
+                        color: "white",
+                        textAlign: "center",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    },
+                }}
+            >
+                <Button
+                    fullWidth
+                    onClick={() => setConfirmDeleteButtonVisibile(true)}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Delete Comment
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleDeleteComment();
+                        setDialogOpen(false);
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#ed4337",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#ed4337" },
+                        borderBottom: "1px solid #505050",
+                        display: confirmDeleteButtonVisibile ? "block" : "none",
+                    }}
+                >
+                    Confirm Delete Comment
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={handleCloseDialog}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                    }}
+                >
+                    Cancel
+                </Button>
+            </Dialog>
         </SwipeableDrawer>
     );
 }

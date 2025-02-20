@@ -22,7 +22,7 @@ import {
 
 import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn, OpenInFull } from "@mui/icons-material";
 
-import { deletePost, likePost, addComment, updatePost, savePost } from "../../services/api"; // Assuming you have an updatePost function in your API
+import { deletePost, likePost, addComment, updatePost, savePost, deleteComment } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@toolpad/core/useNotifications";
@@ -86,7 +86,8 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     const [drawerOpen, setDrawerOpen] = useState(false);
     const postRef = useRef<HTMLDivElement>(null);
     const postWidth = postRef?.current?.offsetWidth || 0;
-    const [isImageLoading, setIsImageLoading] = useState(true); // Track image loading state
+    const [isImageLoading, setIsImageLoading] = useState(true);
+    const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -148,6 +149,21 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 }
             } catch (error) {
                 console.error("Error adding comment:", error);
+            }
+        }
+    };
+
+    const handleDeleteComment = async () => {
+        if (selectedCommentId) {
+            try {
+                const res = await deleteComment(currentUser?.id, selectedCommentId);
+                if (res?.success) {
+                    const updatedComments = postComments.filter((comment) => comment.id !== selectedCommentId);
+                    setPostComments(updatedComments);
+                    fetchPosts();
+                }
+            } catch (error) {
+                console.error("Error deleting comment:", error);
             }
         }
     };
@@ -504,6 +520,8 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 content={post.content}
                 username={post.username}
                 avatarUrl={post.profile_picture}
+                setSelectedCommentId={setSelectedCommentId}
+                handleDeleteComment={handleDeleteComment}
             />
 
             <ImageDialog openDialog={openImageDialog} handleCloseDialog={handleCloseDialog} selectedImage={post.file_url || ""} />
