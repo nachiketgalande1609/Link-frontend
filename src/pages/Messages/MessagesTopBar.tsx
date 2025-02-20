@@ -14,7 +14,7 @@ interface messagesTopBarProps {
 }
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
-const themeBackgrounds = [`url(${bg1})`, `url(${bg2})`, `url(${bg3})`, `url(${bg4})`];
+const themeBackgrounds = ["black", `url(${bg1})`, `url(${bg2})`, `url(${bg3})`, `url(${bg4})`];
 
 const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme, setChatTheme }) => {
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
             {/* Theme Settings Dialog */}
             <Dialog
                 open={openThemeDialog}
-                onClose={setOpenThemeDialog}
+                onClose={() => setOpenThemeDialog(false)}
                 fullWidth
                 maxWidth="xs"
                 sx={{
@@ -99,9 +99,7 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                 </Button>
                 <Button
                     fullWidth
-                    onClick={() => {
-                        setOpenThemeDialog(false);
-                    }}
+                    onClick={() => setOpenThemeDialog(false)}
                     sx={{
                         padding: "10px",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
@@ -129,28 +127,35 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
             >
                 <DialogTitle sx={{ color: "#fff" }}>Select a Background</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={isMobile ? 0 : 2}>
                         {themeBackgrounds.map((background, index) => (
                             <Grid item xs={3} key={index}>
                                 <Box
                                     sx={{
-                                        width: 80,
-                                        height: 80,
-                                        backgroundImage: background,
+                                        width: isMobile ? 60 : 80,
+                                        height: isMobile ? 60 : 80,
+                                        background: background === "black" ? "black" : background,
                                         backgroundSize: "cover",
                                         backgroundPosition: "center",
                                         cursor: "pointer",
-                                        borderRadius: "4px", // Square with slight rounding for aesthetic
+                                        borderRadius: "4px",
                                         border: chatTheme === background ? "3px solid #fff" : "1px solid #444",
                                         boxShadow: chatTheme === background ? "0 0 8px rgba(255,255,255,0.5)" : "none",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        color: background === "black" ? "#fff" : "transparent",
+                                        mb: 2,
                                     }}
                                     onClick={() => {
-                                        localStorage.setItem("chatTheme", background); // Save to localStorage
+                                        localStorage.setItem("chatTheme", background);
                                         setChatTheme(background);
                                         setOpenColorDialog(false);
                                         setOpenThemeDialog(false);
                                     }}
-                                />
+                                >
+                                    <Typography sx={{ fontSize: "0.9rem" }}>{background === "black" && "Default"}</Typography>
+                                </Box>
                             </Grid>
                         ))}
                     </Grid>
@@ -164,7 +169,6 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                         textTransform: "none",
                         borderRadius: "0 0 20px 20px ",
                         borderTop: "1px solid #505050",
-
                         "&:hover": { backgroundColor: "rgb(0,0,0,0.2)" },
                     }}
                 >

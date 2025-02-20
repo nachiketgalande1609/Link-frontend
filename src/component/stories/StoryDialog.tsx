@@ -210,11 +210,22 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                     )}
 
                     {/* Close Button */}
-                    <IconButton sx={{ position: "absolute", top: 20, right: 20, color: "white" }} onClick={handleClose}>
-                        <Close />
+                    <IconButton
+                        sx={{
+                            position: "absolute",
+                            top: 15,
+                            right: 5,
+                            color: "white",
+                            backgroundColor: "transparent",
+                            "&:hover": {
+                                backgroundColor: "transparent",
+                            },
+                        }}
+                        onClick={handleClose}
+                    >
+                        <Close sx={{ fontSize: "20px" }} />
                     </IconButton>
 
-                    {/* Previous Story Button */}
                     {/* Previous Story Button */}
                     {currentIndex > 0 && (
                         <IconButton

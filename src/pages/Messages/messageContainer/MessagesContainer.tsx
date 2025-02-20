@@ -372,7 +372,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                 flexDirection: "column",
                                                 position: "relative",
                                             }}
-                                            onDoubleClick={() => !isMobile && handleDoubleClick(msg)}
                                             onTouchStart={(e) => {
                                                 if (isMobile) {
                                                     const timeout = setTimeout(() => handleDoubleClick(msg), 500); // Long press for 500ms
@@ -470,10 +469,9 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                     </Button>
                 </Box>
             )}
+
             <div ref={messagesEndRef} />
 
-            {/* Drawer for Message Details */}
-            <MessageDetailsDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} selectedMessage={selectedMessage} />
             <MessageOptionsDialog
                 open={moreMenuOpen}
                 onClose={() => setMoreMenuOpen(false)}
@@ -487,6 +485,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                     setMoreMenuOpen(false);
                 }}
             />
+
+            <MessageDetailsDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} selectedMessage={selectedMessage} />
         </Box>
     );
 };
