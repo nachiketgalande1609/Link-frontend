@@ -126,7 +126,7 @@ const ProfilePage = () => {
             <Paper
                 sx={{
                     padding: { xs: 2, sm: 3 },
-                    borderRadius: "20px",
+                    borderRadius: "10px",
                     boxShadow: 3,
                     background: "linear-gradient(0deg, hsl(214, 10%, 20%),rgb(0, 0, 0))",
                 }}
@@ -282,7 +282,7 @@ const ProfilePage = () => {
                     </Typography>
                 </Grid>
             ) : (
-                <Grid container spacing={isMobile ? 1 : 2} sx={{ padding: isMobile ? "0 10px" : 0 }}>
+                <Grid container spacing={1} sx={{ padding: isMobile ? "0 10px" : 0 }}>
                     {posts.length > 0 ? (
                         posts.map((post) => (
                             <Grid
