@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos, Close, Pause } from "@mui/icons-material";
+import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography, Drawer } from "@mui/material";
+import { ArrowBackIos, ArrowForwardIos, Close, Pause, RemoveRedEye } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../utils/utils";
@@ -10,6 +10,11 @@ interface Story {
     media_url: string;
     media_type: "image" | "video";
     created_at: string;
+    viewers: Viewer[];
+}
+
+interface Viewer {
+    viewer_username: string;
 }
 
 interface UserStories {
@@ -36,6 +41,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const [selectedUserStories, setSelectedUserStories] = useState<Story[]>([]);
     const [isMediaLoaded, setIsMediaLoaded] = useState(false);
     const [paused, setPaused] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state for viewers
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Handle user story change
@@ -47,7 +53,6 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
             setIsMediaLoaded(false);
             setPaused(false);
             setSelectedUserStories(newStories);
-            console.log("xxx", newStories);
 
             socket.emit("viewStory", { user_id: currentUser?.id, story_id: newStories[currentIndex]?.story_id });
         }
@@ -133,6 +138,10 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
 
     const handlePauseStory = () => {
         setPaused((prev) => !prev); // Toggle pause state on click
+    };
+
+    const handleDrawerToggle = () => {
+        setDrawerOpen(!drawerOpen);
     };
 
     return (
@@ -326,6 +335,48 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             <ArrowForwardIos sx={{ color: "#555555" }} />
                         </IconButton>
                     )}
+
+                    {/* Eye Icon to open Drawer */}
+                    <IconButton
+                        sx={{
+                            position: "absolute",
+                            bottom: 20,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            color: "white",
+                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                            "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.7)" },
+                        }}
+                        onClick={handleDrawerToggle}
+                    >
+                        <RemoveRedEye sx={{ fontSize: "2.5rem" }} />
+                    </IconButton>
+
+                    {/* Drawer for Viewers */}
+                    <Drawer
+                        anchor="bottom"
+                        open={drawerOpen}
+                        onClose={handleDrawerToggle}
+                        sx={{
+                            "& .MuiDrawer-paper": {
+                                backgroundColor: "black",
+                                color: "white",
+                            },
+                        }}
+                    >
+                        <Box sx={{ padding: 2 }}>
+                            <Typography variant="h6" color="white">
+                                Viewers
+                            </Typography>
+                            <Box>
+                                {selectedUserStories[currentIndex].viewers.map((viewer, index) => (
+                                    <Typography key={index} sx={{ color: "gray" }}>
+                                        {viewer.viewer_username}
+                                    </Typography>
+                                ))}
+                            </Box>
+                        </Box>
+                    </Drawer>
                 </Container>
             </DialogContent>
         </Dialog>
