@@ -2,17 +2,20 @@ import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typogr
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import StoryDialog from "../component/stories/StoryDialog";
+import UploadStoryDialog from "../component/stories/UploadStoryDialog";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
 
 const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const user = JSON.parse(localStorage.getItem("user") || "");
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [openStoryDialog, setOpenStoryDialog] = useState(false);
+    const [openUploadDialog, setOpenUploadDialog] = useState(false);
+
     const stories = [
         { id: 1, image: "https://via.placeholder.com/500" },
         { id: 2, image: "https://via.placeholder.com/600" },
@@ -20,8 +23,8 @@ const HomePage = () => {
 
     const fetchPosts = async () => {
         try {
-            if (user) {
-                const res = await getPosts(user?.id);
+            if (currentUser) {
+                const res = await getPosts(currentUser?.id);
                 setPosts(res.data);
             }
         } catch (error) {
@@ -38,12 +41,19 @@ const HomePage = () => {
     return (
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             <Box display="flex" gap={1} p={2}>
+                {/* Current User Story Upload */}
+                <Avatar
+                    src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
+                    onClick={() => setOpenUploadDialog(true)}
+                    sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid blue" }}
+                />
+                {/* Other Stories */}
                 {stories.map((story) => (
                     <Avatar
                         key={story.id}
                         src={story.image}
                         onClick={() => setOpenStoryDialog(true)}
-                        sx={{ width: 50, height: 50, cursor: "pointer", border: "2px solid red" }}
+                        sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid red" }}
                     />
                 ))}
             </Box>
@@ -64,8 +74,8 @@ const HomePage = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 flexDirection: "column",
-                                paddingTop: isMobile ? "0 !important" : "20px",
-                                marginBottom: isMobile && index !== posts.length - 1 ? "2px" : "none", // Apply border except for last item
+                                padding: "0 !important", // Enforce no padding
+                                marginBottom: index !== posts.length - 1 ? "20px" : "none",
                             }}
                         >
                             <Post post={post} fetchPosts={fetchPosts} borderRadius="20px" />
@@ -83,8 +93,8 @@ const HomePage = () => {
                     </Typography>
                 </Box>
             )}
-
-            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} />
+            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} />{" "}
+            <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} />
         </Container>
     );
 };

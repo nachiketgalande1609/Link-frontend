@@ -24,6 +24,7 @@ import {
     GET_SAVED_POSTS_ENDPOINT,
     SAVE_POST_ENDPOINT,
     UNFOLLOW_ENDPOINT,
+    UPLOAD_STORY_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -48,6 +49,12 @@ interface ProfileData {
     username?: string;
     profile_picture_url?: string;
     bio?: string;
+}
+
+interface StoryData {
+    user_id: string;
+    caption: string;
+    media: File;
 }
 
 // User APIs
@@ -503,6 +510,30 @@ export const getAllMessagesData = async (userId: string) => {
 export const shareChatMedia = async (mediaMessageData: FormData): Promise<any> => {
     try {
         const response = await api.post(SHARE_MEDIA_ENDPOINT, mediaMessageData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown error occurred");
+        }
+        throw error;
+    }
+};
+
+export const uploadStory = async (storyData: StoryData) => {
+    try {
+        const formData = new FormData();
+        formData.append("user_id", storyData.user_id);
+        formData.append("caption", storyData.caption);
+        formData.append("media", storyData.media);
+
+        const response = await api.post(UPLOAD_STORY_ENDPOINT, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
