@@ -231,7 +231,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             }}
                             onClick={handlePrev}
                         >
-                            <ArrowBackIos />
+                            <ArrowBackIos sx={{ color: "#555555" }} />
                         </IconButton>
                     )}
 
@@ -251,7 +251,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             }}
                             onClick={handleNext}
                         >
-                            <ArrowForwardIos />
+                            <ArrowForwardIos sx={{ color: "#555555" }} />
                         </IconButton>
                     )}
                 </Container>
