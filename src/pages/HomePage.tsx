@@ -70,7 +70,7 @@ const HomePage = () => {
                         width: 65,
                         height: 65,
                         padding: "3px",
-                        border: "3px solid red",
+                        border: currentUser?.stories?.length ? "3px solid #ff8800" : "none",
                         borderRadius: "50%",
                     }}
                 >
@@ -92,7 +92,7 @@ const HomePage = () => {
                                     width: 65,
                                     height: 65,
                                     padding: "3px",
-                                    border: "3px solid red",
+                                    border: "3px solid #ff8800",
                                     borderRadius: "50%",
                                 }}
                             >

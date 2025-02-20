@@ -2,11 +2,13 @@ import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avat
 import { ArrowBackIos, ArrowForwardIos, Close } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { timeAgo } from "../../utils/utils";
 
 interface Story {
     id: number;
     media_url: string;
     media_type: "image" | "video";
+    created_at: string;
 }
 
 interface UserStories {
@@ -153,8 +155,11 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         }}
                     >
                         <Avatar src={stories[selectedStoryIndex].profile_picture} />
-                        <Typography color="white" sx={{ fontSize: "0.85rem" }}>
+                        <Typography color="white" sx={{ fontSize: "0.85rem", fontWeight: "bold" }}>
                             {stories[selectedStoryIndex].username}
+                        </Typography>
+                        <Typography color="gray" sx={{ fontSize: "0.75rem" }}>
+                            {timeAgo(selectedUserStories[currentIndex]?.created_at)}
                         </Typography>
                     </Box>
 
