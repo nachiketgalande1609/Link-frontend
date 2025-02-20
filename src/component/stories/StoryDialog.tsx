@@ -19,7 +19,7 @@ interface UserStories {
 interface StoryDialogProps {
     open: boolean;
     onClose: () => void;
-    stories: UserStories[]; // Grouped by user
+    stories: UserStories[];
     selectedStoryIndex: number;
 }
 
@@ -31,19 +31,41 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const [progress, setProgress] = useState(0);
     const animationFrameRef = useRef<number | null>(null);
     const [selectedUserStories, setSelectedUserStories] = useState<Story[]>([]);
+    const [isMediaLoaded, setIsMediaLoaded] = useState(false);
 
+    // Handle user story change
     useEffect(() => {
         if (open && stories.length) {
-            const userStories = stories[selectedStoryIndex]?.stories || [];
-            setSelectedUserStories(userStories);
+            const newStories = stories[selectedStoryIndex]?.stories || [];
+
+            // Reset states before updating stories
             setCurrentIndex(0);
+            setIsMediaLoaded(false);
+            setSelectedUserStories(newStories);
         }
     }, [open, selectedStoryIndex, stories]);
 
+    // Preload media
     useEffect(() => {
         if (!open || !selectedUserStories.length) return;
 
         setProgress(0);
+        setIsMediaLoaded(false);
+
+        const currentStory = selectedUserStories[currentIndex];
+
+        if (currentStory.media_type === "image") {
+            const img = new Image();
+            img.src = currentStory.media_url;
+            img.onload = () => setIsMediaLoaded(true);
+        } else {
+            setIsMediaLoaded(true);
+        }
+    }, [currentIndex, open, selectedUserStories]);
+
+    // Start story timer after media is loaded
+    useEffect(() => {
+        if (!open || !isMediaLoaded) return;
 
         const startTime = performance.now();
 
@@ -70,7 +92,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                 cancelAnimationFrame(animationFrameRef.current);
             }
         };
-    }, [currentIndex, open, selectedUserStories.length]);
+    }, [currentIndex, open, isMediaLoaded]);
 
     const handleClose = () => {
         setProgress(0);
@@ -82,13 +104,21 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     }
 
     const handleNext = () => {
-        setProgress(0);
-        setTimeout(() => setCurrentIndex((prev) => prev + 1), 0);
+        if (currentIndex < selectedUserStories.length - 1) {
+            setProgress(0);
+            setIsMediaLoaded(false);
+            setCurrentIndex((prev) => prev + 1);
+        } else {
+            handleClose();
+        }
     };
 
     const handlePrev = () => {
-        setProgress(0);
-        setTimeout(() => setCurrentIndex((prev) => prev - 1), 0);
+        if (currentIndex > 0) {
+            setProgress(0);
+            setIsMediaLoaded(false);
+            setCurrentIndex((prev) => prev - 1);
+        }
     };
 
     return (
@@ -128,7 +158,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         </Typography>
                     </Box>
 
-                    {/* Progress Bars (Split based on number of stories) */}
+                    {/* Progress Bars */}
                     <Box
                         sx={{
                             position: "absolute",
@@ -161,17 +191,21 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                     {selectedUserStories[currentIndex].media_type === "image" ? (
                         <Box
                             component="img"
+                            key={selectedUserStories[currentIndex].id} // Force re-render
                             src={selectedUserStories[currentIndex].media_url}
                             alt="Story"
-                            sx={{ maxHeight: "90vh", maxWidth: "100%", objectFit: "contain" }}
+                            onLoad={() => setIsMediaLoaded(true)}
+                            sx={{ maxHeight: "90vh", maxWidth: "100%", objectFit: "contain", display: isMediaLoaded ? "block" : "none" }}
                         />
                     ) : (
                         <Box
                             component="video"
+                            key={selectedUserStories[currentIndex].id} // Force re-render
                             src={selectedUserStories[currentIndex].media_url}
                             autoPlay
                             controls
-                            sx={{ maxHeight: "90vh", maxWidth: "90vw", objectFit: "contain" }}
+                            onCanPlay={() => setIsMediaLoaded(true)}
+                            sx={{ maxHeight: "90vh", maxWidth: "90vw", objectFit: "contain", display: isMediaLoaded ? "block" : "none" }}
                         />
                     )}
 

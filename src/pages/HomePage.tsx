@@ -85,48 +85,43 @@ const HomePage = () => {
                 </Box>
 
                 <Box sx={{ display: "flex", gap: "16px" }}>
-                    {/* User Stories */}
-                    {loadingStories ? (
-                        <CircularProgress size={24} />
-                    ) : (
-                        stories.map((userStory, index) => (
-                            <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        width: 70,
-                                        height: 70,
-                                        padding: "3px",
-                                        border: "3px solid red",
-                                        borderRadius: "50%",
+                    {stories.map((userStory, index) => (
+                        <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    width: 70,
+                                    height: 70,
+                                    padding: "3px",
+                                    border: "3px solid red",
+                                    borderRadius: "50%",
+                                }}
+                            >
+                                <Avatar
+                                    src={userStory.profile_picture || "https://via.placeholder.com/50"}
+                                    onClick={() => {
+                                        setSelectedStoryIndex(index);
+                                        setOpenStoryDialog(true);
                                     }}
-                                >
-                                    <Avatar
-                                        src={userStory.profile_picture || "https://via.placeholder.com/50"}
-                                        onClick={() => {
-                                            setSelectedStoryIndex(index);
-                                            setOpenStoryDialog(true);
-                                        }}
-                                        sx={{ width: "100%", height: "100%", cursor: "pointer" }}
-                                    />
-                                </Box>
-                                <Typography
-                                    sx={{
-                                        fontSize: "0.75rem",
-                                        maxWidth: 70,
-                                        whiteSpace: "nowrap",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {userStory.username}
-                                </Typography>
+                                    sx={{ width: "100%", height: "100%", cursor: "pointer" }}
+                                />
                             </Box>
-                        ))
-                    )}
+                            <Typography
+                                sx={{
+                                    fontSize: "0.75rem",
+                                    maxWidth: 70,
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {userStory.username}
+                            </Typography>
+                        </Box>
+                    ))}
                 </Box>
             </Box>
 
