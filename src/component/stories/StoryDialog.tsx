@@ -255,6 +255,9 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                     backgroundColor: "rgba(0, 0, 0, 0.4)",
                                     borderRadius: "50%",
                                     zIndex: 1,
+                                    "&:hover": {
+                                        backgroundColor: "rgba(0, 0, 0, 0.6)",
+                                    },
                                 }}
                                 onClick={handlePauseStory} // Toggle pause state
                             >
