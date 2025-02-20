@@ -137,7 +137,7 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userI
             >
                 Copy Profile Link
             </Button>
-            {isMobile && (
+            {isMobile && currentUser?.id == userId && (
                 <>
                     <Button
                         fullWidth
@@ -157,25 +157,27 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userI
                     >
                         Settings
                     </Button>
-                    <Button
-                        fullWidth
-                        onClick={() => {
-                            handleLogout();
-                            handleCloseDialog();
-                        }}
-                        sx={{
-                            padding: "10px",
-                            fontSize: isMobile ? "0.85rem" : "0.9rem",
-                            backgroundColor: "#202327",
-                            textTransform: "none",
-                            borderRadius: 0,
-                            "&:hover": { backgroundColor: "#2e3238" },
-                            borderBottom: "1px solid #505050",
-                        }}
-                    >
-                        Logout
-                    </Button>
                 </>
+            )}
+            {currentUser?.id == userId && (
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleLogout();
+                        handleCloseDialog();
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Logout
+                </Button>
             )}
             <Button
                 fullWidth

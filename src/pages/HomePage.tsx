@@ -1,6 +1,7 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography, Avatar } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
+import StoryDialog from "../component/stories/StoryDialog";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
 
@@ -10,6 +11,12 @@ const HomePage = () => {
     const user = JSON.parse(localStorage.getItem("user") || "");
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const [openStoryDialog, setOpenStoryDialog] = useState(false);
+    const stories = [
+        { id: 1, image: "https://via.placeholder.com/500" },
+        { id: 2, image: "https://via.placeholder.com/600" },
+    ];
 
     const fetchPosts = async () => {
         try {
@@ -30,6 +37,16 @@ const HomePage = () => {
 
     return (
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+            <Box display="flex" gap={1} p={2}>
+                {stories.map((story) => (
+                    <Avatar
+                        key={story.id}
+                        src={story.image}
+                        onClick={() => setOpenStoryDialog(true)}
+                        sx={{ width: 50, height: 50, cursor: "pointer", border: "2px solid red" }}
+                    />
+                ))}
+            </Box>
             {loading ? (
                 <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexGrow={1}>
                     <CircularProgress />
@@ -66,6 +83,8 @@ const HomePage = () => {
                     </Typography>
                 </Box>
             )}
+
+            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} />
         </Container>
     );
 };
