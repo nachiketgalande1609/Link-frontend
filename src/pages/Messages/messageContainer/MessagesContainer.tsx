@@ -82,12 +82,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const emojiPickerOpen = Boolean(emojiAnchorEl);
     const [selectedMessageForReaction, setSelectedMessageForReaction] = useState<Message | null>(null);
 
-    // Handle double click on a message
-    const handleDoubleClick = (msg: Message) => {
-        setSelectedMessage(msg);
-        setDrawerOpen(true);
-    };
-
     const findOriginalMessage = (replyToId: number | null) => {
         return Object.values(messages)
             .flat()
@@ -393,12 +387,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                 display: "flex",
                                                 flexDirection: "column",
                                                 position: "relative",
-                                            }}
-                                            onTouchStart={(e) => {
-                                                if (isMobile) {
-                                                    const timeout = setTimeout(() => handleDoubleClick(msg), 500); // Long press for 500ms
-                                                    e.currentTarget.dataset.timeout = String(timeout);
-                                                }
                                             }}
                                         >
                                             <span>{msg.message_text}</span>
