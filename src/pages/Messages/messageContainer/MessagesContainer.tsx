@@ -1,5 +1,19 @@
 import React, { useState } from "react";
-import { Typography, Box, CircularProgress, useMediaQuery, useTheme, IconButton, Button, Popover } from "@mui/material";
+import {
+    Typography,
+    Box,
+    CircularProgress,
+    useMediaQuery,
+    useTheme,
+    IconButton,
+    Button,
+    Popover,
+    List,
+    ListItem,
+    ListItemAvatar,
+    Avatar,
+    ListItemText,
+} from "@mui/material";
 import {
     Done as DoneIcon,
     DoneAll as DoneAllIcon,
@@ -54,6 +68,10 @@ type MessagesType = Record<string, Message[]>;
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
+interface Reactions {
+    [userId: string]: string;
+}
+
 const MessagesContainer: React.FC<MessagesContainerProps> = ({
     selectedUser,
     messages,
@@ -82,6 +100,19 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const emojiPickerOpen = Boolean(emojiAnchorEl);
     const [selectedMessageForReaction, setSelectedMessageForReaction] = useState<Message | null>(null);
 
+    const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
+    const [selectedReactions, setSelectedReactions] = useState<Reactions | null>(null);
+
+    const handleReactionPopoverOpen = (event: React.MouseEvent<HTMLElement>, reactions: Reactions) => {
+        setReactionAnchor(event.currentTarget);
+        setSelectedReactions(reactions);
+    };
+
+    const handleReactionPopoverClose = () => {
+        setReactionAnchor(null);
+        setSelectedReactions(null);
+    };
+
     const findOriginalMessage = (replyToId: number | null) => {
         return Object.values(messages)
             .flat()
@@ -99,6 +130,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const handleCloseEmojiPicker = () => {
         setEmojiAnchorEl(null);
     };
+
+    console.log(messages);
 
     return (
         <Box
@@ -359,7 +392,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                         </Typography>
                                     </Box>
                                 )}
-
                                 <Box
                                     id={`msg-${msg.message_id}`}
                                     sx={{
@@ -496,11 +528,13 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                             paddingLeft: msg.sender_id === currentUser.id ? "0px" : "10px",
                                             paddingRight: msg.sender_id === currentUser.id ? "10px" : "0px",
                                             zIndex: 1,
+                                            cursor: "pointer",
                                         }}
+                                        onClick={(e) => handleReactionPopoverOpen(e, msg.reactions || {})}
                                     >
-                                        {Object.entries(msg.reactions).map(([userId, reaction]) => (
+                                        {Object.values(msg.reactions).map((reaction, index) => (
                                             <Typography
-                                                key={userId}
+                                                key={index}
                                                 sx={{
                                                     fontSize: "1rem",
                                                     borderRadius: "12px",
@@ -511,6 +545,56 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                         ))}
                                     </Box>
                                 )}
+                                <Popover
+                                    open={Boolean(reactionAnchor)}
+                                    anchorEl={reactionAnchor}
+                                    onClose={handleReactionPopoverClose}
+                                    anchorOrigin={{
+                                        vertical: "bottom",
+                                        horizontal: "left",
+                                    }}
+                                    transformOrigin={{
+                                        vertical: "top",
+                                        horizontal: "right",
+                                    }}
+                                    PaperProps={{
+                                        sx: {
+                                            borderRadius: "20px",
+                                            boxShadow: 3,
+                                            minWidth: 200,
+                                            backgroundColor: "#000000",
+                                        },
+                                    }}
+                                >
+                                    <Box sx={{ p: 1 }}>
+                                        <List sx={{ maxHeight: 250, overflowY: "auto", padding: 0 }}>
+                                            {selectedReactions &&
+                                                Object.entries(selectedReactions).map(([userId, reaction]) => (
+                                                    <ListItem
+                                                        key={userId}
+                                                        sx={{ borderRadius: 2, padding: "5px 5px", justifyContent: "space-between" }}
+                                                    >
+                                                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                            <ListItemAvatar>
+                                                                <Avatar
+                                                                    sx={{ height: "40px", width: "40px" }}
+                                                                    src={`/path/to/user/avatar/${userId}.jpg`}
+                                                                    alt={userId}
+                                                                />
+                                                            </ListItemAvatar>
+                                                            <Typography variant="body1" sx={{ fontWeight: "medium", marginRight: 1 }}>
+                                                                {userId ? userId : "Unknown User"}
+                                                            </Typography>
+                                                        </Box>
+
+                                                        <Typography color="text.secondary" sx={{ fontSize: "22px" }}>
+                                                            {String(reaction)}
+                                                        </Typography>
+                                                    </ListItem>
+                                                ))}
+                                        </List>
+                                    </Box>
+                                </Popover>
                             </Box>
                             <Box sx={{ paddingBottom: "2px" }}>
                                 {msg.sender_id === currentUser.id &&
