@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Typography, IconButton, Avatar, Box, TextField, SwipeableDrawer, useMediaQuery, useTheme, styled, Dialog, Button } from "@mui/material";
 import { MoreHoriz, Send } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
-import { deleteComment } from "../../services/api";
 
 interface ScrollableCommentsDrawerProps {
     drawerOpen: boolean;
@@ -50,6 +49,7 @@ export default function ScrollableCommentsDrawer({
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
+    const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
 
     const handleOpenDialog = (commentId: number) => {
         setSelectedCommentId(commentId);
@@ -137,7 +137,12 @@ export default function ScrollableCommentsDrawer({
                     </Typography>
                 ) : (
                     postComments.map((comment) => (
-                        <Box key={comment.id} sx={{ display: "flex", gap: 1.5, mb: 2, alignItems: "center" }}>
+                        <Box
+                            key={comment.id}
+                            sx={{ display: "flex", gap: 1.5, mb: 2, alignItems: "center" }}
+                            onMouseEnter={() => setHoveredCommentId(comment.id)}
+                            onMouseLeave={() => setHoveredCommentId(null)}
+                        >
                             <Avatar src={comment.commenter_profile_picture} />
                             <Box
                                 sx={{
@@ -161,9 +166,11 @@ export default function ScrollableCommentsDrawer({
                                         <Typography sx={{ fontSize: "0.9rem", fontWeight: "500", color: "#aaaaaa" }}>
                                             {comment.commenter_username}
                                         </Typography>
-                                        <IconButton onClick={() => handleOpenDialog(comment.id)} sx={{ color: "#aaaaaa", padding: 0 }}>
-                                            <MoreHoriz sx={{ fontSize: 20 }} />
-                                        </IconButton>
+                                        {hoveredCommentId === comment.id && comment.user_id === currentUser.id && (
+                                            <IconButton onClick={() => handleOpenDialog(comment.id)} sx={{ color: "#aaaaaa", padding: 0 }}>
+                                                <MoreHoriz sx={{ fontSize: 20 }} />
+                                            </IconButton>
+                                        )}
                                     </Box>
                                     <Typography variant="caption" color="gray" sx={{ ml: "auto" }}>
                                         {comment.timeAgo}
