@@ -36,7 +36,19 @@ const HomePage = () => {
     const fetchStories = async () => {
         try {
             const res = await getStories(currentUser?.id);
-            setStories(res);
+            const groupedStories = res.reduce((acc: any, story: any) => {
+                if (!acc[story.user_id]) {
+                    acc[story.user_id] = {
+                        user_id: story.user_id,
+                        username: story.username,
+                        profile_picture: story.profile_picture,
+                        stories: [],
+                    };
+                }
+                acc[story.user_id].stories.push(story);
+                return acc;
+            }, {});
+            setStories(Object.values(groupedStories));
         } catch (error) {
             console.error("Error fetching stories:", error);
         } finally {
@@ -89,16 +101,18 @@ const HomePage = () => {
                 {loadingStories ? (
                     <CircularProgress size={24} />
                 ) : (
-                    stories.map((story, index) => (
-                        <Avatar
-                            key={story.story_id}
-                            src={story.media_url}
-                            onClick={() => {
-                                setSelectedStoryIndex(index);
-                                setOpenStoryDialog(true);
-                            }}
-                            sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid red" }}
-                        />
+                    stories.map((userStory, index) => (
+                        <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center">
+                            <Avatar
+                                src={userStory.profile_picture || "https://via.placeholder.com/50"}
+                                onClick={() => {
+                                    setSelectedStoryIndex(index);
+                                    setOpenStoryDialog(true);
+                                }}
+                                sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid red" }}
+                            />
+                            <Typography variant="caption">{userStory.username}</Typography>
+                        </Box>
                     ))
                 )}
             </Box>
@@ -141,7 +155,7 @@ const HomePage = () => {
                 </Box>
             )}
 
-            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} initialIndex={selectedStoryIndex} />
+            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} selectedStoryIndex={selectedStoryIndex} />
             <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} />
         </Container>
     );

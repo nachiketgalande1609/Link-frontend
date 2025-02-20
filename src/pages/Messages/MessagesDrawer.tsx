@@ -181,7 +181,6 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             backgroundColor:
                                                 selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
                                             padding: "12px",
-                                            mb: 1,
                                             textAlign: "left",
                                             width: "100%",
                                             border: "none",
@@ -193,31 +192,17 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                     >
                                         <ListItemAvatar sx={{ position: "relative" }}>
                                             <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
-                                            {isOnline ? (
+                                            {isOnline && (
                                                 <Box
                                                     sx={{
                                                         width: "10px",
                                                         height: "10px",
                                                         borderRadius: "50%",
-                                                        backgroundColor: "#54ff54",
+                                                        backgroundColor: isOnline ? "#54ff54" : "#EFAD1D",
                                                         position: "absolute",
                                                         bottom: 0,
                                                         right: 13,
                                                         border: "1px solid #000",
-                                                    }}
-                                                />
-                                            ) : (
-                                                <CloseOutlined
-                                                    sx={{
-                                                        color: "white",
-                                                        position: "absolute",
-                                                        bottom: 0,
-                                                        right: 10,
-                                                        backgroundColor: "#000000",
-                                                        borderRadius: "50%",
-                                                        width: "12px",
-                                                        height: "12px",
-                                                        padding: "2px",
                                                     }}
                                                 />
                                             )}
@@ -324,7 +309,6 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                     sx={{
                                         backgroundColor: selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
                                         padding: "12px",
-                                        mb: 1,
                                         textAlign: "left",
                                         width: "100%",
                                         border: "none",
@@ -337,7 +321,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             sx={{ width: "50px", height: "50px", mr: "12px" }}
                                             src={user.profile_picture || "https://via.placeholder.com/40"}
                                         />
-                                        {isOnline ? (
+                                        {isOnline && (
                                             <Box
                                                 sx={{
                                                     width: "12px",
@@ -348,20 +332,6 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                     bottom: 0,
                                                     right: 10,
                                                     border: "1px solid #000",
-                                                }}
-                                            />
-                                        ) : (
-                                            <CloseOutlined
-                                                sx={{
-                                                    color: "white",
-                                                    position: "absolute",
-                                                    bottom: 0,
-                                                    right: 10,
-                                                    backgroundColor: "#000000",
-                                                    borderRadius: "50%",
-                                                    width: "12px",
-                                                    height: "12px",
-                                                    padding: "2px",
                                                 }}
                                             />
                                         )}
