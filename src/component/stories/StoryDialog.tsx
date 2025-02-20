@@ -3,9 +3,10 @@ import { ArrowBackIos, ArrowForwardIos, Close, Pause } from "@mui/icons-material
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../utils/utils";
+import socket from "../../services/socket";
 
 interface Story {
-    id: number;
+    story_id: number;
     media_url: string;
     media_type: "image" | "video";
     created_at: string;
@@ -34,18 +35,21 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const animationFrameRef = useRef<number | null>(null);
     const [selectedUserStories, setSelectedUserStories] = useState<Story[]>([]);
     const [isMediaLoaded, setIsMediaLoaded] = useState(false);
-    const [paused, setPaused] = useState(false); // State to track whether the story is paused
+    const [paused, setPaused] = useState(false);
+    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Handle user story change
     useEffect(() => {
         if (open && stories.length) {
             const newStories = stories[selectedStoryIndex]?.stories || [];
 
-            // Reset states before updating stories
             setCurrentIndex(0);
             setIsMediaLoaded(false);
-            setPaused(false); // Reset pause state when changing stories
+            setPaused(false);
             setSelectedUserStories(newStories);
+            console.log("xxx", newStories);
+
+            socket.emit("viewStory", { user_id: currentUser?.id, story_id: newStories[currentIndex]?.story_id });
         }
     }, [open, selectedStoryIndex, stories]);
 
@@ -155,7 +159,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             left: 10,
                             display: "flex",
                             alignItems: "center",
-                            gap: 1,
+                            gap: 1.5,
                             cursor: "pointer",
                         }}
                         onClick={() => {
@@ -163,7 +167,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         }}
                     >
                         <Avatar src={stories[selectedStoryIndex].profile_picture} />
-                        <Typography color="white" sx={{ fontSize: "0.85rem", fontWeight: "bold" }}>
+                        <Typography color="white" sx={{ fontSize: "0.85rem" }}>
                             {stories[selectedStoryIndex].username}
                         </Typography>
                         <Typography color="gray" sx={{ fontSize: "0.75rem" }}>
@@ -214,7 +218,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         {selectedUserStories[currentIndex].media_type === "image" ? (
                             <Box
                                 component="img"
-                                key={selectedUserStories[currentIndex].id} // Force re-render
+                                key={selectedUserStories[currentIndex].story_id} // Force re-render
                                 src={selectedUserStories[currentIndex].media_url}
                                 alt="Story"
                                 onLoad={() => setIsMediaLoaded(true)}
@@ -230,7 +234,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         ) : (
                             <Box
                                 component="video"
-                                key={selectedUserStories[currentIndex].id} // Force re-render
+                                key={selectedUserStories[currentIndex].story_id} // Force re-render
                                 src={selectedUserStories[currentIndex].media_url}
                                 autoPlay
                                 controls

@@ -41,6 +41,7 @@ const HomePage = () => {
                         user_id: story.user_id,
                         username: story.username,
                         profile_picture: story.profile_picture,
+                        story_id: story.story_id,
                         stories: [],
                     };
                 }
@@ -70,55 +71,87 @@ const HomePage = () => {
                         width: 65,
                         height: 65,
                         padding: "3px",
-                        border: currentUser?.stories?.length ? "3px solid #ff8800" : "none",
+                        border: stories.some((userStory) => userStory.user_id === currentUser.id && userStory.stories.length)
+                            ? "3px solid #ff8800"
+                            : "none",
                         borderRadius: "50%",
+                        position: "relative", // To position the + icon
                     }}
                 >
                     <Avatar
                         src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
-                        onClick={() => setOpenUploadDialog(true)}
+                        onClick={() => {
+                            // Open the current user's story dialog instead of upload dialog
+                            const currentUserStories = stories.find((userStory) => userStory.user_id === currentUser.id);
+                            if (currentUserStories) {
+                                setSelectedStoryIndex(0);
+                                setOpenStoryDialog(true);
+                            }
+                        }}
                         sx={{ width: "100%", height: "100%", cursor: "pointer" }}
                     />
+
+                    <Box
+                        onClick={() => setOpenUploadDialog(true)}
+                        sx={{
+                            position: "absolute",
+                            bottom: -5,
+                            right: -5,
+                            backgroundColor: "#ffffff",
+                            borderRadius: "50%",
+                            border: "2px solid #000000",
+                            width: 22,
+                            height: 22,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            cursor: "pointer",
+                        }}
+                    >
+                        <Typography sx={{ color: "#000000", fontSize: "22px" }}>+</Typography>
+                    </Box>
                 </Box>
 
                 <Box sx={{ display: "flex", gap: "16px" }}>
-                    {stories.map((userStory, index) => (
-                        <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    width: 65,
-                                    height: 65,
-                                    padding: "3px",
-                                    border: "3px solid #ff8800",
-                                    borderRadius: "50%",
-                                }}
-                            >
-                                <Avatar
-                                    src={userStory.profile_picture || "https://via.placeholder.com/50"}
-                                    onClick={() => {
-                                        setSelectedStoryIndex(index);
-                                        setOpenStoryDialog(true);
+                    {stories
+                        .filter((userStory) => userStory.user_id !== currentUser.id)
+                        .map((userStory, index) => (
+                            <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        width: 65,
+                                        height: 65,
+                                        padding: "3px",
+                                        border: "3px solid #ff8800",
+                                        borderRadius: "50%",
                                     }}
-                                    sx={{ width: "100%", height: "100%", cursor: "pointer" }}
-                                />
+                                >
+                                    <Avatar
+                                        src={userStory.profile_picture || "https://via.placeholder.com/50"}
+                                        onClick={() => {
+                                            setSelectedStoryIndex(index);
+                                            setOpenStoryDialog(true);
+                                        }}
+                                        sx={{ width: "100%", height: "100%", cursor: "pointer" }}
+                                    />
+                                </Box>
+                                <Typography
+                                    sx={{
+                                        fontSize: "0.75rem",
+                                        maxWidth: 70,
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    {userStory.username}
+                                </Typography>
                             </Box>
-                            <Typography
-                                sx={{
-                                    fontSize: "0.75rem",
-                                    maxWidth: 70,
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {userStory.username}
-                            </Typography>
-                        </Box>
-                    ))}
+                        ))}
                 </Box>
             </Box>
 
