@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos, Close } from "@mui/icons-material";
+import { ArrowBackIos, ArrowForwardIos, Close, Pause } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../utils/utils";
@@ -34,6 +34,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const animationFrameRef = useRef<number | null>(null);
     const [selectedUserStories, setSelectedUserStories] = useState<Story[]>([]);
     const [isMediaLoaded, setIsMediaLoaded] = useState(false);
+    const [paused, setPaused] = useState(false); // State to track whether the story is paused
 
     // Handle user story change
     useEffect(() => {
@@ -43,6 +44,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
             // Reset states before updating stories
             setCurrentIndex(0);
             setIsMediaLoaded(false);
+            setPaused(false); // Reset pause state when changing stories
             setSelectedUserStories(newStories);
         }
     }, [open, selectedStoryIndex, stories]);
@@ -67,7 +69,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
 
     // Start story timer after media is loaded
     useEffect(() => {
-        if (!open || !isMediaLoaded) return;
+        if (!open || !isMediaLoaded || paused) return;
 
         const startTime = performance.now();
 
@@ -94,7 +96,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                 cancelAnimationFrame(animationFrameRef.current);
             }
         };
-    }, [currentIndex, open, isMediaLoaded]);
+    }, [currentIndex, open, isMediaLoaded, paused]);
 
     const handleClose = () => {
         setProgress(0);
@@ -109,6 +111,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
         if (currentIndex < selectedUserStories.length - 1) {
             setProgress(0);
             setIsMediaLoaded(false);
+            setPaused(false); // Reset pause when moving to the next story
             setCurrentIndex((prev) => prev + 1);
         } else {
             handleClose();
@@ -119,8 +122,13 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
         if (currentIndex > 0) {
             setProgress(0);
             setIsMediaLoaded(false);
+            setPaused(false); // Reset pause when moving to the previous story
             setCurrentIndex((prev) => prev - 1);
         }
+    };
+
+    const handlePauseStory = () => {
+        setPaused((prev) => !prev); // Toggle pause state on click
     };
 
     return (
@@ -193,26 +201,67 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                     </Box>
 
                     {/* Story Media */}
-                    {selectedUserStories[currentIndex].media_type === "image" ? (
-                        <Box
-                            component="img"
-                            key={selectedUserStories[currentIndex].id} // Force re-render
-                            src={selectedUserStories[currentIndex].media_url}
-                            alt="Story"
-                            onLoad={() => setIsMediaLoaded(true)}
-                            sx={{ maxHeight: "90vh", maxWidth: "100%", objectFit: "contain", display: isMediaLoaded ? "block" : "none" }}
-                        />
-                    ) : (
-                        <Box
-                            component="video"
-                            key={selectedUserStories[currentIndex].id} // Force re-render
-                            src={selectedUserStories[currentIndex].media_url}
-                            autoPlay
-                            controls
-                            onCanPlay={() => setIsMediaLoaded(true)}
-                            sx={{ maxHeight: "90vh", maxWidth: "90vw", objectFit: "contain", display: isMediaLoaded ? "block" : "none" }}
-                        />
-                    )}
+                    <Box
+                        sx={{
+                            position: "relative",
+                            width: "100%",
+                            height: "90vh",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        {selectedUserStories[currentIndex].media_type === "image" ? (
+                            <Box
+                                component="img"
+                                key={selectedUserStories[currentIndex].id} // Force re-render
+                                src={selectedUserStories[currentIndex].media_url}
+                                alt="Story"
+                                onLoad={() => setIsMediaLoaded(true)}
+                                onClick={handlePauseStory} // Add click handler
+                                sx={{
+                                    maxHeight: "90vh",
+                                    maxWidth: "100%",
+                                    objectFit: "contain",
+                                    display: isMediaLoaded ? "block" : "none",
+                                    cursor: "pointer",
+                                }}
+                            />
+                        ) : (
+                            <Box
+                                component="video"
+                                key={selectedUserStories[currentIndex].id} // Force re-render
+                                src={selectedUserStories[currentIndex].media_url}
+                                autoPlay
+                                controls
+                                onCanPlay={() => setIsMediaLoaded(true)}
+                                onClick={handlePauseStory} // Add click handler
+                                sx={{
+                                    maxHeight: "90vh",
+                                    maxWidth: "90vw",
+                                    objectFit: "contain",
+                                    display: isMediaLoaded ? "block" : "none",
+                                    cursor: "pointer",
+                                }}
+                            />
+                        )}
+
+                        {/* Pause Icon */}
+                        {paused && (
+                            <IconButton
+                                sx={{
+                                    position: "absolute",
+                                    color: "white",
+                                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                                    borderRadius: "50%",
+                                    zIndex: 1,
+                                }}
+                                onClick={handlePauseStory} // Toggle pause state
+                            >
+                                <Pause sx={{ fontSize: "5rem" }} />
+                            </IconButton>
+                        )}
+                    </Box>
 
                     {/* Close Button */}
                     <IconButton
