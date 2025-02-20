@@ -8,7 +8,7 @@ import {
     Close as CloseIcon,
     EmojiEmotionsOutlined as EmojiIcon,
 } from "@mui/icons-material";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
@@ -222,10 +222,15 @@ const MessageInput: React.FC<MessageInputProps> = ({
                     open={Boolean(emojiAnchorEl)}
                     anchorEl={emojiAnchorEl}
                     onClose={() => setEmojiAnchorEl(null)}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                    transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    transformOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    PaperProps={{
+                        sx: {
+                            borderRadius: "20px",
+                        },
+                    }}
                 >
-                    <EmojiPicker onEmojiClick={handleEmojiClick} />
+                    <EmojiPicker theme={Theme.DARK} onEmojiClick={handleEmojiClick} />
                 </Popover>
                 <input
                     type="file"

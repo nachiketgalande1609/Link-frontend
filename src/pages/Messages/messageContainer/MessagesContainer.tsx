@@ -11,7 +11,7 @@ import {
     MoreHoriz,
     EmojiEmotions,
 } from "@mui/icons-material";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import BlurBackgroundImage from "../../../static/blur.jpg";
 
 import MessageDetailsDrawer from "./MessageDetailsDrawer";
@@ -484,10 +484,13 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             vertical: "top",
                                                             horizontal: "right",
                                                         }}
+                                                        PaperProps={{
+                                                            sx: {
+                                                                borderRadius: "20px",
+                                                            },
+                                                        }}
                                                     >
-                                                        <Box>
-                                                            <EmojiPicker onEmojiClick={handleEmojiClick} />
-                                                        </Box>
+                                                        <EmojiPicker theme={Theme.DARK} onEmojiClick={handleEmojiClick} />
                                                     </Popover>
                                                 </Box>
                                             )}
