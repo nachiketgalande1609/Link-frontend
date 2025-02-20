@@ -1,6 +1,6 @@
-import { Dialog, DialogContent, Container, Box, IconButton, CircularProgress, LinearProgress } from "@mui/material";
+import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos, Close } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Story {
     id: number;
@@ -20,49 +20,68 @@ const STORY_DURATION = 5000; // 5 seconds per story
 const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, initialIndex = 0 }) => {
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [progress, setProgress] = useState(0);
+    const animationFrameRef = useRef<number | null>(null);
 
     useEffect(() => {
-        if (open) {
-            setCurrentIndex(initialIndex);
-            setProgress(0);
-        }
-    }, [open, initialIndex]);
+        if (!open || !stories.length) return;
+
+        setCurrentIndex(initialIndex);
+        setProgress(0);
+    }, [open, initialIndex, stories.length]);
 
     useEffect(() => {
-        if (open && stories.length > 0) {
-            setProgress(0);
-            const interval = setInterval(() => {
-                setProgress((prev) => (prev >= 100 ? 100 : prev + 2));
-            }, STORY_DURATION / 50);
+        if (!open || !stories.length) return;
 
-            const timer = setTimeout(() => {
+        setProgress(0);
+
+        const startTime = performance.now();
+
+        const updateProgress = () => {
+            const elapsed = performance.now() - startTime;
+            const newProgress = Math.min((elapsed / STORY_DURATION) * 100, 100);
+            setProgress(newProgress);
+
+            if (newProgress < 100) {
+                animationFrameRef.current = requestAnimationFrame(updateProgress);
+            } else {
                 if (currentIndex < stories.length - 1) {
                     setCurrentIndex((prev) => prev + 1);
                 } else {
-                    onClose();
+                    handleClose();
                 }
-            }, STORY_DURATION);
+            }
+        };
 
-            return () => {
-                setProgress(0);
-                clearTimeout(timer);
-                clearInterval(interval);
-            };
-        }
-    }, [open, currentIndex, stories.length, onClose]);
+        animationFrameRef.current = requestAnimationFrame(updateProgress);
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [currentIndex, open, stories.length]);
+
+    const handleClose = () => {
+        setProgress(0); // Reset progress when dialog closes
+        onClose();
+    };
 
     if (!stories.length || !stories[currentIndex]) {
-        return (
-            <Dialog fullScreen open={open} onClose={onClose}>
-                <DialogContent sx={{ display: "flex", justifyContent: "center", alignItems: "center", backgroundColor: "black", padding: 2 }}>
-                    <CircularProgress color="primary" />
-                </DialogContent>
-            </Dialog>
-        );
+        return null;
     }
 
+    const handleNext = () => {
+        setProgress(0); // Instantly reset progress
+        setTimeout(() => setCurrentIndex((prev) => prev + 1), 0); // Ensure re-render before increment
+    };
+
+    const handlePrev = () => {
+        setProgress(0); // Instantly reset progress
+        setTimeout(() => setCurrentIndex((prev) => prev - 1), 0);
+    };
+
     return (
-        <Dialog fullScreen open={open} onClose={onClose}>
+        <Dialog fullScreen open={open} onClose={handleClose}>
             <DialogContent sx={{ backgroundColor: "black", padding: 0 }}>
                 <Container
                     maxWidth="sm"
@@ -101,20 +120,20 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, initi
                     )}
 
                     {/* Close Button */}
-                    <IconButton sx={{ position: "absolute", top: 20, right: 20, color: "white" }} onClick={onClose}>
+                    <IconButton sx={{ position: "absolute", top: 20, right: 20, color: "white" }} onClick={handleClose}>
                         <Close />
                     </IconButton>
 
                     {/* Previous Story Button */}
                     {currentIndex > 0 && (
-                        <IconButton sx={{ position: "absolute", left: 20, color: "white" }} onClick={() => setCurrentIndex(currentIndex - 1)}>
+                        <IconButton sx={{ position: "absolute", left: 20, color: "white" }} onClick={handlePrev}>
                             <ArrowBackIos />
                         </IconButton>
                     )}
 
                     {/* Next Story Button */}
                     {currentIndex < stories.length - 1 && (
-                        <IconButton sx={{ position: "absolute", right: 20, color: "white" }} onClick={() => setCurrentIndex(currentIndex + 1)}>
+                        <IconButton sx={{ position: "absolute", right: 20, color: "white" }} onClick={handleNext}>
                             <ArrowForwardIos />
                         </IconButton>
                     )}
