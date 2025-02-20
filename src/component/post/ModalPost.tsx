@@ -18,8 +18,8 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, Send } from "@mui/icons-material";
-import { deletePost, likePost, addComment, updatePost } from "../../services/api";
+import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, Send, MoreHoriz } from "@mui/icons-material";
+import { deletePost, likePost, addComment, updatePost, deleteComment } from "../../services/api";
 import ImageDialog from "../ImageDialog";
 
 interface PostProps {
@@ -71,8 +71,13 @@ const ModalPost: React.FC<PostProps> = ({
     const [postComments, setPostComments] = useState(initialComments);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [commentOptionsDialogOpen, setCommentOptionsDialog] = useState(false);
+
     const [isLiked, setIsLiked] = useState(hasUserLikedPost);
     const [likes, setLikes] = useState(initialLikes);
+    const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
+    const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
+    const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
@@ -133,6 +138,21 @@ const ModalPost: React.FC<PostProps> = ({
         }
     };
 
+    const handleDeleteComment = async () => {
+        if (selectedCommentId) {
+            try {
+                const res = await deleteComment(currentUser?.id, selectedCommentId);
+                if (res?.success) {
+                    const updatedComments = postComments.filter((comment) => comment.id !== selectedCommentId);
+                    setPostComments(updatedComments);
+                    fetchPosts();
+                }
+            } catch (error) {
+                console.error("Error deleting comment:", error);
+            }
+        }
+    };
+
     const handleDelete = async () => {
         try {
             const res = await deletePost(userId, postId);
@@ -167,6 +187,17 @@ const ModalPost: React.FC<PostProps> = ({
 
     const handleCloseDialog = () => {
         setOpenImageDialog(false);
+    };
+
+    const handleOpenCommentOptionsDialog = (commentId: number) => {
+        setSelectedCommentId(commentId);
+        setCommentOptionsDialog(true);
+    };
+
+    const handleCloseCommentOptionsDialog = () => {
+        setCommentOptionsDialog(false);
+        setSelectedCommentId(null);
+        setConfirmDeleteButtonVisibile(false);
     };
 
     const handleSaveEdit = async () => {
@@ -391,20 +422,38 @@ const ModalPost: React.FC<PostProps> = ({
                                             }}
                                         >
                                             {visibleComments.map((comment) => (
-                                                <Box key={comment.id} sx={{ mb: 2 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                <Box key={comment.id} sx={{ mb: 3 }}>
+                                                    <Box
+                                                        sx={{ display: "flex", alignItems: "center" }}
+                                                        onMouseEnter={() => setHoveredCommentId(comment.id)}
+                                                        onMouseLeave={() => setHoveredCommentId(null)}
+                                                    >
                                                         <Avatar
                                                             src={comment.commenter_profile_picture}
                                                             alt={comment.commenter_username}
                                                             sx={{ width: isMobile ? 30 : 40, height: isMobile ? 30 : 40 }}
                                                         />
                                                         <Box sx={{ ml: 2, display: "flex", justifyContent: "space-between", width: "100%" }}>
-                                                            <Typography variant="body2" color="text.primary">
-                                                                <strong style={{ fontWeight: "bold", marginRight: "4px", color: "#aaaaaa" }}>
-                                                                    {comment.commenter_username}
-                                                                </strong>
-                                                                {comment.content}
-                                                            </Typography>
+                                                            <Box>
+                                                                <Box sx={{ display: "flex", flexDirection: "row" }}>
+                                                                    <Typography variant="body2" color="text.primary">
+                                                                        <strong style={{ fontWeight: "bold", marginRight: "4px", color: "#aaaaaa" }}>
+                                                                            {comment.commenter_username}
+                                                                        </strong>
+                                                                    </Typography>
+                                                                    {hoveredCommentId === comment.id && comment.user_id === currentUser.id && (
+                                                                        <IconButton
+                                                                            onClick={() => handleOpenCommentOptionsDialog(comment.id)}
+                                                                            sx={{ color: "#aaaaaa", padding: 0 }}
+                                                                        >
+                                                                            <MoreHoriz sx={{ fontSize: 20 }} />
+                                                                        </IconButton>
+                                                                    )}
+                                                                </Box>
+                                                                <Typography variant="body2" color="text.primary">
+                                                                    {comment.content}
+                                                                </Typography>
+                                                            </Box>
                                                             <Typography variant="caption" sx={{ ml: 2, color: "#666666" }}>
                                                                 {comment.timeAgo}
                                                             </Typography>
@@ -453,6 +502,74 @@ const ModalPost: React.FC<PostProps> = ({
                         Delete
                     </Button>
                 </DialogActions>
+            </Dialog>
+            <Dialog
+                open={commentOptionsDialogOpen}
+                onClose={handleCloseDialog}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(32, 35, 39, 0.9)",
+                        color: "white",
+                        textAlign: "center",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    },
+                }}
+            >
+                <Button
+                    fullWidth
+                    onClick={() => setConfirmDeleteButtonVisibile(true)}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    Delete Comment
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleDeleteComment();
+                        setCommentOptionsDialog(false);
+                    }}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#ed4337",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#ed4337" },
+                        borderBottom: "1px solid #505050",
+                        display: confirmDeleteButtonVisibile ? "block" : "none",
+                    }}
+                >
+                    Confirm Delete Comment
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={handleCloseCommentOptionsDialog}
+                    sx={{
+                        padding: "10px",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                    }}
+                >
+                    Cancel
+                </Button>
             </Dialog>
             <ImageDialog openDialog={openImageDialog} handleCloseDialog={handleCloseDialog} selectedImage={fileUrl || ""} />
         </Card>
