@@ -38,3 +38,4 @@ export const SHARE_MEDIA_ENDPOINT: string = "/api/messages/media";
 
 // Stories Endpoints
 export const UPLOAD_STORY_ENDPOINT: string = "/api/stories/upload";
+export const FETCH_USER_STORIES_ENDPOINT: string = "/api/stories/";

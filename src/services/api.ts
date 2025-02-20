@@ -25,6 +25,7 @@ import {
     SAVE_POST_ENDPOINT,
     UNFOLLOW_ENDPOINT,
     UPLOAD_STORY_ENDPOINT,
+    FETCH_USER_STORIES_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -55,6 +56,20 @@ interface StoryData {
     user_id: string;
     caption: string;
     media: File;
+}
+
+export interface Story {
+    story_id: number;
+    user_id: number;
+    media_url: string;
+    media_type: "image" | "video";
+    caption: string;
+    created_at: string;
+    expires_at: string;
+    media_width: number | null;
+    media_height: number | null;
+    username: string;
+    profile_picture: string | null;
 }
 
 // User APIs
@@ -540,6 +555,20 @@ export const uploadStory = async (storyData: StoryData) => {
         });
 
         return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown error occurred");
+        }
+        throw error;
+    }
+};
+
+export const getStories = async (userId: number) => {
+    try {
+        const response = await api.get(`${FETCH_USER_STORIES_ENDPOINT}?userId=${userId}`);
+        return response.data.stories;
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(error.message);

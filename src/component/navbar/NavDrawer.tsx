@@ -245,7 +245,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                         <Typography
                                                             style={{
                                                                 visibility: open ? "visible" : "hidden",
-                                                                backgroundImage: "linear-gradient(to right,#7a60ff,#ff8800)",
+                                                                backgroundImage: "linear-gradient(to right, #7a60ff, #ff8800)",
                                                                 WebkitBackgroundClip: "text",
                                                                 WebkitTextFillColor: "transparent",
                                                             }}

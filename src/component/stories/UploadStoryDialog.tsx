@@ -38,11 +38,11 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose }) 
                 caption,
                 media,
             });
-
-            console.log("Story uploaded successfully:", response);
-            setMedia(null);
-            setCaption("");
-            onClose();
+            if (response?.success) {
+                setMedia(null);
+                setCaption("");
+                onClose();
+            }
         } catch (error) {
             console.error("Failed to upload story:", error);
             alert("Error uploading story. Please try again.");

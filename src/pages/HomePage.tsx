@@ -5,59 +5,105 @@ import StoryDialog from "../component/stories/StoryDialog";
 import UploadStoryDialog from "../component/stories/UploadStoryDialog";
 import { useEffect, useState } from "react";
 import { getPosts } from "../services/api";
+import { getStories } from "../services/api"; // Import getStories function
 
 const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [stories, setStories] = useState<any[]>([]);
+    const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
+    const [loadingStories, setLoadingStories] = useState<boolean>(true);
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [openStoryDialog, setOpenStoryDialog] = useState(false);
     const [openUploadDialog, setOpenUploadDialog] = useState(false);
-
-    const stories = [
-        { id: 1, image: "https://via.placeholder.com/500" },
-        { id: 2, image: "https://via.placeholder.com/600" },
-    ];
+    const [selectedStoryIndex, setSelectedStoryIndex] = useState(0);
 
     const fetchPosts = async () => {
         try {
-            if (currentUser) {
-                const res = await getPosts(currentUser?.id);
+            if (currentUser?.id) {
+                const res = await getPosts(currentUser.id);
                 setPosts(res.data);
             }
         } catch (error) {
             console.log(error);
         } finally {
-            setLoading(false);
+            setLoadingPosts(false);
+        }
+    };
+
+    const fetchStories = async () => {
+        try {
+            const res = await getStories(currentUser?.id);
+            setStories(res);
+        } catch (error) {
+            console.error("Error fetching stories:", error);
+        } finally {
+            setLoadingStories(false);
         }
     };
 
     useEffect(() => {
         fetchPosts();
+        fetchStories();
     }, []);
 
     return (
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-            <Box display="flex" gap={1} p={2}>
+            <Box display="flex" gap={1} sx={{ padding: "10px 0" }}>
                 {/* Current User Story Upload */}
-                <Avatar
-                    src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
-                    onClick={() => setOpenUploadDialog(true)}
-                    sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid blue" }}
-                />
-                {/* Other Stories */}
-                {stories.map((story) => (
+                <Box
+                    sx={{
+                        width: 75,
+                        height: 75,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        position: "relative",
+                        borderRadius: "50%",
+                        "&::before": {
+                            content: '""',
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: "50%",
+                            padding: "2px",
+                            background: "linear-gradient(to right,#7a60ff,#ff8800)",
+                            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "destination-out",
+                            maskComposite: "exclude",
+                        },
+                    }}
+                >
                     <Avatar
-                        key={story.id}
-                        src={story.image}
-                        onClick={() => setOpenStoryDialog(true)}
-                        sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid red" }}
+                        src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
+                        onClick={() => setOpenUploadDialog(true)}
+                        sx={{ width: 70, height: 70, cursor: "pointer" }}
                     />
-                ))}
+                </Box>
+
+                {/* User Stories */}
+                {loadingStories ? (
+                    <CircularProgress size={24} />
+                ) : (
+                    stories.map((story, index) => (
+                        <Avatar
+                            key={story.story_id}
+                            src={story.media_url}
+                            onClick={() => {
+                                setSelectedStoryIndex(index);
+                                setOpenStoryDialog(true);
+                            }}
+                            sx={{ width: 70, height: 70, cursor: "pointer", border: "2px solid red" }}
+                        />
+                    ))
+                )}
             </Box>
-            {loading ? (
+
+            {loadingPosts ? (
                 <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexGrow={1}>
                     <CircularProgress />
                 </Box>
@@ -74,7 +120,8 @@ const HomePage = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 flexDirection: "column",
-                                padding: "0 !important", // Enforce no padding
+                                paddingTop: "0 !important",
+                                width: "100%",
                                 marginBottom: index !== posts.length - 1 ? "20px" : "none",
                             }}
                         >
@@ -93,7 +140,8 @@ const HomePage = () => {
                     </Typography>
                 </Box>
             )}
-            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} />{" "}
+
+            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} initialIndex={selectedStoryIndex} />
             <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} />
         </Container>
     );
