@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Box, CircularProgress, useMediaQuery, useTheme, IconButton, Button } from "@mui/material";
+import { Typography, Box, CircularProgress, useMediaQuery, useTheme, IconButton, Button, Popover } from "@mui/material";
 import {
     Done as DoneIcon,
     DoneAll as DoneAllIcon,
@@ -78,7 +78,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const [selectedMessageForAction, setSelectedMessageForAction] = useState<Message | null>(null);
 
     // State for emoji picker
-    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
+    const emojiPickerOpen = Boolean(emojiAnchorEl);
     const [selectedMessageForReaction, setSelectedMessageForReaction] = useState<Message | null>(null);
 
     // Handle double click on a message
@@ -97,8 +98,12 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const handleEmojiClick = (emojiObject: { emoji: string }) => {
         if (selectedMessageForReaction) {
             handleReaction(selectedMessageForReaction.message_id, emojiObject.emoji);
-            setEmojiPickerOpen(false);
+            setEmojiAnchorEl(null);
         }
+    };
+
+    const handleCloseEmojiPicker = () => {
+        setEmojiAnchorEl(null);
     };
 
     return (
@@ -461,11 +466,29 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             setSelectedMessageForReaction(msg);
-                                                            setEmojiPickerOpen(true);
+                                                            setEmojiAnchorEl(e.currentTarget);
                                                         }}
                                                     >
                                                         <EmojiEmotions sx={{ fontSize: "20px" }} />
                                                     </IconButton>
+                                                    {/* Emoji Picker */}
+                                                    <Popover
+                                                        open={emojiPickerOpen}
+                                                        anchorEl={emojiAnchorEl}
+                                                        onClose={handleCloseEmojiPicker}
+                                                        anchorOrigin={{
+                                                            vertical: "bottom",
+                                                            horizontal: "left",
+                                                        }}
+                                                        transformOrigin={{
+                                                            vertical: "top",
+                                                            horizontal: "right",
+                                                        }}
+                                                    >
+                                                        <Box>
+                                                            <EmojiPicker onEmojiClick={handleEmojiClick} />
+                                                        </Box>
+                                                    </Popover>
                                                 </Box>
                                             )}
                                         </Typography>
@@ -547,20 +570,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
             />
 
             <MessageDetailsDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} selectedMessage={selectedMessage} />
-
-            {/* Emoji Picker */}
-            {emojiPickerOpen && (
-                <Box
-                    sx={{
-                        position: "fixed",
-                        bottom: "80px",
-                        right: "20px",
-                        zIndex: 1000,
-                    }}
-                >
-                    <EmojiPicker onEmojiClick={handleEmojiClick} />
-                </Box>
-            )}
         </Box>
     );
 };
