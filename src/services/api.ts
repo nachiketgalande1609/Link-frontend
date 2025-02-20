@@ -8,7 +8,6 @@ import {
     COMMENT_ENDPOINT,
     FOLLOW_ENDPOINT,
     SEARCH_ENDPOINT,
-    CHAT_USER_DETAILS_ENDPOINT,
     GET_NOTIFICATIONS_ENDPOINT,
     UPDATE_POST_ENDPOINT,
     GOOGLE_LOGIN_ENDPOINT,
@@ -73,7 +72,9 @@ export interface Story {
     profile_picture: string | null;
 }
 
-// User APIs
+/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// AUTHENTICATION APIS ////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 export const registerUser = async (userData: UserRegisterData) => {
     try {
@@ -116,7 +117,127 @@ export const googleLogin = async (data: { token: string }) => {
         throw error;
     }
 };
-// Post APIs
+
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// USER APIS ////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
+
+export const getProfile = async (userId: string, currentUserId: string) => {
+    try {
+        const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const uploadProfilePicture = async (userId: string, profilePic: File) => {
+    try {
+        const formData = new FormData();
+        formData.append("user_id", userId);
+        formData.append("profile_pic", profilePic);
+
+        const response = await api.post(UPLOAD_PROFILE_PICTURE_ENDPOINT, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown error occurred");
+        }
+        throw error;
+    }
+};
+
+export const updateProfileDetails = async (userId: string, updatedProfile: ProfileData) => {
+    try {
+        const response = await api.put(UPDATE_PROFILE_ENDPOINT, { userId, updatedProfile });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to update profile:", error.message);
+        } else {
+            console.error("Failed to update profile: Unknown error");
+        }
+        throw error;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// FOLLOW APIS ////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
+export const followUser = async (followerId: string, followingId: string) => {
+    try {
+        const response = await api.post(FOLLOW_ENDPOINT, { followerId, followingId });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to send follow request:", error.message);
+        } else {
+            console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const unfollowUser = async (followerId: string, followingId: string) => {
+    try {
+        const response = await api.delete(UNFOLLOW_ENDPOINT, {
+            data: { followerId, followingId },
+        });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to send follow request:", error.message);
+        } else {
+            console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const respondToFollowRequest = async (requestId: number, status: string) => {
+    try {
+        const res = await api.post(FOLLOW_RESPONSE_ENDPOINT, { requestId, status });
+        return res.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to send follow request:", error.message);
+        } else {
+            console.error("Failed to send follow request: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const getFollowingUsers = async (userId: string) => {
+    try {
+        const response = await api.get(`${FOLLOWING_USERS_LIST_ENDPOINT}/${userId}`);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to fetch following users:", error.message);
+        } else {
+            console.error("Failed to fetch following users: Unknown error");
+        }
+        throw error;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// POST APIS ////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
 export const getPosts = async (userId: string) => {
     try {
@@ -128,6 +249,62 @@ export const getPosts = async (userId: string) => {
             console.error(error.message);
         } else {
             console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const updatePost = async (postId: string, editContent: string) => {
+    try {
+        const response = await api.post(`${UPDATE_POST_ENDPOINT}/${postId}`, { content: editContent });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const likePost = async (userId: string, postId: string) => {
+    try {
+        const response = await api.post(LIKE_POST_ENDPOINT, { userId, postId });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error liking the post:", error.message);
+        } else {
+            console.error("Unknown error while liking the post");
+        }
+        throw error;
+    }
+};
+
+export const addComment = async (userId: string, postId: string, comment: string) => {
+    try {
+        const response = await api.post(COMMENT_ENDPOINT, { userId, postId, comment });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error adding the comment:", error.message);
+        } else {
+            console.error("Unknown error while adding the comment");
+        }
+        throw error;
+    }
+};
+
+export const deleteComment = async (userId: string, commentId: number) => {
+    try {
+        const response = await api.delete(COMMENT_ENDPOINT, { data: { userId, commentId } });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error deleting the comment:", error.message);
+        } else {
+            console.error("Unknown error while deleting the comment");
         }
         throw error;
     }
@@ -155,20 +332,6 @@ export const savePost = async (userId: string, postId: string) => {
             postId,
         });
 
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Unknown Error");
-        }
-        throw error;
-    }
-};
-
-export const getProfile = async (userId: string, currentUserId: string) => {
-    try {
-        const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -222,43 +385,6 @@ export const createPost = async (postData: PostData) => {
     }
 };
 
-export const uploadProfilePicture = async (userId: string, profilePic: File) => {
-    try {
-        const formData = new FormData();
-        formData.append("user_id", userId);
-        formData.append("profile_pic", profilePic);
-
-        const response = await api.post(UPLOAD_PROFILE_PICTURE_ENDPOINT, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
-
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Unknown error occurred");
-        }
-        throw error;
-    }
-};
-
-export const updatePost = async (postId: string, editContent: string) => {
-    try {
-        const response = await api.post(`${UPDATE_POST_ENDPOINT}/${postId}`, { content: editContent });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("unknown Error");
-        }
-        throw error;
-    }
-};
-
 export const deletePost = async (userId: number, postId: string) => {
     try {
         const response = await api.delete(`${POSTS_ENDPOINT}?userId=${userId}&postId=${postId}`);
@@ -273,119 +399,43 @@ export const deletePost = async (userId: number, postId: string) => {
     }
 };
 
-export const likePost = async (userId: string, postId: string) => {
+////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// NOTIFICATIONS APIS ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+
+export const getNotifications = async (userId: string) => {
     try {
-        const response = await api.post(LIKE_POST_ENDPOINT, { userId, postId });
+        const response = await api.get(`${GET_NOTIFICATIONS_ENDPOINT}/${userId}`);
+
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
-            console.error("Error liking the post:", error.message);
+            console.error(error.message);
         } else {
-            console.error("Unknown error while liking the post");
+            console.error("Unknown Error");
         }
         throw error;
     }
 };
 
-export const addComment = async (userId: string, postId: string, comment: string) => {
+export const getNotificationsCount = async (userId: string) => {
     try {
-        const response = await api.post(COMMENT_ENDPOINT, { userId, postId, comment });
+        const response = await api.get(`${GET_NOTIFICATIONS_COUNT}/${userId}`);
+
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
-            console.error("Error adding the comment:", error.message);
+            console.error(error.message);
         } else {
-            console.error("Unknown error while adding the comment");
+            console.error("Unknown Error");
         }
         throw error;
     }
 };
 
-export const deleteComment = async (userId: string, commentId: number) => {
-    try {
-        const response = await api.delete(COMMENT_ENDPOINT, { data: { userId, commentId } });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Error deleting the comment:", error.message);
-        } else {
-            console.error("Unknown error while deleting the comment");
-        }
-        throw error;
-    }
-};
-
-export const followUser = async (followerId: string, followingId: string) => {
-    try {
-        const response = await api.post(FOLLOW_ENDPOINT, { followerId, followingId });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Failed to send follow request:", error.message);
-        } else {
-            console.error("Failed to send follow request: Unknown error");
-        }
-        throw error;
-    }
-};
-
-export const unfollowUser = async (followerId: string, followingId: string) => {
-    try {
-        const response = await api.delete(UNFOLLOW_ENDPOINT, {
-            data: { followerId, followingId },
-        });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Failed to send follow request:", error.message);
-        } else {
-            console.error("Failed to send follow request: Unknown error");
-        }
-        throw error;
-    }
-};
-
-export const getFollowingUsers = async (userId: string) => {
-    try {
-        const response = await api.get(`${FOLLOWING_USERS_LIST_ENDPOINT}/${userId}`);
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Failed to fetch following users:", error.message);
-        } else {
-            console.error("Failed to fetch following users: Unknown error");
-        }
-        throw error;
-    }
-};
-
-export const updateProfileDetails = async (userId: string, updatedProfile: ProfileData) => {
-    try {
-        const response = await api.put(UPDATE_PROFILE_ENDPOINT, { userId, updatedProfile });
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Failed to update profile:", error.message);
-        } else {
-            console.error("Failed to update profile: Unknown error");
-        }
-        throw error;
-    }
-};
-
-export const respondToFollowRequest = async (requestId: number, status: string) => {
-    try {
-        const res = await api.post(FOLLOW_RESPONSE_ENDPOINT, { requestId, status });
-        return res.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Failed to send follow request:", error.message);
-        } else {
-            console.error("Failed to send follow request: Unknown error");
-        }
-        throw error;
-    }
-};
+/////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// SEARCH APIS ////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 export const getSearchResults = async (searchQuery: string) => {
     try {
@@ -449,50 +499,9 @@ export const deleteSearchHistoryItem = async (currentUserId: number, historyId: 
     }
 };
 
-export const getUserMessageDetails = async (userId: string) => {
-    try {
-        const response = await api.get(`${CHAT_USER_DETAILS_ENDPOINT}/${userId}`);
-
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Unknown Error");
-        }
-        throw error;
-    }
-};
-
-export const getNotifications = async (userId: string) => {
-    try {
-        const response = await api.get(`${GET_NOTIFICATIONS_ENDPOINT}/${userId}`);
-
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Unknown Error");
-        }
-        throw error;
-    }
-};
-
-export const getNotificationsCount = async (userId: string) => {
-    try {
-        const response = await api.get(`${GET_NOTIFICATIONS_COUNT}/${userId}`);
-
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Unknown Error");
-        }
-        throw error;
-    }
-};
+/////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// SETTINGS APIS //////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 
 export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
     try {
@@ -508,9 +517,30 @@ export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
     }
 };
 
+/////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// MESSAGES APIS //////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 export const getAllMessagesData = async (userId: string) => {
     try {
         const response = await api.get(`${GET_ALL_MESSAGES_ENDPOINT}/${userId}`);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const deleteMessage = async (messageId: number, currentUserId: number) => {
+    try {
+        const response = await api.delete(`${DELETE_MESSAGE_ENDPOINT}/${messageId}`, {
+            params: { currentUserId },
+        });
 
         return response.data;
     } catch (error: unknown) {
@@ -541,6 +571,10 @@ export const shareChatMedia = async (mediaMessageData: FormData): Promise<any> =
         throw error;
     }
 };
+
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// STORIES APIS //////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
 export const uploadStory = async (storyData: StoryData) => {
     try {
@@ -575,23 +609,6 @@ export const getStories = async (userId: number) => {
             console.error(error.message);
         } else {
             console.error("Unknown error occurred");
-        }
-        throw error;
-    }
-};
-
-export const deleteMessage = async (messageId: number, currentUserId: number) => {
-    try {
-        const response = await api.delete(`${DELETE_MESSAGE_ENDPOINT}/${messageId}`, {
-            params: { currentUserId },
-        });
-
-        return response.data;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error(error.message);
-        } else {
-            console.error("Unknown Error");
         }
         throw error;
     }

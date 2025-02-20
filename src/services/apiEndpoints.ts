@@ -26,10 +26,11 @@ export const SAVE_POST_ENDPOINT: string = "/api/posts/save";
 export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";
 export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/count";
 
+// Search Endpoints
 export const SEARCH_ENDPOINT: string = "/api/search";
 export const SEARCH_HISTORY_ENDPOINT: string = "/api/search/history";
-export const CHAT_USER_DETAILS_ENDPOINT: string = "/api/users/chat";
 
+// Settings Endpoints
 export const SETTINGS_ENDPOINT: string = "/api/settings";
 
 // Messages Endpoints
