@@ -11,7 +11,6 @@ const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
     const [stories, setStories] = useState<any[]>([]);
     const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
-    const [loadingStories, setLoadingStories] = useState<boolean>(true);
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -51,8 +50,6 @@ const HomePage = () => {
             setStories(Object.values(groupedStories));
         } catch (error) {
             console.error("Error fetching stories:", error);
-        } finally {
-            setLoadingStories(false);
         }
     };
 
@@ -70,8 +67,8 @@ const HomePage = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: 70,
-                        height: 70,
+                        width: 65,
+                        height: 65,
                         padding: "3px",
                         border: "3px solid red",
                         borderRadius: "50%",
@@ -92,8 +89,8 @@ const HomePage = () => {
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    width: 70,
-                                    height: 70,
+                                    width: 65,
+                                    height: 65,
                                     padding: "3px",
                                     border: "3px solid red",
                                     borderRadius: "50%",

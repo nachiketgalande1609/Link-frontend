@@ -278,7 +278,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
             </CardContent>
             <Box
                 sx={{
-                    padding: "12px 16px 0px 16px",
                     backgroundColor: isMobile ? "#000000" : "#101114",
                     display: "flex",
                     alignItems: "center",
@@ -321,7 +320,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
 
             <Box sx={{ padding: isMobile ? "0 14px" : "0 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <Grid container spacing={2} alignItems="flex-start">
-                    {/* Avatar */}
                     <Grid item>
                         <Avatar
                             src={
@@ -338,7 +336,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     <Grid item xs zeroMinWidth>
                         <Typography
                             sx={{
-                                fontSize: isMobile ? "0.85rem" : "1rem",
+                                fontSize: "0.9rem",
                                 whiteSpace: "nowrap",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
@@ -350,7 +348,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         </Typography>
                         <Typography
                             sx={{
-                                fontSize: isMobile ? "0.8rem" : "0.9rem",
+                                fontSize: "0.9rem",
                                 mt: 0.5,
                                 backgroundColor: isMobile ? "#000000" : "#101114",
                             }}
