@@ -71,26 +71,16 @@ const HomePage = () => {
                         width: 65,
                         height: 65,
                         padding: "3px",
-                        border: stories.some((userStory) => userStory.user_id === currentUser.id && userStory.stories.length)
-                            ? "3px solid #ff8800"
-                            : "none",
+                        border: currentUser?.stories?.length ? "3px solid #ff8800" : "none",
                         borderRadius: "50%",
-                        position: "relative", // To position the + icon
+                        position: "relative",
                     }}
                 >
                     <Avatar
                         src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
-                        onClick={() => {
-                            // Open the current user's story dialog instead of upload dialog
-                            const currentUserStories = stories.find((userStory) => userStory.user_id === currentUser.id);
-                            if (currentUserStories) {
-                                setSelectedStoryIndex(0);
-                                setOpenStoryDialog(true);
-                            }
-                        }}
+                        onClick={() => setOpenUploadDialog(true)}
                         sx={{ width: "100%", height: "100%", cursor: "pointer" }}
                     />
-
                     <Box
                         onClick={() => setOpenUploadDialog(true)}
                         sx={{
@@ -113,45 +103,43 @@ const HomePage = () => {
                 </Box>
 
                 <Box sx={{ display: "flex", gap: "16px" }}>
-                    {stories
-                        .filter((userStory) => userStory.user_id !== currentUser.id)
-                        .map((userStory, index) => (
-                            <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        width: 65,
-                                        height: 65,
-                                        padding: "3px",
-                                        border: "3px solid #ff8800",
-                                        borderRadius: "50%",
+                    {stories.map((userStory, index) => (
+                        <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    width: 65,
+                                    height: 65,
+                                    padding: "3px",
+                                    border: "3px solid #ff8800",
+                                    borderRadius: "50%",
+                                }}
+                            >
+                                <Avatar
+                                    src={userStory.profile_picture || "https://via.placeholder.com/50"}
+                                    onClick={() => {
+                                        setSelectedStoryIndex(index);
+                                        setOpenStoryDialog(true);
                                     }}
-                                >
-                                    <Avatar
-                                        src={userStory.profile_picture || "https://via.placeholder.com/50"}
-                                        onClick={() => {
-                                            setSelectedStoryIndex(index);
-                                            setOpenStoryDialog(true);
-                                        }}
-                                        sx={{ width: "100%", height: "100%", cursor: "pointer" }}
-                                    />
-                                </Box>
-                                <Typography
-                                    sx={{
-                                        fontSize: "0.75rem",
-                                        maxWidth: 70,
-                                        whiteSpace: "nowrap",
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {userStory.username}
-                                </Typography>
+                                    sx={{ width: "100%", height: "100%", cursor: "pointer" }}
+                                />
                             </Box>
-                        ))}
+                            <Typography
+                                sx={{
+                                    fontSize: "0.75rem",
+                                    maxWidth: 70,
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {userStory.username}
+                            </Typography>
+                        </Box>
+                    ))}
                 </Box>
             </Box>
 
