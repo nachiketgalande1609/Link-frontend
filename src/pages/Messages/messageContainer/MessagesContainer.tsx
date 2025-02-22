@@ -518,10 +518,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                     <Box
                                         sx={{
                                             display: "flex",
-                                            gap: "4px",
+                                            gap: "2px",
                                             justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                             position: "relative",
-                                            marginTop: "-5px",
+                                            marginTop: "-8px",
                                             paddingLeft: msg.sender_id === currentUser.id ? "0px" : "10px",
                                             paddingRight: msg.sender_id === currentUser.id ? "10px" : "0px",
                                             zIndex: 1,
@@ -533,7 +533,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                             <Typography
                                                 key={index}
                                                 sx={{
-                                                    fontSize: "1rem",
+                                                    fontSize: "1.2rem",
                                                     borderRadius: "12px",
                                                 }}
                                             >

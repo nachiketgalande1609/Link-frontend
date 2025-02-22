@@ -6,7 +6,7 @@ interface PostProps {
 
 const ProfilePagePost: React.FC<PostProps> = ({ fileUrl }) => {
     return (
-        <Card sx={{ borderRadius: "0px", position: "relative" }}>
+        <Card sx={{ borderRadius: "10px", position: "relative" }}>
             <CardContent sx={{ padding: "0 !important" }}>
                 {fileUrl && (
                     <Box sx={{ position: "relative", width: "100%", paddingTop: "100%" }}>
