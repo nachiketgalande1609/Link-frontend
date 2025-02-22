@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Typography, Box, useMediaQuery, useTheme, IconButton, Dialog, DialogTitle, Button, DialogContent, Grid } from "@mui/material";
-import { ChevronLeft, MoreVert } from "@mui/icons-material";
+import { ChevronLeft, Duo, MoreVert } from "@mui/icons-material";
 import bg1 from "../../static/bg1.jpg";
 import bg2 from "../../static/bg2.jpg";
 import bg3 from "../../static/bg3.png";
@@ -11,12 +11,13 @@ interface messagesTopBarProps {
     selectedUser: User | null;
     chatTheme: string;
     setChatTheme: (theme: string) => void;
+    openVideoCall: () => void;
 }
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
 const themeBackgrounds = ["black", `url(${bg1})`, `url(${bg2})`, `url(${bg3})`, `url(${bg4})`];
 
-const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme, setChatTheme }) => {
+const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme, setChatTheme, openVideoCall }) => {
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -54,10 +55,14 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                 </Typography>
             </Box>
 
-            {/* MoreVert Icon */}
-            <IconButton onClick={() => setOpenThemeDialog(true)} sx={{ color: "white" }}>
-                <MoreVert />
-            </IconButton>
+            <Box>
+                <IconButton onClick={openVideoCall} sx={{ color: "white" }}>
+                    <Duo />
+                </IconButton>
+                <IconButton onClick={() => setOpenThemeDialog(true)} sx={{ color: "white" }}>
+                    <MoreVert />
+                </IconButton>
+            </Box>
 
             {/* Theme Settings Dialog */}
             <Dialog

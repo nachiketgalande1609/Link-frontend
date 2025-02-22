@@ -13,6 +13,7 @@ import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import VideoCallModal from "../../component/VideoCallModal";
 
 type Message = {
     message_id: number;
@@ -66,6 +67,11 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
     const [chatTheme, setChatTheme] = useState(() => localStorage.getItem("chatTheme") || "");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
+
+    const openVideoCall = (): void => setIsVideoModalOpen(true);
+    const closeVideoCall = (): void => setIsVideoModalOpen(false);
 
     const handleReply = (msg: Message) => {
         setSelectedMessageForReply(msg);
@@ -513,13 +519,11 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 anchorEl={anchorEl}
                 setAnchorEl={setAnchorEl}
             />
-
             {isMobile && (
                 <IconButton sx={{ position: "absolute", left: 5, top: 15 }} onClick={() => setDrawerOpen(true)}>
                     <ChevronRightIcon sx={{ color: "white" }} />
                 </IconButton>
             )}
-
             {/* Messages Panel */}
             <Box
                 sx={{
@@ -534,7 +538,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 }}
             >
                 {/* Top bar */}
-                {selectedUser && <MessagesTopBar selectedUser={selectedUser} chatTheme={chatTheme} setChatTheme={setChatTheme} />}
+                {selectedUser && (
+                    <MessagesTopBar selectedUser={selectedUser} chatTheme={chatTheme} setChatTheme={setChatTheme} openVideoCall={openVideoCall} />
+                )}
 
                 {/* Messages Container */}
                 <MessagesContainer
@@ -574,6 +580,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 )}
             </Box>
             <ImageDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} selectedImage={selectedImage} />
+            <VideoCallModal open={isVideoModalOpen} onClose={closeVideoCall} />
         </Box>
     );
 };
