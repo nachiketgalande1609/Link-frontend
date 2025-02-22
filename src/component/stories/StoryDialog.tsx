@@ -62,8 +62,6 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state for viewers
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
-    console.log("xxx", selectedUserStories[currentIndex]);
-
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Handle user story change

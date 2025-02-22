@@ -130,8 +130,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
         setEmojiAnchorEl(null);
     };
 
-    console.log(messages);
-
     return (
         <Box
             sx={{

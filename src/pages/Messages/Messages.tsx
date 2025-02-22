@@ -461,8 +461,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     };
 
     socket.on("reaction-received", ({ messageId, senderUserId, reaction }) => {
-        console.log("Reaction received", messageId, senderUserId, reaction);
-
         setMessages((prevMessages) => {
             const updatedMessages = { ...prevMessages };
             Object.keys(updatedMessages).forEach((senderUserId) => {
