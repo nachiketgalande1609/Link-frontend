@@ -65,7 +65,6 @@ const LoginPage: React.FC = () => {
     return (
         <GoogleOAuthProvider clientId={"702353220748-2lmc03lb4tcfnuqds67h8bbupmb1aa0q.apps.googleusercontent.com"}>
             <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                {" "}
                 <Fade in={checked} timeout={1500}>
                     <Box
                         sx={{
@@ -92,6 +91,7 @@ const LoginPage: React.FC = () => {
                             },
                         }}
                     >
+                        {/* Heading */}
                         <Typography
                             style={{
                                 backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
@@ -104,7 +104,8 @@ const LoginPage: React.FC = () => {
                         >
                             Ripple
                         </Typography>
-                        {/* Ensure error is a valid React node */}
+
+                        {/* Error Alert */}
                         {error && (
                             <Alert severity="error" sx={{ mb: 2 }}>
                                 {error}
@@ -112,6 +113,7 @@ const LoginPage: React.FC = () => {
                         )}
 
                         <form onSubmit={handleLogin}>
+                            {/* Email Field */}
                             <TextField
                                 fullWidth
                                 label="Email"
@@ -125,6 +127,7 @@ const LoginPage: React.FC = () => {
                                     },
                                 }}
                             />
+                            {/* Password Field */}
                             <TextField
                                 fullWidth
                                 label="Password"
@@ -139,6 +142,7 @@ const LoginPage: React.FC = () => {
                                     },
                                 }}
                             />
+                            {/* Login Button */}
                             <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2, borderRadius: "15px" }}>
                                 Login
                             </Button>

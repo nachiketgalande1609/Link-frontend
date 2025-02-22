@@ -61,8 +61,11 @@ const HomePage = () => {
 
     return (
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+            {/* Stories Section */}
+
             <Box display="flex" gap="16px" sx={{ padding: isMobile ? "10px 10px 0px 10px" : "10px 0 10px 0" }}>
-                {/* Current User Story Upload */}
+                {/* Current User Story */}
+
                 <Box
                     sx={{
                         display: "flex",
@@ -101,6 +104,8 @@ const HomePage = () => {
                         <Typography sx={{ color: "#000000", fontSize: "22px" }}>+</Typography>
                     </Box>
                 </Box>
+
+                {/* Other User Stories */}
 
                 <Box sx={{ display: "flex", gap: "16px" }}>
                     {stories.map((userStory, index) => (
@@ -143,6 +148,8 @@ const HomePage = () => {
                 </Box>
             </Box>
 
+            {/* Posts Section */}
+
             {loadingPosts ? (
                 <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexGrow={1}>
                     <CircularProgress />
@@ -180,6 +187,8 @@ const HomePage = () => {
                     </Typography>
                 </Box>
             )}
+
+            {/* Other Children Components */}
 
             <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} selectedStoryIndex={selectedStoryIndex} />
             <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} />
