@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Modal, IconButton, Button, Stack, styled } from "@mui/material";
 import { CallEnd, Mic, MicOff, Videocam, VideocamOff } from "@mui/icons-material";
+import socket from "../services/socket";
 
 // Dark theme styling
 const darkTheme = {
@@ -63,25 +64,38 @@ const EndCallButton = styled(Button)({
 interface VideoCallModalProps {
     open: boolean;
     onClose: () => void;
+    callerId: number;
+    receiverId: number;
+    localStream: MediaStream | null;
+    remoteStream: MediaStream | null;
+    pc: RTCPeerConnection | null;
 }
 
-const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose }) => {
+const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, callerId, receiverId, localStream, remoteStream, pc }) => {
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOn, setIsVideoOn] = useState(true);
-    const [isPiPMaximized, setIsPiPMaximized] = useState(false);
+    const localVideoRef = useRef<HTMLVideoElement>(null);
+    const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        if (localStream && localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream;
+        }
+    }, [localStream]);
+
+    useEffect(() => {
+        if (remoteStream && remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = remoteStream;
+        }
+    }, [remoteStream]);
 
     const toggleMute = () => setIsMuted((prev) => !prev);
     const toggleVideo = () => setIsVideoOn((prev) => !prev);
-    const togglePiP = () => setIsPiPMaximized((prev) => !prev);
-
-    // Video sources
-    const mainVideoSrc = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"; // Replace with your main video source
-    const pipVideoSrc = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"; // Replace with your PiP video source
 
     return (
         <Modal open={open} onClose={onClose}>
             <VideoContainer>
-                {/* Main Video Screen */}
+                {/* Remote Video */}
                 <Box
                     sx={{
                         width: "100%",
@@ -93,6 +107,7 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose }) => {
                     }}
                 >
                     <video
+                        ref={remoteVideoRef}
                         style={{
                             width: "100%",
                             height: "100%",
@@ -100,22 +115,20 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose }) => {
                             borderRadius: "8px",
                         }}
                         autoPlay
-                        muted={isMuted}
-                        src={isPiPMaximized ? pipVideoSrc : mainVideoSrc}
                     />
                 </Box>
 
-                {/* PiP Video Screen */}
-                <PiPContainer onClick={togglePiP}>
+                {/* Local Video */}
+                <PiPContainer>
                     <video
+                        ref={localVideoRef}
                         style={{
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
                         }}
                         autoPlay
-                        muted={isMuted}
-                        src={isPiPMaximized ? mainVideoSrc : pipVideoSrc}
+                        muted
                     />
                 </PiPContainer>
 

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-
 import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
-
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
 import { useGlobalStore } from "../../store/store";
@@ -69,6 +67,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
+    const [pc, setPc] = useState<RTCPeerConnection | null>(null);
+    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+    const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
     const openVideoCall = (): void => setIsVideoModalOpen(true);
     const closeVideoCall = (): void => setIsVideoModalOpen(false);
@@ -91,7 +92,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             const users = res.data.users;
             let messages = res.data.messages;
 
-            // Ensure messages with a messageId are marked as saved
             const updatedMessages = Object.keys(messages).reduce(
                 (acc, userId) => {
                     acc[userId] = messages[userId].map((msg: MessagesType) => ({
@@ -102,7 +102,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                     return acc;
                 },
                 {} as Record<string, any[]>
-            ); // Explicitly typing to avoid TS issues
+            );
 
             setUsers(users);
             setMessages(updatedMessages);
@@ -237,7 +237,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
 
     // Socket to send messages and emit stop typing
     const handleSendMessage = async () => {
-        if ((!inputMessage.trim() && !selectedFile) || !selectedUser) return; // Prevent sending empty messages
+        if ((!inputMessage.trim() && !selectedFile) || !selectedUser) return;
 
         let fileUrl = null;
         let fileName = null;
@@ -462,7 +462,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             return updatedMessages;
         });
 
-        // Emit the reaction to the server
         socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
     };
 
@@ -506,6 +505,81 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         setSelectedImage("");
     };
 
+    const handleVideoCall = () => {
+        if (selectedUser) {
+            setIsVideoModalOpen(true);
+            const newPc = new RTCPeerConnection({
+                iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+            });
+            setPc(newPc);
+
+            navigator.mediaDevices
+                .getUserMedia({ video: true, audio: true })
+                .then((stream) => {
+                    setLocalStream(stream);
+                    stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
+                })
+                .catch(console.error);
+
+            newPc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit("iceCandidate", { to: selectedUser.id, candidate: event.candidate });
+                }
+            };
+
+            newPc
+                .createOffer()
+                .then((offer) => newPc.setLocalDescription(offer))
+                .then(() => {
+                    socket.emit("callUser", { from: currentUser.id, to: selectedUser.id, signal: newPc.localDescription });
+                })
+                .catch(console.error);
+        }
+    };
+
+    useEffect(() => {
+        const handleCallReceived = (data: { signal: RTCSessionDescriptionInit; from: number }) => {
+            setIsVideoModalOpen(true);
+            const newPc = new RTCPeerConnection({
+                iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+            });
+            setPc(newPc);
+
+            navigator.mediaDevices
+                .getUserMedia({ video: true, audio: true })
+                .then((stream) => {
+                    setLocalStream(stream);
+                    stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
+                })
+                .catch(console.error);
+
+            newPc.ontrack = (event) => {
+                setRemoteStream(event.streams[0]);
+            };
+
+            newPc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit("iceCandidate", { to: data.from, candidate: event.candidate });
+                }
+            };
+
+            newPc
+                .setRemoteDescription(new RTCSessionDescription(data.signal))
+                .then(() => newPc.createAnswer())
+                .then((answer) => newPc.setLocalDescription(answer))
+                .then(() => {
+                    socket.emit("answerCall", { to: data.from, signal: newPc.localDescription });
+                })
+                .catch(console.error);
+        };
+
+        socket.on("callReceived", handleCallReceived);
+
+        return () => {
+            socket.off("callReceived", handleCallReceived);
+        };
+    }, []);
+
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
             <MessagesDrawer
@@ -539,7 +613,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
             >
                 {/* Top bar */}
                 {selectedUser && (
-                    <MessagesTopBar selectedUser={selectedUser} chatTheme={chatTheme} setChatTheme={setChatTheme} openVideoCall={openVideoCall} />
+                    <MessagesTopBar selectedUser={selectedUser} chatTheme={chatTheme} setChatTheme={setChatTheme} openVideoCall={handleVideoCall} />
                 )}
 
                 {/* Messages Container */}
@@ -580,7 +654,15 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 )}
             </Box>
             <ImageDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} selectedImage={selectedImage} />
-            <VideoCallModal open={isVideoModalOpen} onClose={closeVideoCall} />
+            <VideoCallModal
+                open={isVideoModalOpen}
+                onClose={closeVideoCall}
+                callerId={currentUser.id}
+                receiverId={selectedUser?.id || 0}
+                localStream={localStream}
+                remoteStream={remoteStream}
+                pc={pc}
+            />
         </Box>
     );
 };
