@@ -1,4 +1,17 @@
-import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography, Drawer, Stack } from "@mui/material";
+import {
+    Dialog,
+    DialogContent,
+    Container,
+    Box,
+    IconButton,
+    LinearProgress,
+    Avatar,
+    Typography,
+    Drawer,
+    Stack,
+    useTheme,
+    useMediaQuery,
+} from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos, Close, Pause, ExpandLess } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +29,7 @@ interface Story {
 interface Viewer {
     viewer_username: string;
     viewer_profile_picture: string;
+    viewer_id: number;
 }
 
 interface UserStories {
@@ -36,6 +50,9 @@ const STORY_DURATION = 5000; // 5 seconds per story
 
 const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selectedStoryIndex }) => {
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const animationFrameRef = useRef<number | null>(null);
@@ -346,11 +363,11 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         </IconButton>
                     )}
 
-                    {/* Eye Icon to open Drawer */}
+                    {/* Story open Icon to open Drawer */}
                     <IconButton
                         sx={{
                             position: "absolute",
-                            bottom: 20,
+                            bottom: 10,
                             left: "50%",
                             transform: "translateX(-50%)",
                             color: "white",
@@ -374,27 +391,49 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                 color: "white",
                                 zIndex: 1400,
                                 width: "100%",
-                                maxWidth: "600px",
+                                maxWidth: "500px",
                                 margin: "0 auto",
                                 borderTopLeftRadius: "20px",
                                 borderTopRightRadius: "20px",
                                 height: "60vh",
+                                display: "flex",
+                                flexDirection: "column",
                             },
                         }}
                     >
-                        <Box sx={{ padding: 2, overflow: "auto", maxHeight: "calc(100% - 16px)" }}>
-                            <Typography sx={{ mb: 2 }} variant="h6" color="white">
-                                Viewers
-                            </Typography>
-                            <Box>
+                        {/* Puller */}
+                        <Box
+                            sx={{
+                                width: 40,
+                                height: 4,
+                                backgroundColor: "gray",
+                                borderRadius: 3,
+                                alignSelf: "center",
+                                marginTop: 2,
+                                marginBottom: 0.5,
+                                cursor: "grab",
+                            }}
+                            onMouseDown={handleDrawerToggle}
+                            onTouchStart={handleDrawerToggle}
+                        />
+
+                        {/* Viewers List */}
+                        <Box sx={{ padding: "0 16px 16px 16px", overflow: "auto", flex: 1 }}>
+                            <Box sx={{ marginTop: 2 }}>
                                 {selectedUserStories[currentIndex].viewers.map((viewer, index) => (
-                                    <Stack key={index} direction="row" spacing={2} alignItems="center" sx={{ marginBottom: 1 }}>
+                                    <Stack key={index} direction="row" spacing={1.5} alignItems="center" sx={{ marginBottom: 1 }}>
                                         <Avatar
                                             src={viewer.viewer_profile_picture}
-                                            sx={{ width: "50px", height: "50px" }}
+                                            sx={{ width: isMobile ? "45px" : "50px", height: isMobile ? "45px" : "50px", cursor: "pointer" }}
                                             alt={viewer.viewer_username}
+                                            onClick={() => navigate(`/profile/${viewer.viewer_id}`)}
                                         />
-                                        <Typography sx={{ color: "gray" }}>{viewer.viewer_username}</Typography>
+                                        <Typography
+                                            sx={{ color: "#ffffff", cursor: "pointer" }}
+                                            onClick={() => navigate(`/profile/${viewer.viewer_id}`)}
+                                        >
+                                            {viewer.viewer_username}
+                                        </Typography>
                                     </Stack>
                                 ))}
                             </Box>
