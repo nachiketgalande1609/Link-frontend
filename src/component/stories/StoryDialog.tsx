@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography, Drawer } from "@mui/material";
+import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography, Drawer, Stack } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos, Close, Pause, ExpandLess } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ interface Story {
 
 interface Viewer {
     viewer_username: string;
+    viewer_profile_picture: string;
 }
 
 interface UserStories {
@@ -43,6 +44,8 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const [paused, setPaused] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state for viewers
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+
+    console.log("xxx", selectedUserStories[currentIndex]);
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -373,21 +376,26 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                 width: "100%",
                                 maxWidth: "600px",
                                 margin: "0 auto",
-                                borderTopLeftRadius: 8,
-                                borderTopRightRadius: 8,
-                                height: "60vh", // Fixed height in pixels
+                                borderTopLeftRadius: "20px",
+                                borderTopRightRadius: "20px",
+                                height: "60vh",
                             },
                         }}
                     >
                         <Box sx={{ padding: 2, overflow: "auto", maxHeight: "calc(100% - 16px)" }}>
-                            <Typography variant="h6" color="white">
+                            <Typography sx={{ mb: 2 }} variant="h6" color="white">
                                 Viewers
                             </Typography>
                             <Box>
                                 {selectedUserStories[currentIndex].viewers.map((viewer, index) => (
-                                    <Typography key={index} sx={{ color: "gray" }}>
-                                        {viewer.viewer_username}
-                                    </Typography>
+                                    <Stack key={index} direction="row" spacing={2} alignItems="center" sx={{ marginBottom: 1 }}>
+                                        <Avatar
+                                            src={viewer.viewer_profile_picture}
+                                            sx={{ width: "50px", height: "50px" }}
+                                            alt={viewer.viewer_username}
+                                        />
+                                        <Typography sx={{ color: "gray" }}>{viewer.viewer_username}</Typography>
+                                    </Stack>
                                 ))}
                             </Box>
                         </Box>
