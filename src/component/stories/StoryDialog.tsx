@@ -31,7 +31,7 @@ interface StoryDialogProps {
     selectedStoryIndex: number;
 }
 
-const STORY_DURATION = 500000; // 5 seconds per story
+const STORY_DURATION = 5000; // 5 seconds per story
 
 const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selectedStoryIndex }) => {
     const navigate = useNavigate();
@@ -45,13 +45,6 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     const containerRef = useRef<HTMLDivElement>(null);
-    const [containerWidth, setContainerWidth] = useState<number | undefined>(undefined);
-
-    useEffect(() => {
-        if (containerRef.current) {
-            setContainerWidth(containerRef.current.offsetWidth);
-        }
-    }, [open]);
 
     // Handle user story change
     useEffect(() => {
@@ -146,11 +139,15 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     };
 
     const handlePauseStory = () => {
-        setPaused((prev) => !prev); // Toggle pause state on click
+        setPaused((prev) => !prev);
     };
 
     const handleDrawerToggle = () => {
-        setDrawerOpen(!drawerOpen);
+        setDrawerOpen((prev) => {
+            const newState = !prev;
+            setPaused(newState);
+            return newState;
+        });
     };
 
     return (
@@ -373,14 +370,16 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                 backgroundColor: "black",
                                 color: "white",
                                 zIndex: 1400,
-                                width: containerWidth ? `${containerWidth}px` : "100%", // Dynamic width
-                                margin: "0 auto", // Center the drawer
+                                width: "100%",
+                                maxWidth: "600px",
+                                margin: "0 auto",
                                 borderTopLeftRadius: 8,
                                 borderTopRightRadius: 8,
+                                height: "60vh", // Fixed height in pixels
                             },
                         }}
                     >
-                        <Box sx={{ padding: 2 }}>
+                        <Box sx={{ padding: 2, overflow: "auto", maxHeight: "calc(100% - 16px)" }}>
                             <Typography variant="h6" color="white">
                                 Viewers
                             </Typography>
