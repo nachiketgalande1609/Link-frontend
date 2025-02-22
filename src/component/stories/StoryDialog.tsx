@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, Container, Box, IconButton, LinearProgress, Avatar, Typography, Drawer } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos, Close, Pause, RemoveRedEye } from "@mui/icons-material";
+import { ArrowBackIos, ArrowForwardIos, Close, Pause, ExpandLess } from "@mui/icons-material";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../utils/utils";
@@ -31,7 +31,7 @@ interface StoryDialogProps {
     selectedStoryIndex: number;
 }
 
-const STORY_DURATION = 5000; // 5 seconds per story
+const STORY_DURATION = 500000; // 5 seconds per story
 
 const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selectedStoryIndex }) => {
     const navigate = useNavigate();
@@ -43,6 +43,15 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const [paused, setPaused] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state for viewers
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [containerWidth, setContainerWidth] = useState<number | undefined>(undefined);
+
+    useEffect(() => {
+        if (containerRef.current) {
+            setContainerWidth(containerRef.current.offsetWidth);
+        }
+    }, [open]);
 
     // Handle user story change
     useEffect(() => {
@@ -148,6 +157,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
         <Dialog fullScreen open={open} onClose={handleClose}>
             <DialogContent sx={{ backgroundColor: "black", padding: 0 }}>
                 <Container
+                    ref={containerRef}
                     maxWidth="xs"
                     sx={{
                         position: "relative",
@@ -349,7 +359,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         }}
                         onClick={handleDrawerToggle}
                     >
-                        <RemoveRedEye sx={{ fontSize: "2.5rem" }} />
+                        <ExpandLess sx={{ fontSize: "2rem" }} />
                     </IconButton>
 
                     {/* Drawer for Viewers */}
@@ -358,9 +368,15 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         open={drawerOpen}
                         onClose={handleDrawerToggle}
                         sx={{
+                            zIndex: 1400,
                             "& .MuiDrawer-paper": {
                                 backgroundColor: "black",
                                 color: "white",
+                                zIndex: 1400,
+                                width: containerWidth ? `${containerWidth}px` : "100%", // Dynamic width
+                                margin: "0 auto", // Center the drawer
+                                borderTopLeftRadius: 8,
+                                borderTopRightRadius: 8,
                             },
                         }}
                     >
