@@ -63,7 +63,7 @@ const HomePage = () => {
         <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             {/* Stories Section */}
 
-            <Box display="flex" gap="16px" sx={{ padding: isMobile ? "10px 10px 0px 10px" : "10px 0 10px 0" }}>
+            <Box display="flex" gap="16px" sx={{ padding: isMobile ? "10px 10px 20px 10px" : "10px 0 20px 0" }}>
                 {/* Current User Story */}
 
                 <Box
