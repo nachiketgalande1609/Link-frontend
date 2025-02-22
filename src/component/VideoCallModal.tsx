@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Modal, IconButton, Button, Stack, styled } from "@mui/material";
 import { CallEnd, Mic, MicOff, Videocam, VideocamOff } from "@mui/icons-material";
-import socket from "../services/socket";
 
 // Dark theme styling
 const darkTheme = {
@@ -69,9 +68,10 @@ interface VideoCallModalProps {
     localStream: MediaStream | null;
     remoteStream: MediaStream | null;
     pc: RTCPeerConnection | null;
+    handleEndCall: () => void; // Add this line
 }
 
-const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, callerId, receiverId, localStream, remoteStream, pc }) => {
+const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStream, remoteStream, handleEndCall }) => {
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOn, setIsVideoOn] = useState(true);
     const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -136,7 +136,7 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, callerId
                 <ControlBar direction="row" spacing={2}>
                     <StyledIconButton onClick={toggleMute}>{isMuted ? <MicOff /> : <Mic />}</StyledIconButton>
                     <StyledIconButton onClick={toggleVideo}>{isVideoOn ? <Videocam /> : <VideocamOff />}</StyledIconButton>
-                    <EndCallButton onClick={onClose}>
+                    <EndCallButton onClick={handleEndCall}>
                         <CallEnd />
                     </EndCallButton>
                 </ControlBar>

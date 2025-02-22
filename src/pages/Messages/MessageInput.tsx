@@ -180,7 +180,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 </Box>
             )}
 
-            <Box sx={{ display: "flex", alignItems: "center", mb: isMobile ? "50px" : null, padding: 2, borderTop: "1px solid #202327" }}>
+            <Box sx={{ display: "flex", alignItems: "center", mb: isMobile ? "50px" : null, padding: "12px 18px", borderTop: "1px solid #202327" }}>
                 <TextField
                     fullWidth
                     placeholder="Type a message..."
@@ -194,7 +194,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                     }}
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault(); // Prevents cursor from moving to the next line
+                            e.preventDefault();
                             if (inputMessage.trim() || selectedFile) {
                                 handleSendMessage();
                             }
