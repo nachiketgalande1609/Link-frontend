@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, TextField, IconButton, CircularProgress, useMediaQuery, useTheme, Typography, Popover } from "@mui/material";
 import {
-    Send as SendIcon,
-    AttachFileOutlined as AttachFileIcon,
     CancelOutlined as DeleteIcon,
     InsertDriveFile as FileIcon,
     Close as CloseIcon,
     EmojiEmotionsOutlined as EmojiIcon,
 } from "@mui/icons-material";
 import EmojiPicker, { Theme } from "emoji-picker-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
@@ -215,7 +216,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                         },
                     }}
                 />
-                <IconButton onClick={(e) => setEmojiAnchorEl(e.currentTarget)} color="primary">
+                <IconButton onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
                     <EmojiIcon />
                 </IconButton>
                 <Popover
@@ -240,13 +241,13 @@ const MessageInput: React.FC<MessageInputProps> = ({
                     disabled={!!(selectedFile || selectedFileURL)}
                 />
                 <label htmlFor="upload-file">
-                    <IconButton color="primary" component="span" disabled={!!(selectedFile || selectedFileURL)}>
-                        <AttachFileIcon />
+                    <IconButton component="span" disabled={!!(selectedFile || selectedFileURL)}>
+                        <FontAwesomeIcon icon={faPaperclip} style={{ fontSize: "22px" }} />{" "}
                     </IconButton>
                 </label>
 
-                <IconButton onClick={() => (inputMessage.trim() || selectedFile) && handleSendMessage()} color="primary" disabled={isSendingMessage}>
-                    {isSendingMessage ? <CircularProgress size={24} /> : <SendIcon />}
+                <IconButton onClick={() => (inputMessage.trim() || selectedFile) && handleSendMessage()} disabled={isSendingMessage}>
+                    {isSendingMessage ? <CircularProgress size={24} /> : <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "22px" }} />}
                 </IconButton>
             </Box>
         </Box>

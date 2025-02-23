@@ -5,6 +5,10 @@ import CreatePostModal from "../../component/post/CreatePostModal";
 import Logo from "../../static/logo-transparent.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
+import { faComment as faCommentSolid, faSearch } from "@fortawesome/free-solid-svg-icons";
+
+import { faSignIn } from "@fortawesome/free-solid-svg-icons";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 
 import {
     Box,
@@ -32,8 +36,6 @@ import {
     FavoriteBorder,
     Favorite,
     ChevronLeft,
-    Login,
-    AccountCircleOutlined,
     BookmarkBorderOutlined,
     Bookmark,
 } from "@mui/icons-material";
@@ -81,8 +83,8 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   kind: "item",
                   segment: "search",
                   title: "Search",
-                  icon: <Search sx={{ fontSize: "2rem" }} />,
-                  filledIcon: <Search sx={{ fontSize: "2rem", color: "#000000" }} />,
+                  icon: <FontAwesomeIcon icon={faSearch} style={{ fontSize: "26.67px", paddingLeft: "1px" }} />,
+                  filledIcon: <FontAwesomeIcon icon={faSearch} style={{ fontSize: "26.67px", paddingLeft: "1px", color: "#000000" }} />,
               },
               {
                   kind: "item",
@@ -95,7 +97,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   ),
                   filledIcon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px", color: "#000000", paddingLeft: "1px" }} />
+                          <FontAwesomeIcon icon={faCommentSolid} style={{ fontSize: "30px", color: "#000000", paddingLeft: "1px" }} />
                       </Badge>
                   ),
               },
@@ -161,8 +163,18 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
           ]
         : [
               { kind: "header", title: "Link" },
-              { kind: "item", segment: "login", title: "Login", icon: <Login sx={{ fontSize: "2rem" }} /> },
-              { kind: "item", segment: "register", title: "Register", icon: <AccountCircleOutlined sx={{ fontSize: "2rem" }} /> },
+              {
+                  kind: "item",
+                  segment: "login",
+                  title: "Login",
+                  icon: <FontAwesomeIcon icon={faSignIn} style={{ fontSize: "26.67px", paddingLeft: "1px" }} />,
+              },
+              {
+                  kind: "item",
+                  segment: "register",
+                  title: "Register",
+                  icon: <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: "20.67px", paddingLeft: "1px", marginLeft: "3px" }} />,
+              },
           ];
 
     useEffect(() => {

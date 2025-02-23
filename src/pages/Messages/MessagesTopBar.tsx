@@ -58,10 +58,10 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
             </Box>
 
             <Box sx={{ display: "flex", gap: 1.5 }}>
-                <IconButton onClick={openVideoCall} sx={{ color: "white", padding: 0 }}>
+                <IconButton onClick={openVideoCall} sx={{ padding: 0 }}>
                     <FontAwesomeIcon icon={faVideoCamera} size="xs" /> {/* Change size here */}
                 </IconButton>
-                <IconButton onClick={() => setOpenThemeDialog(true)} sx={{ color: "white", padding: 0 }}>
+                <IconButton onClick={() => setOpenThemeDialog(true)} sx={{ padding: 0 }}>
                     <MoreVert sx={{ fontSize: "22px" }} />
                 </IconButton>
             </Box>

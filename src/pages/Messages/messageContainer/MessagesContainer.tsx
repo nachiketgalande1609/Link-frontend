@@ -20,7 +20,6 @@ import {
     Article as PdfIcon,
     InsertDriveFile as FolderIcon,
     Reply as ReplyIcon,
-    AddCommentOutlined as AddCommentOutlined,
     MoreHoriz,
     EmojiEmotions,
 } from "@mui/icons-material";
@@ -29,6 +28,9 @@ import BlurBackgroundImage from "../../../static/blur.jpg";
 
 import MessageDetailsDrawer from "./MessageDetailsDrawer";
 import MessageOptionsDialog from "./MessageOptionsDialog";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
 
 interface MessagesContainerProps {
     selectedUser: User | null;
@@ -610,7 +612,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                 })
             ) : (
                 <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                    <AddCommentOutlined sx={{ fontSize: "50px" }} />
+                    <FontAwesomeIcon icon={faComments} style={{ fontSize: "80px", marginBottom: "10px" }} />
                     <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
                         Select a user to start chatting
                     </Typography>

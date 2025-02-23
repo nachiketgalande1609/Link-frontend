@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Typography, IconButton, Avatar, Box, TextField, SwipeableDrawer, useMediaQuery, useTheme, styled, Dialog, Button } from "@mui/material";
-import { MoreHoriz, Send } from "@mui/icons-material";
+import { MoreHoriz } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 interface ScrollableCommentsDrawerProps {
     drawerOpen: boolean;
@@ -218,7 +220,7 @@ export default function ScrollableCommentsDrawer({
                     inputRef={commentInputRef}
                 />
                 <IconButton onClick={handleComment} sx={{ color: "white" }}>
-                    <Send />
+                    <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "22px" }} />
                 </IconButton>
             </Box>
             <Dialog
