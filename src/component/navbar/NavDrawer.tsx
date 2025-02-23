@@ -90,12 +90,12 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   title: "Messages",
                   icon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px" }} />
+                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px", paddingLeft: "1px" }} />
                       </Badge>
                   ),
                   filledIcon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px", color: "#000000" }} />
+                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px", color: "#000000", paddingLeft: "1px" }} />
                       </Badge>
                   ),
               },
