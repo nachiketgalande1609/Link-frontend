@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, IconButton, useMediaQuery, useTheme, Modal, Button, Stack, Typography } from "@mui/material";
+import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
@@ -11,7 +11,6 @@ import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";
 import { useNotifications } from "@toolpad/core/useNotifications";
-import VideoCallModal from "../../component/VideoCallModal";
 
 type Message = {
     message_id: number;
@@ -37,9 +36,12 @@ type User = { id: number; username: string; profile_picture: string; isOnline: b
 
 interface MessageProps {
     onlineUsers: string[];
+    selectedUser: User | null;
+    setSelectedUser: (user: User | null) => void;
+    handleVideoCall: () => void;
 }
 
-const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
+const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelectedUser, handleVideoCall }) => {
     const { userId } = useParams();
     const notifications = useNotifications();
     const { unreadMessagesCount, setUnreadMessagesCount } = useGlobalStore();
@@ -51,7 +53,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     const [users, setUsers] = useState<User[]>([]);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [messages, setMessages] = useState<MessagesType>({});
     const [inputMessage, setInputMessage] = useState("");
     const [typingUser, setTypingUser] = useState<number | null>(null);
@@ -65,22 +66,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
     const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
     const [chatTheme, setChatTheme] = useState(() => localStorage.getItem("chatTheme") || "");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-    const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
-    const [pc, setPc] = useState<RTCPeerConnection | null>(null);
-    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-    const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-    const [incomingCall, setIncomingCall] = useState<{
-        from: number;
-        signal: RTCSessionDescriptionInit;
-        callerUsername: string;
-        callerProfilePicture: string;
-    } | null>(null);
-
-    console.log(incomingCall);
-
-    const openVideoCall = (): void => setIsVideoModalOpen(true);
-    const closeVideoCall = (): void => setIsVideoModalOpen(false);
 
     const handleReply = (msg: Message) => {
         setSelectedMessageForReply(msg);
@@ -513,143 +498,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
         setSelectedImage("");
     };
 
-    const handleVideoCall = () => {
-        if (selectedUser) {
-            setIsVideoModalOpen(true);
-            const newPc = new RTCPeerConnection({
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-            });
-            setPc(newPc);
-
-            navigator.mediaDevices
-                .getUserMedia({ video: true, audio: true })
-                .then((stream) => {
-                    setLocalStream(stream);
-                    stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
-                })
-                .catch(console.error);
-
-            newPc.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.emit("iceCandidate", { to: selectedUser.id, candidate: event.candidate });
-                }
-            };
-
-            newPc
-                .createOffer()
-                .then((offer) => newPc.setLocalDescription(offer))
-                .then(() => {
-                    socket.emit("callUser", {
-                        from: currentUser.id,
-                        to: selectedUser.id,
-                        signal: newPc.localDescription,
-                        callerUsername: currentUser.username, // Pass the caller's username
-                        callerProfilePicture: currentUser.profile_picture_url, // Pass the caller's profile picture
-                    });
-                })
-                .catch(console.error);
-        }
-    };
-
-    useEffect(() => {
-        const handleCallReceived = (data: {
-            signal: RTCSessionDescriptionInit;
-            from: number;
-            callerUsername: string;
-            callerProfilePicture: string;
-        }) => {
-            setIncomingCall(data);
-        };
-
-        socket.on("callReceived", handleCallReceived);
-
-        return () => {
-            socket.off("callReceived", handleCallReceived);
-        };
-    }, []);
-
-    const handleAcceptCall = () => {
-        if (incomingCall) {
-            setIsVideoModalOpen(true);
-            const newPc = new RTCPeerConnection({
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-            });
-            setPc(newPc);
-
-            navigator.mediaDevices
-                .getUserMedia({ video: true, audio: true })
-                .then((stream) => {
-                    setLocalStream(stream);
-                    stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
-                })
-                .catch(console.error);
-
-            newPc.ontrack = (event) => {
-                setRemoteStream(event.streams[0]);
-            };
-
-            newPc.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.emit("iceCandidate", { to: incomingCall.from, candidate: event.candidate });
-                }
-            };
-
-            newPc
-                .setRemoteDescription(new RTCSessionDescription(incomingCall.signal))
-                .then(() => newPc.createAnswer())
-                .then((answer) => newPc.setLocalDescription(answer))
-                .then(() => {
-                    socket.emit("answerCall", { to: incomingCall.from, signal: newPc.localDescription });
-                })
-                .catch(console.error);
-
-            setIncomingCall(null);
-        }
-    };
-
-    const handleRejectCall = () => {
-        setIncomingCall(null);
-        handleEndCall();
-    };
-
-    const handleEndCall = () => {
-        if (selectedUser) {
-            socket.emit("endCall", { to: selectedUser.id });
-            closeVideoCall();
-            if (pc) {
-                pc.close();
-                setPc(null);
-            }
-            if (localStream) {
-                localStream.getTracks().forEach((track) => track.stop());
-                setLocalStream(null);
-            }
-            setRemoteStream(null);
-        }
-    };
-
-    // Add this useEffect to listen for the endCall event
-    useEffect(() => {
-        const handleEndCallReceived = () => {
-            closeVideoCall();
-            if (pc) {
-                pc.close();
-                setPc(null);
-            }
-            if (localStream) {
-                localStream.getTracks().forEach((track) => track.stop());
-                setLocalStream(null);
-            }
-            setRemoteStream(null);
-        };
-
-        socket.on("endCall", handleEndCallReceived);
-
-        return () => {
-            socket.off("endCall", handleEndCallReceived);
-        };
-    }, [pc, localStream]);
-
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
             <MessagesDrawer
@@ -725,56 +573,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers }) => {
                 )}
             </Box>
             <ImageDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} selectedImage={selectedImage} />
-            <VideoCallModal
-                open={isVideoModalOpen}
-                onClose={closeVideoCall}
-                callerId={currentUser.id}
-                receiverId={selectedUser?.id || 0}
-                localStream={localStream}
-                remoteStream={remoteStream}
-                pc={pc}
-                handleEndCall={handleEndCall} // Pass handleEndCall here
-            />
-
-            {/* Incoming Call Modal */}
-            <Modal open={!!incomingCall} onClose={handleRejectCall}>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: 400,
-                        bgcolor: "background.paper",
-                        boxShadow: 24,
-                        p: 4,
-                        textAlign: "center",
-                        borderRadius: "20px",
-                    }}
-                >
-                    <img
-                        src={incomingCall?.callerProfilePicture}
-                        alt="Caller Profile"
-                        style={{
-                            width: 100,
-                            height: 100,
-                            borderRadius: "50%",
-                            objectFit: "cover",
-                            marginBottom: "16px",
-                        }}
-                    />
-                    <Typography>{incomingCall?.callerUsername}</Typography>
-                    <Typography sx={{ fontSize: "0.9rem", color: "#999999" }}>is calling you</Typography>
-                    <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ marginTop: 2 }}>
-                        <Button variant="contained" sx={{ borderRadius: "15px" }} color="success" onClick={handleAcceptCall}>
-                            Accept
-                        </Button>
-                        <Button variant="contained" sx={{ borderRadius: "15px" }} color="error" onClick={handleRejectCall}>
-                            Reject
-                        </Button>
-                    </Stack>
-                </Box>
-            </Modal>
         </Box>
     );
 };
