@@ -24,6 +24,7 @@ interface Story {
     media_type: "image" | "video";
     created_at: string;
     viewers: Viewer[];
+    caption?: string;
 }
 
 interface Viewer {
@@ -282,6 +283,26 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                     cursor: "pointer",
                                 }}
                             />
+                        )}
+
+                        {selectedUserStories[currentIndex].caption && (
+                            <Typography
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 60,
+                                    left: 0,
+                                    right: 0,
+                                    color: "white",
+                                    textAlign: "center",
+                                    padding: "8px 16px",
+                                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                                    maxWidth: "100%",
+                                    margin: "0 auto",
+                                    wordBreak: "break-word",
+                                }}
+                            >
+                                {selectedUserStories[currentIndex].caption}
+                            </Typography>
                         )}
 
                         {/* Pause Icon */}
