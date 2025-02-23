@@ -400,7 +400,7 @@ const AppContent = () => {
                                 <SearchPage />
                             </PrivateRoute>
                         }
-                    />{" "}
+                    />
                     <Route
                         path="/saved"
                         element={

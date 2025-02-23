@@ -72,7 +72,7 @@ export default function MessageDetailsDrawer({ drawerOpen, setDrawerOpen, select
                                 day: "numeric",
                                 month: "short",
                             })}
-                            ,{" "}
+                            ,
                             {new Date(selectedMessage.timestamp).toLocaleTimeString("en-US", {
                                 hour: "numeric",
                                 minute: "2-digit",
@@ -106,7 +106,7 @@ export default function MessageDetailsDrawer({ drawerOpen, setDrawerOpen, select
                                 day: "numeric",
                                 month: "short",
                             })}
-                            ,{" "}
+                            ,
                             {new Date(selectedMessage.delivered_timestamp).toLocaleTimeString("en-US", {
                                 hour: "numeric",
                                 minute: "2-digit",
@@ -143,7 +143,7 @@ export default function MessageDetailsDrawer({ drawerOpen, setDrawerOpen, select
                                 day: "numeric",
                                 month: "short",
                             })}
-                            ,{" "}
+                            ,
                             {new Date(selectedMessage.read_timestamp).toLocaleTimeString("en-US", {
                                 hour: "numeric",
                                 minute: "2-digit",
