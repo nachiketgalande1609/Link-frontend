@@ -29,8 +29,6 @@ import {
     SearchOutlined as Search,
     Menu as MenuIcon,
     Add as AddIcon,
-    ChatBubbleOutlineOutlined as MessageOutlined,
-    ChatBubble as Message,
     FavoriteBorder,
     Favorite,
     ChevronLeft,

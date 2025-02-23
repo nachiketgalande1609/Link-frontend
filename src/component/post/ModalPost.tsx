@@ -18,8 +18,10 @@ import {
     DialogTitle,
     Button,
 } from "@mui/material";
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, Send, MoreHoriz } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, MoreVert, MoreHoriz } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost, deleteComment } from "../../services/api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 import ImageDialog from "../ImageDialog";
 
 interface PostProps {
@@ -334,8 +336,8 @@ const ModalPost: React.FC<PostProps> = ({
                                             <Typography variant="body2" component="span" sx={{ mr: 2 }}>
                                                 {likes}
                                             </Typography>
-                                            <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0" }}>
-                                                <ChatBubbleOutline sx={{ fontSize: "35px", mr: 1 }} />
+                                            <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0", mr: 1 }}>
+                                                <FontAwesomeIcon icon={faComment} style={{ fontSize: "31px" }} />
                                             </IconButton>
                                             <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                                                 {commentCount}

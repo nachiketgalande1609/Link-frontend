@@ -20,7 +20,10 @@ import {
     CircularProgress,
 } from "@mui/material";
 
-import { FavoriteBorder, Favorite, ChatBubbleOutline, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn } from "@mui/icons-material";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 
 import { deletePost, likePost, addComment, updatePost, savePost, deleteComment } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
@@ -292,12 +295,12 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", ":hover": { backgroundColor: "transparent" } }}>
                             {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                         </IconButton>
-                        <Typography variant="body2" component="span" sx={{ mr: 2 }}>
+                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                             {post.like_count}
                         </Typography>
 
                         <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
-                            <ChatBubbleOutline sx={{ fontSize: isMobile ? "26px" : "30px" }} onClick={() => setDrawerOpen(true)} />
+                            <FontAwesomeIcon icon={faComment} style={{ fontSize: "28px" }} onClick={() => setDrawerOpen(true)} />
                         </IconButton>
                         <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                             {post.comment_count}
