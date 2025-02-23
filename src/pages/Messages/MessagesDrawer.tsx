@@ -277,10 +277,16 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                     }}
                 >
                     <Box
-                        sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: "15px", borderBottom: "1px solid #202327" }}
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            p: "19px 12px",
+                            borderBottom: "1px solid #202327",
+                        }}
                     >
                         <Typography variant="h6">Messages</Typography>
-                        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ padding: 0 }}>
                             <PersonAddIcon sx={{ color: "white" }} />
                         </IconButton>
                     </Box>

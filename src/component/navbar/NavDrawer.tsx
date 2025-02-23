@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import socket from "../../services/socket";
 import CreatePostModal from "../../component/post/CreatePostModal";
 import Logo from "../../static/logo-transparent.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 
 import {
     Box,
@@ -90,12 +92,12 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   title: "Messages",
                   icon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <MessageOutlined sx={{ fontSize: "2rem" }} />
+                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px" }} />
                       </Badge>
                   ),
                   filledIcon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <Message sx={{ fontSize: "2rem", color: "#000000" }} />
+                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px", color: "#000000" }} />
                       </Badge>
                   ),
               },
