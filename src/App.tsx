@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Box, Button, LinearProgress, Modal, Stack, ThemeProvider, Typography } from "@mui/material";
 
@@ -23,6 +23,7 @@ import { getNotificationsCount } from "./services/api";
 import NavDrawer from "./component/navbar/NavDrawer";
 import SavedPage from "./pages/SavedPage";
 import VideoCallModal from "./component/VideoCallModal";
+import Ringtone from "./static/microsoft_teams_call.mp3";
 
 const demoTheme = extendTheme({
     colorSchemes: { light: true, dark: true },
@@ -72,12 +73,30 @@ const AppContent = () => {
 
     const [callParticipantId, setCallParticipantId] = useState<number | null>(null);
 
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [audioAllowed, setAudioAllowed] = useState(false);
+
     const iceServers = {
         iceServers: [{ urls: "stun:stun1.l.google.com:19302" }],
     };
 
-    // Update all RTCPeerConnection creations to use this config:
-    const newPc = new RTCPeerConnection(iceServers);
+    // Add this effect to handle initial user interaction
+    useEffect(() => {
+        const handleFirstUserInteraction = () => {
+            setAudioAllowed(true);
+            // Play/pause the hidden video to warm up the audio context
+            const video = document.createElement("video");
+            video.muted = true;
+            video.play().then(() => video.pause());
+            window.removeEventListener("click", handleFirstUserInteraction);
+        };
+
+        window.addEventListener("click", handleFirstUserInteraction);
+
+        return () => {
+            window.removeEventListener("click", handleFirstUserInteraction);
+        };
+    }, []);
 
     const [incomingCall, setIncomingCall] = useState<{
         from: number;
@@ -85,6 +104,27 @@ const AppContent = () => {
         callerUsername: string;
         callerProfilePicture: string;
     } | null>(null);
+
+    useEffect(() => {
+        if (incomingCall && audioAllowed) {
+            const playAudio = async () => {
+                try {
+                    if (audioRef.current) {
+                        await audioRef.current.play();
+                        console.log("Ringtone playing successfully");
+                    }
+                } catch (error) {
+                    console.error("Audio play failed:", error);
+                    // Show UI indication that audio is blocked
+                }
+            };
+
+            playAudio();
+        } else if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
+    }, [incomingCall, audioAllowed]);
 
     useEffect(() => {
         socket.on("onlineUsers", (data) => {
@@ -215,6 +255,10 @@ const AppContent = () => {
     };
 
     const handleAcceptCall = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
         if (incomingCall) {
             setCallParticipantId(incomingCall.from);
 
@@ -256,6 +300,10 @@ const AppContent = () => {
     };
 
     const handleRejectCall = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
         if (incomingCall) {
             socket.emit("endCall", { to: incomingCall.from });
         }
@@ -508,8 +556,19 @@ const AppContent = () => {
                 localStream={localStream}
                 remoteStream={remoteStream}
                 pc={pc}
-                handleEndCall={handleEndCall} // Pass handleEndCall here
+                handleEndCall={handleEndCall}
             />
+
+            <audio
+                ref={audioRef}
+                loop
+                onPlay={() => console.log("Ringtone started")}
+                onPause={() => console.log("Ringtone stopped")}
+                onError={(e) => console.error("Audio error:", e)}
+            >
+                <source src={Ringtone} type="audio/mpeg" />
+            </audio>
+            <video muted style={{ display: "none" }} />
         </Box>
     );
 };
