@@ -76,36 +76,49 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
     const [isVideoOn, setIsVideoOn] = useState(true);
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
-    const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
 
+    console.log("yyy", remoteStream);
+
+    // Handle local stream
     useEffect(() => {
         if (localStream && localVideoRef.current) {
             localVideoRef.current.srcObject = localStream;
         }
     }, [localStream]);
 
+    // Handle remote stream
     useEffect(() => {
-        if (remoteStream) {
-            const newStream = new MediaStream();
-            remoteStream.getTracks().forEach((track) => newStream.addTrack(track));
-            setRemoteMediaStream(newStream);
+        if (remoteStream && remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = remoteStream;
         }
     }, [remoteStream]);
 
-    const toggleMute = () => setIsMuted((prev) => !prev);
-    const toggleVideo = () => setIsVideoOn((prev) => !prev);
+    const toggleMute = () => {
+        if (localStream) {
+            localStream.getAudioTracks().forEach((track) => {
+                track.enabled = !track.enabled;
+            });
+            setIsMuted((prev) => !prev);
+        }
+    };
+
+    const toggleVideo = () => {
+        if (localStream) {
+            localStream.getVideoTracks().forEach((track) => {
+                track.enabled = !track.enabled;
+            });
+            setIsVideoOn((prev) => !prev);
+        }
+    };
 
     return (
         <Modal open={open} onClose={onClose}>
             <VideoContainer>
-                {/* Remote Video */}
+                {/* Remote Video (Main Feed) */}
                 <Box
                     sx={{
                         width: "100%",
                         height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
                         backgroundColor: darkTheme.background,
                     }}
                 >
@@ -115,15 +128,14 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
-                            borderRadius: "8px",
+                            transform: "scaleX(-1)", // Mirror the video if needed
                         }}
                         autoPlay
-                        playsInline // Add this
-                        onCanPlay={() => remoteVideoRef.current?.play()}
+                        playsInline
                     />
                 </Box>
 
-                {/* Local Video */}
+                {/* Local Video (Picture-in-Picture) */}
                 <PiPContainer>
                     <video
                         ref={localVideoRef}
@@ -131,11 +143,11 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
+                            transform: "scaleX(-1)", // Mirror the video if needed
                         }}
                         autoPlay
                         muted
-                        playsInline // Add this
-                        onCanPlay={() => localVideoRef.current?.play()}
+                        playsInline
                     />
                 </PiPContainer>
 

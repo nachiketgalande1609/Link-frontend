@@ -53,7 +53,12 @@ const AppContent = () => {
     const [audioAllowed, setAudioAllowed] = useState(false);
 
     const iceServers = {
-        iceServers: [{ urls: "stun:stun1.l.google.com:19302" }],
+        iceServers: [
+            {
+                urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
+            },
+        ],
+        iceCandidatePoolSize: 10,
     };
 
     // Add this effect to handle initial user interaction
@@ -284,12 +289,13 @@ const AppContent = () => {
             setIsVideoModalOpen(true);
 
             const newPc = new RTCPeerConnection(iceServers);
-            setPc(newPc);
 
-            // Add ontrack handler for remote stream
-            newPc.ontrack = (event) => {
-                setRemoteStream(event.streams[0]);
-            };
+            // Add state change listeners for debugging
+            newPc.oniceconnectionstatechange = () => console.log("ICE Connection State:", newPc.iceConnectionState);
+            newPc.onsignalingstatechange = () => console.log("Signaling State:", newPc.signalingState);
+            newPc.onicegatheringstatechange = () => console.log("ICE Gathering State:", newPc.iceGatheringState);
+
+            newPc.ontrack = (event) => setRemoteStream(event.streams[0]);
 
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
@@ -317,7 +323,9 @@ const AppContent = () => {
                         callerProfilePicture: currentUser.profile_picture_url,
                     });
                 })
-                .catch(console.error);
+                .catch((err) => console.error("Offer Error:", err));
+
+            setPc(newPc); // Update state after setup
         }
     };
 
