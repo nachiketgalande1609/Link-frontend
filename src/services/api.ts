@@ -32,6 +32,8 @@ interface UserRegisterData {
     email: string;
     username: string;
     password: string;
+    publicKey?: string;
+    encryptedPrivateKey?: string;
 }
 
 interface UserLoginData {

@@ -194,6 +194,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
         }
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        localStorage.removeItem("privateKey");
 
         setOpenDialog(false);
         navigate("/login");

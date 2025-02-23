@@ -34,8 +34,6 @@ const HomePage = () => {
         }
     };
 
-    console.log(selfStories);
-
     const fetchStories = async () => {
         try {
             const res = await getStories(currentUser?.id);

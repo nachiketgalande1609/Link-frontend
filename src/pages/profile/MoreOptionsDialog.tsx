@@ -47,6 +47,8 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userI
         }
         localStorage.removeItem("token");
         localStorage.removeItem("user");
+        localStorage.removeItem("privateKey");
+
         handleCloseDialog();
         navigate("/login");
     };
