@@ -30,7 +30,6 @@ import {
 import {
     HomeOutlined as HomeOutlined,
     Home as HomeFilled,
-    SearchOutlined as Search,
     Menu as MenuIcon,
     Add as AddIcon,
     FavoriteBorder,

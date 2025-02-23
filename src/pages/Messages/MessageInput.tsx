@@ -246,7 +246,10 @@ const MessageInput: React.FC<MessageInputProps> = ({
                     </IconButton>
                 </label>
 
-                <IconButton onClick={() => (inputMessage.trim() || selectedFile) && handleSendMessage()} disabled={isSendingMessage}>
+                <IconButton
+                    onClick={() => (inputMessage.trim() || selectedFile) && handleSendMessage()}
+                    disabled={isSendingMessage || !(inputMessage.trim() || selectedFile)}
+                >
                     {isSendingMessage ? <CircularProgress size={24} /> : <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "22px" }} />}
                 </IconButton>
             </Box>

@@ -219,7 +219,7 @@ export default function ScrollableCommentsDrawer({
                     }}
                     inputRef={commentInputRef}
                 />
-                <IconButton onClick={handleComment} sx={{ color: "white" }}>
+                <IconButton onClick={handleComment} sx={{ color: "white" }} disabled={!commentText}>
                     <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "22px" }} />
                 </IconButton>
             </Box>
