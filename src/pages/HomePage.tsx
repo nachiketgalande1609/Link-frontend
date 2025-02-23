@@ -9,7 +9,6 @@ import { getStories } from "../services/api"; // Import getStories function
 
 const HomePage = () => {
     const [posts, setPosts] = useState<any[]>([]);
-    const [stories, setStories] = useState<any[]>([]);
     const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const theme = useTheme();
@@ -18,6 +17,9 @@ const HomePage = () => {
     const [openStoryDialog, setOpenStoryDialog] = useState(false);
     const [openUploadDialog, setOpenUploadDialog] = useState(false);
     const [selectedStoryIndex, setSelectedStoryIndex] = useState(0);
+
+    const [selfStories, setSelfStories] = useState<any[]>([]);
+    const [followingStories, setFollowingStories] = useState<any[]>([]);
 
     const fetchPosts = async () => {
         try {
@@ -32,23 +34,46 @@ const HomePage = () => {
         }
     };
 
+    console.log(selfStories);
+
     const fetchStories = async () => {
         try {
             const res = await getStories(currentUser?.id);
-            const groupedStories = res.reduce((acc: any, story: any) => {
-                if (!acc[story.user_id]) {
-                    acc[story.user_id] = {
-                        user_id: story.user_id,
+
+            // Process self stories
+            const selfStoriesData = res.data.selfStory || [];
+            const groupedSelf = selfStoriesData.reduce((acc: any, story: any) => {
+                const userId = story.user_id;
+                if (!acc[userId]) {
+                    acc[userId] = {
+                        user_id: userId,
                         username: story.username,
                         profile_picture: story.profile_picture,
-                        story_id: story.story_id,
                         stories: [],
                     };
                 }
-                acc[story.user_id].stories.push(story);
+                acc[userId].stories.push(story);
                 return acc;
             }, {});
-            setStories(Object.values(groupedStories));
+
+            // Process following stories
+            const followingStoriesData = res.data.stories || [];
+            const groupedFollowing = followingStoriesData.reduce((acc: any, story: any) => {
+                const userId = story.user_id;
+                if (!acc[userId]) {
+                    acc[userId] = {
+                        user_id: userId,
+                        username: story.username,
+                        profile_picture: story.profile_picture,
+                        stories: [],
+                    };
+                }
+                acc[userId].stories.push(story);
+                return acc;
+            }, {});
+
+            setSelfStories(Object.values(groupedSelf));
+            setFollowingStories(Object.values(groupedFollowing));
         } catch (error) {
             console.error("Error fetching stories:", error);
         }
@@ -74,14 +99,16 @@ const HomePage = () => {
                         width: 65,
                         height: 65,
                         padding: "3px",
-                        border: currentUser?.stories?.length ? "3px solid #ff8800" : "none",
+                        border: selfStories.length ? "3px solid #ff8800" : "none",
                         borderRadius: "50%",
                         position: "relative",
                     }}
                 >
                     <Avatar
                         src={currentUser?.profile_picture_url || "https://via.placeholder.com/50"}
-                        onClick={() => setOpenUploadDialog(true)}
+                        onClick={() => {
+                            selfStories.length > 0 ? (setSelectedStoryIndex(0), setOpenStoryDialog(true)) : setOpenUploadDialog(true);
+                        }}
                         sx={{ width: "100%", height: "100%", cursor: "pointer" }}
                     />
                     <Box
@@ -108,7 +135,7 @@ const HomePage = () => {
                 {/* Other User Stories */}
 
                 <Box sx={{ display: "flex", gap: "16px" }}>
-                    {stories.map((userStory, index) => (
+                    {followingStories.map((userStory, index) => (
                         <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
                             <Box
                                 sx={{
@@ -125,7 +152,9 @@ const HomePage = () => {
                                 <Avatar
                                     src={userStory.profile_picture || "https://via.placeholder.com/50"}
                                     onClick={() => {
-                                        setSelectedStoryIndex(index);
+                                        // Calculate correct index accounting for self stories
+                                        const actualIndex = selfStories.length + index;
+                                        setSelectedStoryIndex(actualIndex);
                                         setOpenStoryDialog(true);
                                     }}
                                     sx={{ width: "100%", height: "100%", cursor: "pointer" }}
@@ -190,7 +219,12 @@ const HomePage = () => {
 
             {/* Other Children Components */}
 
-            <StoryDialog open={openStoryDialog} onClose={() => setOpenStoryDialog(false)} stories={stories} selectedStoryIndex={selectedStoryIndex} />
+            <StoryDialog
+                open={openStoryDialog}
+                onClose={() => setOpenStoryDialog(false)}
+                stories={[...selfStories, ...followingStories]} // Combine for navigation
+                selectedStoryIndex={selectedStoryIndex}
+            />
             <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} />
         </Container>
     );

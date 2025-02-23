@@ -603,7 +603,7 @@ export const uploadStory = async (storyData: StoryData) => {
 export const getStories = async (userId: number) => {
     try {
         const response = await api.get(`${FETCH_USER_STORIES_ENDPOINT}?userId=${userId}`);
-        return response.data.stories;
+        return response;
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(error.message);

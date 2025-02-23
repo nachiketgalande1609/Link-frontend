@@ -67,15 +67,20 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
 
     // Handle user story change
     useEffect(() => {
-        if (open && stories.length) {
-            const newStories = stories[selectedStoryIndex]?.stories || [];
-
+        if (open && stories.length && selectedStoryIndex < stories.length) {
+            const currentStoryGroup = stories[selectedStoryIndex];
+            setSelectedUserStories(currentStoryGroup.stories);
             setCurrentIndex(0);
             setIsMediaLoaded(false);
             setPaused(false);
-            setSelectedUserStories(newStories);
 
-            socket.emit("viewStory", { user_id: currentUser?.id, story_id: newStories[currentIndex]?.story_id });
+            // Only emit view story if not current user's story
+            if (currentStoryGroup.user_id !== currentUser?.id) {
+                socket.emit("viewStory", {
+                    user_id: currentUser?.id,
+                    story_id: currentStoryGroup.stories[0]?.story_id,
+                });
+            }
         }
     }, [open, selectedStoryIndex, stories]);
 
