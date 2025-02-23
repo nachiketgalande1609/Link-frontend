@@ -76,6 +76,7 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
     const [isVideoOn, setIsVideoOn] = useState(true);
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
+    const [remoteMediaStream, setRemoteMediaStream] = useState<MediaStream | null>(null);
 
     useEffect(() => {
         if (localStream && localVideoRef.current) {
@@ -84,8 +85,10 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
     }, [localStream]);
 
     useEffect(() => {
-        if (remoteStream && remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = remoteStream;
+        if (remoteStream) {
+            const newStream = new MediaStream();
+            remoteStream.getTracks().forEach((track) => newStream.addTrack(track));
+            setRemoteMediaStream(newStream);
         }
     }, [remoteStream]);
 
@@ -115,6 +118,8 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
                             borderRadius: "8px",
                         }}
                         autoPlay
+                        playsInline // Add this
+                        onCanPlay={() => remoteVideoRef.current?.play()}
                     />
                 </Box>
 
@@ -129,6 +134,8 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
                         }}
                         autoPlay
                         muted
+                        playsInline // Add this
+                        onCanPlay={() => localVideoRef.current?.play()}
                     />
                 </PiPContainer>
 

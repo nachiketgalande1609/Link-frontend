@@ -72,6 +72,13 @@ const AppContent = () => {
 
     const [callParticipantId, setCallParticipantId] = useState<number | null>(null);
 
+    const iceServers = {
+        iceServers: [{ urls: "stun:stun1.l.google.com:19302" }],
+    };
+
+    // Update all RTCPeerConnection creations to use this config:
+    const newPc = new RTCPeerConnection(iceServers);
+
     const [incomingCall, setIncomingCall] = useState<{
         from: number;
         signal: RTCSessionDescriptionInit;
@@ -168,14 +175,51 @@ const AppContent = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleIceCandidate = (data: { candidate: RTCIceCandidateInit }) => {
+            if (pc) {
+                pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(console.error);
+            }
+        };
+
+        socket.on("iceCandidate", handleIceCandidate);
+
+        return () => {
+            socket.off("iceCandidate", handleIceCandidate);
+        };
+    }, [pc]);
+
+    useEffect(() => {
+        const handleAnswerCall = (data: { signal: RTCSessionDescriptionInit }) => {
+            if (pc) {
+                pc.setRemoteDescription(new RTCSessionDescription(data.signal)).catch(console.error);
+            }
+        };
+
+        socket.on("answerCall", handleAnswerCall);
+
+        return () => {
+            socket.off("answerCall", handleAnswerCall);
+        };
+    }, [pc]);
+
+    const handleTrackEvent = (event: RTCTrackEvent) => {
+        console.log("Received tracks:", event.streams);
+        if (event.streams && event.streams[0]) {
+            const newRemoteStream = new MediaStream();
+            event.streams[0].getTracks().forEach((track) => {
+                newRemoteStream.addTrack(track);
+            });
+            setRemoteStream(newRemoteStream);
+        }
+    };
+
     const handleAcceptCall = () => {
         if (incomingCall) {
             setCallParticipantId(incomingCall.from);
 
             setIsVideoModalOpen(true);
-            const newPc = new RTCPeerConnection({
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-            });
+            const newPc = new RTCPeerConnection(iceServers);
             setPc(newPc);
 
             navigator.mediaDevices
@@ -186,12 +230,14 @@ const AppContent = () => {
                 })
                 .catch(console.error);
 
-            newPc.ontrack = (event) => {
-                setRemoteStream(event.streams[0]);
-            };
+            newPc.ontrack = handleTrackEvent;
+
+            console.log(newPc);
 
             newPc.onicecandidate = (event) => {
                 if (event.candidate) {
+                    console.log("emitting 2");
+
                     socket.emit("iceCandidate", { to: incomingCall.from, candidate: event.candidate });
                 }
             };
@@ -217,12 +263,15 @@ const AppContent = () => {
     const handleVideoCall = () => {
         if (selectedUser) {
             setCallParticipantId(selectedUser.id);
-
             setIsVideoModalOpen(true);
-            const newPc = new RTCPeerConnection({
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-            });
+
+            const newPc = new RTCPeerConnection(iceServers);
             setPc(newPc);
+
+            // Add ontrack handler for remote stream
+            newPc.ontrack = (event) => {
+                setRemoteStream(event.streams[0]);
+            };
 
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
@@ -246,8 +295,8 @@ const AppContent = () => {
                         from: currentUser.id,
                         to: selectedUser.id,
                         signal: newPc.localDescription,
-                        callerUsername: currentUser.username, // Pass the caller's username
-                        callerProfilePicture: currentUser.profile_picture_url, // Pass the caller's profile picture
+                        callerUsername: currentUser.username,
+                        callerProfilePicture: currentUser.profile_picture_url,
                     });
                 })
                 .catch(console.error);
@@ -257,9 +306,21 @@ const AppContent = () => {
     const handleEndCall = () => {
         if (callParticipantId) {
             socket.emit("endCall", { to: callParticipantId });
+            // Reset all media tracks
+            if (localStream) {
+                localStream.getTracks().forEach((track) => {
+                    track.stop();
+                    localStream.removeTrack(track);
+                });
+            }
+            if (remoteStream) {
+                remoteStream.getTracks().forEach((track) => {
+                    track.stop();
+                    remoteStream.removeTrack(track);
+                });
+            }
             // Close connections and reset states
             if (pc) pc.close();
-            if (localStream) localStream.getTracks().forEach((track) => track.stop());
             setPc(null);
             setLocalStream(null);
             setRemoteStream(null);
