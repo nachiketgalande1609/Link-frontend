@@ -256,8 +256,10 @@ const AppContent = () => {
     };
 
     const handleRejectCall = () => {
+        if (incomingCall) {
+            socket.emit("endCall", { to: incomingCall.from });
+        }
         setIncomingCall(null);
-        handleEndCall();
     };
 
     const handleVideoCall = () => {
@@ -458,20 +460,20 @@ const AppContent = () => {
                     />
                 </Box>
             )}
+
             {/* Incoming Call Modal */}
-            <Modal open={!!incomingCall} onClose={handleRejectCall}>
+            <Modal open={!!incomingCall} onClose={handleRejectCall} BackdropProps={{ style: { backgroundColor: "transparent" } }}>
                 <Box
                     sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: 400,
-                        bgcolor: "background.paper",
+                        position: "fixed",
+                        bottom: 16,
+                        right: 16,
+                        backgroundColor: "#ffffff",
                         boxShadow: 24,
                         p: 4,
                         textAlign: "center",
                         borderRadius: "20px",
+                        outline: "none",
                     }}
                 >
                     <img
@@ -485,18 +487,19 @@ const AppContent = () => {
                             marginBottom: "16px",
                         }}
                     />
-                    <Typography>{incomingCall?.callerUsername}</Typography>
-                    <Typography sx={{ fontSize: "0.9rem", color: "#999999" }}>is calling you</Typography>
+                    <Typography sx={{ color: "#000000" }}>{incomingCall?.callerUsername}</Typography>
+                    <Typography sx={{ fontSize: "0.9rem", color: "#555555" }}>is calling you</Typography>
                     <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ marginTop: 2 }}>
-                        <Button variant="contained" sx={{ borderRadius: "15px" }} color="success" onClick={handleAcceptCall}>
+                        <Button variant="contained" sx={{ borderRadius: "15px", width: "150px" }} color="success" onClick={handleAcceptCall}>
                             Accept
                         </Button>
-                        <Button variant="contained" sx={{ borderRadius: "15px" }} color="error" onClick={handleRejectCall}>
+                        <Button variant="contained" sx={{ borderRadius: "15px", width: "150px" }} color="error" onClick={handleRejectCall}>
                             Reject
                         </Button>
                     </Stack>
                 </Box>
             </Modal>
+
             <VideoCallModal
                 open={isVideoModalOpen}
                 onClose={closeVideoCall}
