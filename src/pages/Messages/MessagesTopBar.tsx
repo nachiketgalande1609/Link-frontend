@@ -6,6 +6,8 @@ import bg1 from "../../static/bg1.jpg";
 import bg2 from "../../static/bg2.jpg";
 import bg3 from "../../static/bg3.png";
 import bg4 from "../../static/bg4.jpg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVideoCamera } from "@fortawesome/free-solid-svg-icons";
 
 interface messagesTopBarProps {
     selectedUser: User | null;
@@ -55,12 +57,12 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                 </Typography>
             </Box>
 
-            <Box>
-                <IconButton onClick={openVideoCall} sx={{ color: "white" }}>
-                    <Duo />
+            <Box sx={{ display: "flex", gap: 1.5 }}>
+                <IconButton onClick={openVideoCall} sx={{ color: "white", padding: 0 }}>
+                    <FontAwesomeIcon icon={faVideoCamera} size="xs" /> {/* Change size here */}
                 </IconButton>
-                <IconButton onClick={() => setOpenThemeDialog(true)} sx={{ color: "white" }}>
-                    <MoreVert />
+                <IconButton onClick={() => setOpenThemeDialog(true)} sx={{ color: "white", padding: 0 }}>
+                    <MoreVert sx={{ fontSize: "22px" }} />
                 </IconButton>
             </Box>
 
