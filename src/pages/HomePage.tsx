@@ -83,12 +83,20 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <Container
+            maxWidth="sm"
+            sx={{
+                padding: isMobile ? 0 : "10px",
+                minHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
+                borderLeft: "1px solid #202327",
+                borderRight: "1px solid #202327",
+            }}
+        >
             {/* Stories Section */}
-
             <Box display="flex" gap="16px" sx={{ padding: isMobile ? "15px 10px 10px 10px" : "10px 0 15px 0" }}>
                 {/* Current User Story */}
-
                 <Box
                     sx={{
                         display: "flex",
@@ -131,7 +139,6 @@ const HomePage = () => {
                 </Box>
 
                 {/* Other User Stories */}
-
                 <Box sx={{ display: "flex", gap: "16px" }}>
                     {followingStories.map((userStory, index) => (
                         <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
@@ -176,7 +183,6 @@ const HomePage = () => {
             </Box>
 
             {/* Posts Section */}
-
             {loadingPosts ? (
                 <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexGrow={1}>
                     <CircularProgress />
@@ -216,7 +222,6 @@ const HomePage = () => {
             )}
 
             {/* Other Children Components */}
-
             <StoryDialog
                 open={openStoryDialog}
                 onClose={() => setOpenStoryDialog(false)}
