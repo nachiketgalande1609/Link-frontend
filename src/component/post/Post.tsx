@@ -20,7 +20,7 @@ import {
     CircularProgress,
 } from "@mui/material";
 
-import { FavoriteBorder, Favorite, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, MoreVert, BookmarkBorderOutlined, Bookmark, LocationOn, Close } from "@mui/icons-material";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
@@ -402,38 +402,89 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
             <Dialog
                 open={isEditing}
                 onClose={handleCancelEdit}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
                 sx={{
                     "& .MuiDialog-paper": {
                         borderRadius: "20px",
                         width: "90%",
                         maxWidth: "600px",
-                        padding: "20px",
-                        backgroundColor: "#000000",
+                        backgroundColor: "rgba(0, 0, 0)", // Slight transparency
+                        overflow: "hidden",
                     },
                 }}
             >
-                <DialogContent sx={{ padding: 0 }}>
-                    <TextField
-                        fullWidth
-                        multiline
-                        size="small"
-                        variant="standard"
-                        value={editedContent}
-                        onChange={(e) => setEditedContent(e.target.value)}
-                        sx={{
-                            mb: 2,
-                            "& .MuiOutlinedInput-root": {},
-                        }}
-                    />
-                </DialogContent>
-                <DialogActions sx={{ padding: "0" }}>
-                    <Button onClick={handleCancelEdit} size="medium" sx={{ color: "#ffffff", borderRadius: "15px" }}>
-                        Cancel
-                    </Button>
-                    <Button onClick={handleSaveEdit} size="medium" variant="outlined" color="primary" sx={{ borderRadius: "15px" }}>
-                        Save
-                    </Button>
-                </DialogActions>
+                {/* Image Section */}
+                {post.file_url && (
+                    <Box sx={{ position: "relative" }}>
+                        <CardMedia
+                            component="img"
+                            image={post.file_url}
+                            alt="Post Image"
+                            sx={{
+                                width: "100%",
+                                height: "auto",
+                                borderRadius: "10px 10px 0 0",
+                            }}
+                        />
+                        {/* Cancel Button (Cross Icon) */}
+                        <IconButton
+                            onClick={handleCancelEdit}
+                            sx={{
+                                position: "absolute",
+                                top: 8,
+                                right: 8,
+                                color: "#ffffff",
+                                padding: "6px",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                "&:hover": {
+                                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                },
+                            }}
+                        >
+                            <Close sx={{ fontSize: "18px" }} /> {/* Import Close icon from @mui/icons-material */}
+                        </IconButton>
+                    </Box>
+                )}
+
+                {/* TextField and Save Button Section */}
+                <Box sx={{ padding: "16px 8px 16px 16px" }}>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        <TextField
+                            fullWidth
+                            multiline
+                            size="small"
+                            variant="standard"
+                            value={editedContent}
+                            onChange={(e) => setEditedContent(e.target.value)}
+                            sx={{
+                                flex: 1,
+                                "& .MuiInput-underline:before": {
+                                    borderBottom: "none !important",
+                                },
+                                "& .MuiInput-underline:after": {
+                                    borderBottom: "none !important",
+                                },
+                                "& .MuiInput-underline:hover:before": {
+                                    borderBottom: "none !important",
+                                },
+                            }}
+                        />
+                        {/* Save Button */}
+                        <Button
+                            onClick={handleSaveEdit}
+                            size="medium"
+                            color="primary"
+                            sx={{ textTransform: "none", "&:hover": { backgroundColor: "transparent" }, padding: 0, width: "20px" }}
+                        >
+                            Save
+                        </Button>
+                    </Box>
+                </Box>
             </Dialog>
 
             <Dialog
