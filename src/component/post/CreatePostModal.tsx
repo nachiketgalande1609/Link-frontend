@@ -65,7 +65,18 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     };
 
     return (
-        <Modal open={open} onClose={handleClose} closeAfterTransition BackdropComponent={Backdrop} BackdropProps={{ timeout: 500 }}>
+        <Modal
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+                sx: {
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    backdropFilter: "blur(5px)",
+                },
+            }}
+        >
             <Fade in={open}>
                 <Box
                     sx={{

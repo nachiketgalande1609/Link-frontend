@@ -86,7 +86,8 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userI
             }}
             BackdropProps={{
                 sx: {
-                    backgroundColor: "rgba(0, 0, 0, 0.8)",
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    backdropFilter: "blur(5px)",
                 },
             }}
         >

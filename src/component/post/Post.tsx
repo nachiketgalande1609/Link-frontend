@@ -384,6 +384,12 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         borderRadius: "20px",
                     },
                 }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
             >
                 <DialogTitle>Confirm Deletion</DialogTitle>
                 <DialogContent>
@@ -502,7 +508,8 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 }}
                 BackdropProps={{
                     sx: {
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
                     },
                 }}
             >

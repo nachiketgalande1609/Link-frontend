@@ -45,7 +45,12 @@ const ImageDialog: React.FC<DialogProps> = ({ openDialog, handleCloseDialog, sel
             maxWidth="lg"
             onClose={handleCloseDialog}
             sx={{ "& .MuiPaper-root": { borderRadius: "10px" } }}
-            BackdropProps={{ sx: { backgroundColor: "rgba(0, 0, 0, 0.85)" } }}
+            BackdropProps={{
+                sx: {
+                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    backdropFilter: "blur(5px)",
+                },
+            }}
         >
             <DialogContent
                 sx={{

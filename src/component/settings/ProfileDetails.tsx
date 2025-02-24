@@ -246,6 +246,12 @@ const ProfileDetails = () => {
                         padding: "10px",
                     },
                 }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
             >
                 <DialogContent>
                     {uploading ? (

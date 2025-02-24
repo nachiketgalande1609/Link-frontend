@@ -82,7 +82,8 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                 }}
                 BackdropProps={{
                     sx: {
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
                     },
                 }}
             >
@@ -129,6 +130,12 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                         backgroundColor: "#000000",
                         color: "#fff",
                         borderRadius: "20px",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
                     },
                 }}
             >
