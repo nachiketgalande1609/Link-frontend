@@ -24,6 +24,7 @@ import { FavoriteBorder, Favorite, MoreVert, BookmarkBorderOutlined, Bookmark, L
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
+import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 
 import { deletePost, likePost, addComment, updatePost, savePost, deleteComment } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
@@ -305,6 +306,10 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         <Typography variant="body2" component="span" sx={{ mr: 1 }}>
                             {post.comment_count}
                         </Typography>
+
+                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
+                            <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "26 px" }} onClick={() => setDrawerOpen(true)} />
+                        </IconButton>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>

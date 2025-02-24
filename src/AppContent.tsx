@@ -493,7 +493,16 @@ const AppContent = () => {
             )}
 
             {/* Incoming Call Modal */}
-            <Modal open={!!incomingCall} onClose={handleRejectCall} BackdropProps={{ style: { backgroundColor: "transparent" } }}>
+            <Modal
+                open={!!incomingCall}
+                onClose={handleRejectCall}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
+            >
                 <Box
                     sx={{
                         position: "fixed",
