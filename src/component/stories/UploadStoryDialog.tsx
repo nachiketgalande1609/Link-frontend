@@ -3,7 +3,6 @@ import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton, 
 import { Close } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import { uploadStory } from "../../services/api"; // Import the API function
-import { useGlobalStore } from "../../store/store"; // Assuming you have a store for user info
 
 interface UploadStoryDialogProps {
     open: boolean;
