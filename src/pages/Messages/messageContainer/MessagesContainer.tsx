@@ -63,6 +63,18 @@ type Message = {
     media_height: number | null;
     media_width: number | null;
     reactions?: Record<number, string> | null;
+    post?: {
+        post_id: number;
+        file_url: string;
+        media_width: number;
+        media_height: number;
+        content: string;
+        owner: {
+            user_id: number;
+            username: string;
+            profile_picture: string;
+        };
+    };
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -391,6 +403,97 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                         </Typography>
                                     </Box>
                                 )}
+                                {msg.post && (
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            backgroundColor: "#202327",
+                                            borderRadius: "12px",
+                                            overflow: "hidden",
+                                        }}
+                                    >
+                                        {/* Post Owner Info */}
+                                        {msg.post.owner && (
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    padding: "10px",
+                                                    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                                                }}
+                                            >
+                                                <Box
+                                                    component="img"
+                                                    src={msg.post.owner.profile_picture}
+                                                    alt="Owner Profile"
+                                                    sx={{
+                                                        width: "32px",
+                                                        height: "32px",
+                                                        borderRadius: "50%",
+                                                        marginRight: "8px",
+                                                    }}
+                                                />
+                                                <Typography sx={{ fontSize: "0.85rem", color: "#fff" }}>{msg.post.owner.username}</Typography>
+                                            </Box>
+                                        )}
+
+                                        {/* Post Image with Loader */}
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                backgroundImage: `url(${BlurBackgroundImage})`,
+                                                backgroundSize: "cover",
+                                                backgroundPosition: "center",
+                                                overflow: "hidden",
+                                                position: "relative",
+                                            }}
+                                        >
+                                            <CircularProgress
+                                                sx={{
+                                                    position: "absolute",
+                                                    visibility: "visible",
+                                                    color: "#ffffff",
+                                                }}
+                                            />
+                                            <Box
+                                                component="img"
+                                                src={msg.post.file_url}
+                                                alt="Post Image"
+                                                sx={{
+                                                    width: isMobile ? "200px" : "300px",
+                                                    height:
+                                                        msg.post.media_width && msg.post.media_height
+                                                            ? `${(msg.post.media_height / msg.post.media_width) * (isMobile ? 200 : 300)}px`
+                                                            : "auto",
+                                                    position: "relative",
+                                                    objectFit: "cover",
+                                                    visibility: "hidden",
+                                                }}
+                                                onLoad={(e) => {
+                                                    const imgElement = e.target as HTMLImageElement;
+                                                    const loader = imgElement.previousSibling as HTMLElement;
+
+                                                    imgElement.style.visibility = "visible";
+                                                    if (loader) loader.style.display = "none";
+                                                }}
+                                            />
+                                        </Box>
+
+                                        {/* Post Content */}
+                                        <Box sx={{ padding: "10px" }}>
+                                            <Typography sx={{ fontSize: "0.85rem", color: "#fff" }}>
+                                                <Box component="span" sx={{ color: "#cccccc" }}>
+                                                    {msg.post.owner.username}
+                                                </Box>{" "}
+                                                {msg.post.content}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                )}
+
                                 <Box
                                     id={`msg-${msg.message_id}`}
                                     sx={{
@@ -403,6 +506,20 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                         backgroundColor: highlightedMessageId === msg.message_id ? "#0b335b" : "transparent",
                                         borderRadius: "12px",
                                         position: "relative",
+                                        ...(msg.message_text && {
+                                            "&::before": {
+                                                content: '""',
+                                                position: "absolute",
+                                                top: "0px",
+                                                [msg.sender_id === currentUser.id ? "right" : "left"]: "-8px",
+                                                width: 0,
+                                                height: 0,
+                                                borderTop: "0px solid transparent",
+                                                borderBottom: "25px solid transparent",
+                                                borderLeft: msg.sender_id === currentUser.id ? "20px solid #1976d2" : "none", // Apply only for sender
+                                                borderRight: msg.sender_id !== currentUser.id ? "20px solid #202327" : "none", // Apply only for receiver
+                                            },
+                                        }),
                                     }}
                                 >
                                     {msg?.message_text && (
@@ -410,7 +527,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                             sx={{
                                                 backgroundColor: msg.sender_id === currentUser.id ? "#1976d2" : "#202327",
                                                 padding: "8px 12px",
-                                                borderRadius: "12px",
+                                                borderRadius: msg.sender_id === currentUser.id ? "12px 0px 12px 12px" : "0px 12px 12px 12px",
                                                 maxWidth: isMobile ? "70vw" : { lg: "40vw", md: "30vw", sm: "30vw", xs: "20vw" },
                                                 fontSize: isMobile ? "0.8rem" : "1rem",
                                                 wordWrap: "break-word",

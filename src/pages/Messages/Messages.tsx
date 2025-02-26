@@ -29,6 +29,18 @@ type Message = {
     media_height: number | null;
     media_width: number | null;
     reactions?: Record<number, string> | null;
+    post?: {
+        post_id: number;
+        file_url: string;
+        media_width: number;
+        media_height: number;
+        content: string;
+        owner: {
+            user_id: number;
+            username: string;
+            profile_picture: string;
+        };
+    };
 };
 
 type MessagesType = Record<string, Message[]>;

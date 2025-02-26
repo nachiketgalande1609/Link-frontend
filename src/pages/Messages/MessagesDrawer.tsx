@@ -57,6 +57,18 @@ type Message = {
     media_height: number | null;
     media_width: number | null;
     reactions?: Record<number, string> | null;
+    post?: {
+        post_id: number;
+        file_url: string;
+        media_width: number;
+        media_height: number;
+        content: string;
+        owner: {
+            user_id: number;
+            username: string;
+            profile_picture: string;
+        };
+    };
 };
 
 type MessagesType = Record<string, Message[]>;
@@ -92,6 +104,10 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
 
     const getLastMessageText = (lastMessage: Message | undefined) => {
         if (!lastMessage) return "No messages yet";
+
+        if (lastMessage.post) {
+            return lastMessage.post.owner.user_id === currentUser.id ? "You shared a post" : `${lastMessage.post.owner.username} shared a post`;
+        }
 
         if (lastMessage.message_text) {
             return lastMessage.message_text.trim();
@@ -168,7 +184,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         </Typography>
                         <List sx={{ padding: 0 }}>
                             {users.map((user) => {
-                                const userMessages = messages[user.id] || [];
+                                const userMessages = messages[user.id] ? [...messages[user.id]] : [];
                                 const lastMessage = userMessages[userMessages.length - 1];
                                 const lastMessageText = getLastMessageText(lastMessage);
                                 const isOnline = onlineUsers.includes(user.id.toString());
@@ -300,7 +316,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                     />
                     <List sx={{ padding: 0 }}>
                         {users?.map((user) => {
-                            const userMessages = messages[user.id] || [];
+                            const userMessages = messages[user.id] ? [...messages[user.id]] : [];
                             const lastMessage = userMessages[userMessages.length - 1];
                             const lastMessageText = getLastMessageText(lastMessage);
                             const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;

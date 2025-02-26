@@ -26,11 +26,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 
-import { deletePost, likePost, addComment, updatePost, savePost, deleteComment } from "../../services/api"; // Assuming you have an updatePost function in your API
+import { deletePost, likePost, addComment, updatePost, savePost, deleteComment, getFollowingUsers } from "../../services/api"; // Assuming you have an updatePost function in your API
 import ScrollableCommentsDrawer from "./ScrollableCommentsDrawer";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "@toolpad/core/useNotifications";
 import ImageDialog from "../ImageDialog";
+import socket from "../../services/socket";
 
 interface Post {
     username: string;
@@ -64,6 +65,8 @@ interface Post {
     }>;
 }
 
+type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
+
 interface PostProps {
     post: Post;
     fetchPosts: () => Promise<void>;
@@ -92,6 +95,31 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     const postWidth = postRef?.current?.offsetWidth || 0;
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
+
+    const [usersModalOpen, setUsersModalOpen] = useState(false);
+    const [usersList, setUsersList] = useState([]);
+
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredUsers = usersList.filter((user: User) => user.username.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const handleUserClick = (user: User) => {
+        const tempMessageId = Date.now() + Math.floor(Math.random() * 1000);
+
+        socket.emit("sendMessage", {
+            tempId: tempMessageId,
+            senderId: currentUser.id,
+            receiverId: user.id,
+            postId: post.id,
+        });
+
+        notifications.show(`Post sent!`, {
+            severity: "success",
+            autoHideDuration: 3000,
+        });
+
+        setUsersModalOpen(false);
+    };
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -126,6 +154,18 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
             fetchPosts();
         } catch (error) {
             console.log(error);
+        }
+    };
+
+    const handlePaperPlaneClick = async () => {
+        try {
+            const response = await getFollowingUsers(currentUser?.id);
+            if (response.success) {
+                setUsersList(response.data);
+                setUsersModalOpen(true);
+            }
+        } catch (error) {
+            console.error("Error fetching users list:", error);
         }
     };
 
@@ -287,7 +327,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     alignItems: "center",
                 }}
             ></Box>
-
             <CardActions
                 sx={{ justifyContent: "space-between", height: "60px", padding: "0px 8px", backgroundColor: isMobile ? "#000000" : "#101114" }}
             >
@@ -307,8 +346,8 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                             {post.comment_count}
                         </Typography>
 
-                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
-                            <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "26 px" }} onClick={() => setDrawerOpen(true)} />
+                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handlePaperPlaneClick}>
+                            <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "26 px" }} />
                         </IconButton>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
@@ -325,7 +364,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     </Box>
                 </Box>
             </CardActions>
-
             <Box sx={{ padding: isMobile ? "0 14px" : "0 16px", backgroundColor: isMobile ? "#000000" : "#101114" }}>
                 <Grid container spacing={2} alignItems="flex-start">
                     <Grid item>
@@ -369,7 +407,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     {currentUser?.id === post.user_id && <Grid item></Grid>}
                 </Grid>
             </Box>
-
             <Box sx={{ padding: "16px", backgroundColor: isMobile ? "#000000" : "#101114", display: "flex", justifyContent: "space-between" }}>
                 <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{post.timeAgo}</Typography>
                 {post.location && (
@@ -379,7 +416,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     </Box>
                 )}
             </Box>
-
             {/* Confirmation Dialog */}
             <Dialog
                 open={dialogOpen}
@@ -497,7 +533,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     </Box>
                 </Box>
             </Dialog>
-
             <Dialog
                 open={optionsDialogOpen}
                 onClose={handleOptionsDialogClose}
@@ -571,7 +606,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     Cancel
                 </Button>
             </Dialog>
-
             <ScrollableCommentsDrawer
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}
@@ -586,8 +620,73 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 setSelectedCommentId={setSelectedCommentId}
                 handleDeleteComment={handleDeleteComment}
             />
-
             <ImageDialog openDialog={openImageDialog} handleCloseDialog={handleCloseDialog} selectedImage={post.file_url || ""} />
+            {/* Share List Dialog */}
+            <Dialog
+                open={usersModalOpen}
+                onClose={() => setUsersModalOpen(false)}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "10px",
+                        backgroundColor: "#000000",
+                        color: "white",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
+            >
+                <DialogContent sx={{ p: 0 }}>
+                    <Box sx={{ padding: "14px 10px 2px 10px", borderBottom: "1px solid #444444" }}>
+                        <TextField
+                            variant="standard"
+                            size="small"
+                            placeholder="Search users..."
+                            fullWidth
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            sx={{
+                                "& .MuiInputBase-input": {
+                                    fontSize: "0.9rem",
+                                    color: "#ffffff",
+                                },
+                                "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:before": {
+                                    borderBottom: "none !important",
+                                },
+                                mb: 1,
+                            }}
+                        />
+                    </Box>
+
+                    {filteredUsers.length > 0 ? (
+                        filteredUsers.map((user: User) => (
+                            <Box
+                                key={user.id}
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    padding: "10px 12px",
+                                    cursor: "pointer",
+                                    "&:hover": { backgroundColor: "#1e1e1e" },
+                                }}
+                                onClick={() => handleUserClick(user)}
+                            >
+                                <Avatar src={user.profile_picture} sx={{ width: 40, height: 40, mr: 2 }} />
+                                <Typography sx={{ fontSize: "0.9rem" }}>{user.username}</Typography>
+                            </Box>
+                        ))
+                    ) : (
+                        <Box sx={{ padding: "18px 12px", textAlign: "center" }}>
+                            <Typography sx={{ fontSize: "0.9rem" }}>No users found</Typography>
+                        </Box>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 };

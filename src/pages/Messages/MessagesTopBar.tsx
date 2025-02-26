@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Typography, Box, useMediaQuery, useTheme, IconButton, Dialog, DialogTitle, Button, DialogContent, Grid } from "@mui/material";
-import { ChevronLeft, Duo, MoreVert } from "@mui/icons-material";
+import { ChevronLeft, MoreVert } from "@mui/icons-material";
 import bg1 from "../../static/bg1.jpg";
 import bg2 from "../../static/bg2.jpg";
 import bg3 from "../../static/bg3.png";
