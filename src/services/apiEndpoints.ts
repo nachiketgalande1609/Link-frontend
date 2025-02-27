@@ -12,7 +12,7 @@ export const UPDATE_PROFILE_ENDPOINT: string = "/api/users/profile/update";
 export const FOLLOW_ENDPOINT: string = "/api/follow";
 export const UNFOLLOW_ENDPOINT: string = "/api/follow/unfollow";
 export const FOLLOW_RESPONSE_ENDPOINT: string = "/api/follow/response";
-export const FOLLOWING_USERS_LIST_ENDPOINT: string = "/api/follow/following";
+export const FOLLOWING_USERS_LIST_ENDPOINT: string = "/api/follow/fetch-following-list";
 
 // Post Endpoints
 export const GET_POSTS_ENDPOINT: string = "/api/posts/fetch-posts";
@@ -39,9 +39,9 @@ export const DELETE_SEARCH_HISTORY_ENDPOINT: string = "/api/search/delete-search
 export const SETTINGS_ENDPOINT: string = "/api/settings";
 
 // Messages Endpoints
-export const GET_ALL_MESSAGES_ENDPOINT: string = "/api/messages";
+export const GET_ALL_MESSAGES_ENDPOINT: string = "/api/messages/fetch-users-messages";
 export const DELETE_MESSAGE_ENDPOINT: string = "/api/messages";
-export const SHARE_MEDIA_ENDPOINT: string = "/api/messages/media";
+export const SHARE_MEDIA_ENDPOINT: string = "/api/messages/send-media";
 
 // Stories Endpoints
 export const UPLOAD_STORY_ENDPOINT: string = "/api/stories/upload-story";

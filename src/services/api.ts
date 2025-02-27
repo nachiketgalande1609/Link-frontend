@@ -229,7 +229,11 @@ export const respondToFollowRequest = async (requestId: number, status: string) 
 
 export const getFollowingUsers = async (userId: string) => {
     try {
-        const response = await api.get(`${FOLLOWING_USERS_LIST_ENDPOINT}/${userId}`);
+        const response = await api.get(FOLLOWING_USERS_LIST_ENDPOINT, {
+            params: {
+                userId,
+            },
+        });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -533,7 +537,11 @@ export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
 
 export const getAllMessagesData = async (userId: string) => {
     try {
-        const response = await api.get(`${GET_ALL_MESSAGES_ENDPOINT}/${userId}`);
+        const response = await api.get(GET_ALL_MESSAGES_ENDPOINT, {
+            params: {
+                currentUserId: userId,
+            },
+        });
 
         return response.data;
     } catch (error: unknown) {
