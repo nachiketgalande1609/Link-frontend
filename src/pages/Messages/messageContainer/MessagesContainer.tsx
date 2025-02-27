@@ -22,6 +22,7 @@ import {
     Reply as ReplyIcon,
     MoreHoriz,
     EmojiEmotions,
+    ExpandMore,
 } from "@mui/icons-material";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import BlurBackgroundImage from "../../../static/blur.jpg";
@@ -116,6 +117,25 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
     const [selectedReactions, setSelectedReactions] = useState<Reactions | null>(null);
 
+    const [isScrolledUp, setIsScrolledUp] = useState(false);
+
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        const isNearBottom = scrollHeight - (scrollTop + clientHeight) < 50; // 50px threshold
+
+        if (isNearBottom) {
+            setIsScrolledUp(false); // User is near the bottom, hide the button
+        } else {
+            setIsScrolledUp(true); // User has scrolled up, show the button
+        }
+    };
+
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
     const handleReactionPopoverOpen = (event: React.MouseEvent<HTMLElement>, reactions: Reactions) => {
         setReactionAnchor(event.currentTarget);
         setSelectedReactions(reactions);
@@ -152,8 +172,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                 overflowY: "auto",
                 display: "flex",
                 paddingBottom: "50px",
-                flexDirection: "column-reverse", // Reverse the order of messages
+                flexDirection: "column-reverse",
+                position: "relative",
             }}
+            onScroll={handleScroll}
         >
             {selectedUser ? (
                 [...(messages[selectedUser.id] || [])].reverse().map((msg, index) => {
@@ -742,6 +764,24 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                         Send Message
                     </Button>
                 </Box>
+            )}
+
+            {isScrolledUp && (
+                <IconButton
+                    sx={{
+                        position: "fixed",
+                        bottom: "75px",
+                        right: "20px",
+                        backgroundColor: "rgb(255,255,255,0.5)",
+                        color: "black",
+                        "&:hover": {
+                            backgroundColor: "rgb(255,255,255,0.6)",
+                        },
+                    }}
+                    onClick={scrollToBottom}
+                >
+                    <ExpandMore sx={{ fontSize: "20px" }} />
+                </IconButton>
             )}
 
             <div ref={messagesEndRef} />
