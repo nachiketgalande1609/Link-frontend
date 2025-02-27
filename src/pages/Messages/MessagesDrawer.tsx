@@ -22,7 +22,6 @@ type MessagesDrawerProps = {
     drawerOpen: boolean;
     setDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
     users: User[];
-    messages: MessagesType;
     onlineUsers: string[];
     selectedUser: User | null;
     handleUserClick: (userId: number) => void;
@@ -30,46 +29,20 @@ type MessagesDrawerProps = {
     setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 };
 
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean; latest_message: string; latest_message_timestamp: string };
-
-type Message = {
-    message_id: number;
-    sender_id: number;
-    message_text: string;
-    timestamp: string;
-    delivered?: boolean;
-    read?: boolean;
-    saved?: boolean;
-    file_url: string;
-    delivered_timestamp?: string | null;
-    read_timestamp?: string | null;
-    file_name: string | null;
-    file_size: string | null;
-    reply_to: number | null;
-    media_height: number | null;
-    media_width: number | null;
-    reactions?: Record<number, string> | null;
-    post?: {
-        post_id: number;
-        file_url: string;
-        media_width: number;
-        media_height: number;
-        content: string;
-        owner: {
-            user_id: number;
-            username: string;
-            profile_picture: string;
-        };
-    } | null;
+type User = {
+    id: number;
+    username: string;
+    profile_picture: string;
+    isOnline: boolean;
+    latest_message: string;
+    latest_message_timestamp: string;
+    unread_count: number;
 };
-
-type MessagesType = Record<string, Message>;
 
 const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
     drawerOpen,
     setDrawerOpen,
     users,
-    messages,
     onlineUsers,
     selectedUser,
     handleUserClick,
@@ -112,13 +85,10 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         </Typography>
                         <List sx={{ padding: 0 }}>
                             {users.map((user) => {
-                                const userMessage = messages[user.id] || null; // Now it's a single message object or null
-                                const lastMessageText = userMessage?.message_text || user.latest_message;
+                                const lastMessageText = user.latest_message;
                                 const isOnline = onlineUsers.includes(user.id.toString());
-                                const lastMessageTimestamp = userMessage?.timestamp
-                                    ? timeAgo(userMessage.timestamp)
-                                    : timeAgo(user.latest_message_timestamp);
-                                const unreadCount = userMessage && userMessage.sender_id === user.id && !userMessage.read ? 1 : 0; // Single message check
+                                const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
+                                const unreadCount = 0; // Single message check
 
                                 return (
                                     <ListItem
@@ -133,7 +103,9 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                         }}
                                         component="button"
                                         key={user.id}
-                                        onClick={() => handleUserClick(user.id)}
+                                        onClick={() => {
+                                            handleUserClick(user.id);
+                                        }}
                                     >
                                         <ListItemAvatar sx={{ position: "relative" }}>
                                             <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
@@ -244,13 +216,10 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                     />
                     <List sx={{ padding: 0 }}>
                         {users?.map((user) => {
-                            const userMessage = messages[user.id] || null; // Single message object
-                            const lastMessageText = userMessage?.message_text || user.latest_message;
-                            const unreadCount = userMessage && userMessage.sender_id === user.id && !userMessage.read ? 1 : 0; // Single message check
+                            const lastMessageText = user.latest_message;
+                            const unreadCount = user.unread_count || 0; // Single message check
                             const isOnline = onlineUsers.includes(user.id.toString());
-                            const lastMessageTimestamp = userMessage?.timestamp
-                                ? timeAgo(userMessage.timestamp)
-                                : timeAgo(user.latest_message_timestamp);
+                            const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
 
                             return (
                                 <ListItem

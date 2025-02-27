@@ -45,7 +45,15 @@ type Message = {
 
 type MessagesType = Record<string, Message>;
 
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean; latest_message: string; latest_message_timestamp: string };
+type User = {
+    id: number;
+    username: string;
+    profile_picture: string;
+    isOnline: boolean;
+    latest_message: string;
+    latest_message_timestamp: string;
+    unread_count: number;
+};
 
 interface MessageProps {
     onlineUsers: string[];
@@ -232,6 +240,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
         fetchMessagesForSelectedUser();
+        setUsers((prevUsers) => prevUsers.map((user) => (user.id === userId ? { ...user, unread_count: 0 } : user)));
         navigate(`/messages/${userId}`);
     };
 
@@ -403,6 +412,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     useEffect(() => {
         if (selectedUser && messages[selectedUser.id]) {
+            console.log("xxx", messages);
+
             const message = messages[selectedUser.id];
 
             if (message.sender_id === selectedUser.id && !message.read) {
@@ -521,7 +532,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}
                 users={users}
-                messages={messages}
                 onlineUsers={onlineUsers}
                 selectedUser={selectedUser}
                 handleUserClick={handleUserClick}
