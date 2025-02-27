@@ -26,8 +26,8 @@ export const GET_SAVED_POSTS_ENDPOINT: string = "/api/posts/saved";
 export const SAVE_POST_ENDPOINT: string = "/api/posts/save";
 
 // Notifications Endpoints
-export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications";
-export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/count";
+export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications/fetch-notifications";
+export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/fetch-notifications-count";
 
 // Search Endpoints
 export const SEARCH_ENDPOINT: string = "/api/search";
@@ -42,5 +42,5 @@ export const DELETE_MESSAGE_ENDPOINT: string = "/api/messages";
 export const SHARE_MEDIA_ENDPOINT: string = "/api/messages/media";
 
 // Stories Endpoints
-export const UPLOAD_STORY_ENDPOINT: string = "/api/stories/upload";
-export const FETCH_USER_STORIES_ENDPOINT: string = "/api/stories/";
+export const UPLOAD_STORY_ENDPOINT: string = "/api/stories/upload-story";
+export const FETCH_USER_STORIES_ENDPOINT: string = "/api/stories/fetch-user-stories";

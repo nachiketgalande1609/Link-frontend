@@ -425,7 +425,11 @@ export const getNotifications = async (userId: string) => {
 
 export const getNotificationsCount = async (userId: string) => {
     try {
-        const response = await api.get(`${GET_NOTIFICATIONS_COUNT}/${userId}`);
+        const response = await api.get(GET_NOTIFICATIONS_COUNT, {
+            params: {
+                userId,
+            },
+        });
 
         return response.data;
     } catch (error: unknown) {
