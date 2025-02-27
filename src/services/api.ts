@@ -30,6 +30,7 @@ import {
     DELETE_POST_ENDPOINT,
     FETCH_SEARCH_HISTORY_ENDPOINT,
     UPDATE_SEARCH_HISTORY_ENDPOINT,
+    DELETE_SEARCH_HISTORY_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -507,7 +508,7 @@ export const addToSearchHistory = async (currentUserId: number, targetUserId: nu
 
 export const deleteSearchHistoryItem = async (currentUserId: number, historyId: number) => {
     try {
-        const response = await api.delete(DELETE_MESSAGE_ENDPOINT, {
+        const response = await api.delete(DELETE_SEARCH_HISTORY_ENDPOINT, {
             params: { userId: currentUserId, historyId: historyId },
         });
 
@@ -565,8 +566,8 @@ export const getAllMessagesData = async (userId: string) => {
 
 export const deleteMessage = async (messageId: number, currentUserId: number) => {
     try {
-        const response = await api.delete(`${DELETE_MESSAGE_ENDPOINT}/${messageId}`, {
-            params: { currentUserId },
+        const response = await api.delete(DELETE_MESSAGE_ENDPOINT, {
+            params: { currentUserId, messageId },
         });
 
         return response.data;

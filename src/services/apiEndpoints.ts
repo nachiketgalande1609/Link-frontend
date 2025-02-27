@@ -40,7 +40,7 @@ export const SETTINGS_ENDPOINT: string = "/api/settings";
 
 // Messages Endpoints
 export const GET_ALL_MESSAGES_ENDPOINT: string = "/api/messages/fetch-users-messages";
-export const DELETE_MESSAGE_ENDPOINT: string = "/api/messages";
+export const DELETE_MESSAGE_ENDPOINT: string = "/api/messages/delete-message";
 export const SHARE_MEDIA_ENDPOINT: string = "/api/messages/send-media";
 
 // Stories Endpoints
