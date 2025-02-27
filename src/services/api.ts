@@ -130,7 +130,12 @@ export const googleLogin = async (data: { token: string }) => {
 
 export const getProfile = async (userId: string, currentUserId: string) => {
     try {
-        const response = await api.get(`${GET_PROFILE_ENDPOINT}/${userId}?currentUserId=${currentUserId}`);
+        const response = await api.get(GET_PROFILE_ENDPOINT, {
+            params: {
+                currentUserId,
+                userId,
+            },
+        });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -355,7 +360,7 @@ export const savePost = async (userId: string, postId: string) => {
 
 export const getUserPosts = async (currentUserId: string, userId: string) => {
     try {
-        const response = await api.post(`${GET_PROFILE_POSTS_ENDPOINT}/${userId}`, { currentUserId });
+        const response = await api.get(GET_PROFILE_POSTS_ENDPOINT, { params: { currentUserId, userId } });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -415,7 +420,11 @@ export const deletePost = async (userId: number, postId: string) => {
 
 export const getNotifications = async (userId: string) => {
     try {
-        const response = await api.get(`${GET_NOTIFICATIONS_ENDPOINT}/${userId}`);
+        const response = await api.get(GET_NOTIFICATIONS_ENDPOINT, {
+            params: {
+                userId,
+            },
+        });
 
         return response.data;
     } catch (error: unknown) {

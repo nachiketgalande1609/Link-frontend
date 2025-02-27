@@ -4,7 +4,7 @@ export const LOGIN_ENDPOINT: string = "/api/auth/login";
 export const GOOGLE_LOGIN_ENDPOINT: string = "/api/auth/google-login";
 
 // User Endpoints
-export const GET_PROFILE_ENDPOINT: string = "/api/users/profile";
+export const GET_PROFILE_ENDPOINT: string = "/api/users/fetch-profile-details";
 export const UPLOAD_PROFILE_PICTURE_ENDPOINT: string = "/api/users/update-profile-picture";
 export const UPDATE_PROFILE_ENDPOINT: string = "/api/users/profile/update";
 
