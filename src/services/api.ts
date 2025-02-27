@@ -233,13 +233,9 @@ export const respondToFollowRequest = async (requestId: number, status: string) 
     }
 };
 
-export const getFollowingUsers = async (userId: string) => {
+export const getFollowingUsers = async () => {
     try {
-        const response = await api.get(FOLLOWING_USERS_LIST_ENDPOINT, {
-            params: {
-                userId,
-            },
-        });
+        const response = await api.get(FOLLOWING_USERS_LIST_ENDPOINT);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -255,9 +251,9 @@ export const getFollowingUsers = async (userId: string) => {
 //////////////////////////////////// POST APIS ////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
-export const getPosts = async (userId: string) => {
+export const getPosts = async () => {
     try {
-        const response = await api.get(`${GET_POSTS_ENDPOINT}?userId=${userId}`);
+        const response = await api.get(GET_POSTS_ENDPOINT);
 
         return response.data;
     } catch (error: unknown) {
@@ -419,13 +415,9 @@ export const deletePost = async (userId: number, postId: string) => {
 //////////////////////////////////// NOTIFICATIONS APIS ////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-export const getNotifications = async (userId: string) => {
+export const getNotifications = async () => {
     try {
-        const response = await api.get(GET_NOTIFICATIONS_ENDPOINT, {
-            params: {
-                userId,
-            },
-        });
+        const response = await api.get(GET_NOTIFICATIONS_ENDPOINT);
 
         return response.data;
     } catch (error: unknown) {
@@ -438,13 +430,9 @@ export const getNotifications = async (userId: string) => {
     }
 };
 
-export const getNotificationsCount = async (userId: string) => {
+export const getNotificationsCount = async () => {
     try {
-        const response = await api.get(GET_NOTIFICATIONS_COUNT, {
-            params: {
-                userId,
-            },
-        });
+        const response = await api.get(GET_NOTIFICATIONS_COUNT);
 
         return response.data;
     } catch (error: unknown) {
@@ -545,13 +533,9 @@ export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
 //////////////////////////////////// MESSAGES APIS //////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-export const getAllMessagesData = async (userId: string) => {
+export const getAllMessagesData = async () => {
     try {
-        const response = await api.get(GET_ALL_MESSAGES_ENDPOINT, {
-            params: {
-                currentUserId: userId,
-            },
-        });
+        const response = await api.get(GET_ALL_MESSAGES_ENDPOINT);
 
         return response.data;
     } catch (error: unknown) {
@@ -628,9 +612,9 @@ export const uploadStory = async (storyData: StoryData) => {
     }
 };
 
-export const getStories = async (userId: number) => {
+export const getStories = async () => {
     try {
-        const response = await api.get(`${FETCH_USER_STORIES_ENDPOINT}?userId=${userId}`);
+        const response = await api.get(FETCH_USER_STORIES_ENDPOINT);
         return response;
     } catch (error: unknown) {
         if (error instanceof Error) {

@@ -159,7 +159,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
 
     const handlePaperPlaneClick = async () => {
         try {
-            const response = await getFollowingUsers(currentUser?.id);
+            const response = await getFollowingUsers();
             if (response.success) {
                 setUsersList(response.data);
                 setUsersModalOpen(true);

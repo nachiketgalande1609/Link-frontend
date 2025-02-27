@@ -13,7 +13,7 @@ const api: AxiosInstance = axios.create({
     headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        "X-Current-User-Id": userId || "", // Attach currentUserId directly
+        "X-CURRENT-USER-ID": userId || "", // Attach currentUserId directly
     },
 });
 

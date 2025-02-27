@@ -93,7 +93,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     // Fetch messages initially
     const fetchData = async () => {
         try {
-            const res = await getAllMessagesData(currentUser.id);
+            const res = await getAllMessagesData();
             const users = res.data.users;
             let messages = res.data.messages;
 

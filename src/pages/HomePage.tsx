@@ -24,7 +24,7 @@ const HomePage = () => {
     const fetchPosts = async () => {
         try {
             if (currentUser?.id) {
-                const res = await getPosts(currentUser.id);
+                const res = await getPosts();
                 setPosts(res.data);
             }
         } catch (error) {
@@ -36,7 +36,7 @@ const HomePage = () => {
 
     const fetchStories = async () => {
         try {
-            const res = await getStories(currentUser?.id);
+            const res = await getStories();
 
             // Process self stories
             const selfStoriesData = res.data.selfStory || [];

@@ -30,7 +30,7 @@ const NotificationsPage = () => {
         if (!currentUser?.id) return;
         try {
             setLoading(true);
-            const res = await getNotifications(currentUser.id);
+            const res = await getNotifications();
             setNotifications(res.data);
         } catch (error) {
             console.error("Error fetching notifications:", error);

@@ -128,7 +128,7 @@ const AppContent = () => {
 
         const fetchNotificationCount = async () => {
             try {
-                const response = await getNotificationsCount(user.id);
+                const response = await getNotificationsCount();
                 if (response?.success) {
                     setUnreadNotificationsCount(response?.data?.unread_notifications);
                     setUnreadMessagesCount(response?.data?.unread_messages);

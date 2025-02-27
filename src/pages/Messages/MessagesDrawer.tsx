@@ -92,7 +92,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     const fetchUsersList = async () => {
-        const response = await getFollowingUsers(currentUser?.id);
+        const response = await getFollowingUsers();
         if (response.success) {
             setUsersList(response.data);
         }
