@@ -172,7 +172,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     const handleComment = async () => {
         if (commentText) {
             try {
-                const response = await addComment(currentUser.id, post.id, commentText);
+                const response = await addComment(post.id, commentText);
                 if (response?.success) {
                     const newComment = {
                         id: Date.now(),
@@ -214,7 +214,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
 
     const handleDelete = async () => {
         try {
-            const res = await deletePost(post.user_id, post.id);
+            const res = await deletePost(post.id);
             if (res?.success) {
                 fetchPosts();
             }

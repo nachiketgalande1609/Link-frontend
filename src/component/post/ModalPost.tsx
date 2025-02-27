@@ -117,7 +117,7 @@ const ModalPost: React.FC<PostProps> = ({
     const handleComment = async () => {
         if (commentText) {
             try {
-                const response = await addComment(currentUser.id, postId, commentText);
+                const response = await addComment(postId, commentText);
                 if (response?.success) {
                     const newComment = {
                         id: Date.now(),
@@ -159,7 +159,7 @@ const ModalPost: React.FC<PostProps> = ({
 
     const handleDelete = async () => {
         try {
-            const res = await deletePost(userId, postId);
+            const res = await deletePost(postId);
             if (res?.success) {
                 fetchPosts();
                 handleCloseModal();

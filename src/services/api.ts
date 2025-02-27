@@ -294,9 +294,9 @@ export const likePost = async (postId: string) => {
     }
 };
 
-export const addComment = async (userId: string, postId: string, comment: string) => {
+export const addComment = async (postId: string, comment: string) => {
     try {
-        const response = await api.post(COMMENT_ENDPOINT, { userId, postId, comment });
+        const response = await api.post(COMMENT_ENDPOINT, { postId, comment });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -394,9 +394,9 @@ export const createPost = async (postData: PostData) => {
     }
 };
 
-export const deletePost = async (userId: number, postId: string) => {
+export const deletePost = async (postId: string) => {
     try {
-        const response = await api.delete(`${DELETE_POST_ENDPOINT}?userId=${userId}&postId=${postId}`);
+        const response = await api.delete(DELETE_POST_ENDPOINT, { params: { postId } });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
