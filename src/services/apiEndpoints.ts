@@ -15,7 +15,10 @@ export const FOLLOW_RESPONSE_ENDPOINT: string = "/api/follow/response";
 export const FOLLOWING_USERS_LIST_ENDPOINT: string = "/api/follow/following";
 
 // Post Endpoints
-export const POSTS_ENDPOINT: string = "/api/posts";
+export const GET_POSTS_ENDPOINT: string = "/api/posts/fetch-posts";
+export const GET_PROFILE_POSTS_ENDPOINT: string = "/api/posts/fetch-profile-posts";
+export const CREATE_POST_ENDPOINT: string = "/api/posts/create-post";
+export const DELETE_POST_ENDPOINT: string = "/api/posts/delete-post";
 export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
 export const COMMENT_ENDPOINT: string = "/api/posts/comment";

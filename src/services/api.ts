@@ -2,7 +2,8 @@ import api from "./config";
 import {
     REGISTER_ENDPOINT,
     LOGIN_ENDPOINT,
-    POSTS_ENDPOINT,
+    GET_POSTS_ENDPOINT,
+    GET_PROFILE_POSTS_ENDPOINT,
     GET_PROFILE_ENDPOINT,
     LIKE_POST_ENDPOINT,
     COMMENT_ENDPOINT,
@@ -26,6 +27,8 @@ import {
     UPLOAD_STORY_ENDPOINT,
     FETCH_USER_STORIES_ENDPOINT,
     DELETE_MESSAGE_ENDPOINT,
+    CREATE_POST_ENDPOINT,
+    DELETE_POST_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -243,7 +246,7 @@ export const getFollowingUsers = async (userId: string) => {
 
 export const getPosts = async (userId: string) => {
     try {
-        const response = await api.get(`${POSTS_ENDPOINT}?userId=${userId}`);
+        const response = await api.get(`${GET_POSTS_ENDPOINT}?userId=${userId}`);
 
         return response.data;
     } catch (error: unknown) {
@@ -347,7 +350,7 @@ export const savePost = async (userId: string, postId: string) => {
 
 export const getUserPosts = async (currentUserId: string, userId: string) => {
     try {
-        const response = await api.post(`${POSTS_ENDPOINT}/${userId}`, { currentUserId });
+        const response = await api.post(`${GET_PROFILE_POSTS_ENDPOINT}/${userId}`, { currentUserId });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -370,7 +373,7 @@ export const createPost = async (postData: PostData) => {
             formData.append("image", postData.image);
         }
 
-        const response = await api.post(POSTS_ENDPOINT, formData, {
+        const response = await api.post(CREATE_POST_ENDPOINT, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -389,7 +392,7 @@ export const createPost = async (postData: PostData) => {
 
 export const deletePost = async (userId: number, postId: string) => {
     try {
-        const response = await api.delete(`${POSTS_ENDPOINT}?userId=${userId}&postId=${postId}`);
+        const response = await api.delete(`${DELETE_POST_ENDPOINT}?userId=${userId}&postId=${postId}`);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
