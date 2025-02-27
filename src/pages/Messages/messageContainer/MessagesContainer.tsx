@@ -120,13 +120,14 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const [isScrolledUp, setIsScrolledUp] = useState(false);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-        const isNearBottom = scrollHeight - (scrollTop + clientHeight) < 50; // 50px threshold
+        const { scrollTop } = e.currentTarget;
+
+        const isNearBottom = scrollTop > -100;
 
         if (isNearBottom) {
-            setIsScrolledUp(false); // User is near the bottom, hide the button
+            setIsScrolledUp(false);
         } else {
-            setIsScrolledUp(true); // User has scrolled up, show the button
+            setIsScrolledUp(true);
         }
     };
 
@@ -177,6 +178,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
             }}
             onScroll={handleScroll}
         >
+            <div ref={messagesEndRef} />
             {selectedUser ? (
                 [...(messages[selectedUser.id] || [])].reverse().map((msg, index) => {
                     const originalMessage = msg.reply_to ? findOriginalMessage(msg.reply_to) : null;
@@ -765,7 +767,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                     </Button>
                 </Box>
             )}
-
             {isScrolledUp && (
                 <IconButton
                     sx={{
@@ -783,9 +784,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                     <ExpandMore sx={{ fontSize: "20px" }} />
                 </IconButton>
             )}
-
-            <div ref={messagesEndRef} />
-
             <MessageOptionsDialog
                 open={moreMenuOpen}
                 onClose={() => setMoreMenuOpen(false)}
@@ -799,7 +797,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                     setMoreMenuOpen(false);
                 }}
             />
-
             <MessageDetailsDrawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} selectedMessage={selectedMessage} />
         </Box>
     );
