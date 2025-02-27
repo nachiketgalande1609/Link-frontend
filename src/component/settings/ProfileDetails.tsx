@@ -128,7 +128,7 @@ const ProfileDetails = () => {
         }
         setProfileUpdating(true);
         try {
-            await updateProfileDetails(user.id, { username: newUsername, bio: newBio });
+            await updateProfileDetails({ username: newUsername, bio: newBio });
             const updatedUser = { ...user, username: newUsername };
             setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));

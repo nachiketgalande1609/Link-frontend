@@ -149,7 +149,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
 
     const handleLike = async () => {
         try {
-            await likePost(currentUser.id, post.id);
+            await likePost(post.id);
             setIsLiked(!isLiked);
             fetchPosts();
         } catch (error) {

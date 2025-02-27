@@ -6,7 +6,7 @@ export const GOOGLE_LOGIN_ENDPOINT: string = "/api/auth/google-login";
 // User Endpoints
 export const GET_PROFILE_ENDPOINT: string = "/api/users/fetch-profile-details";
 export const UPLOAD_PROFILE_PICTURE_ENDPOINT: string = "/api/users/update-profile-picture";
-export const UPDATE_PROFILE_ENDPOINT: string = "/api/users/profile/update";
+export const UPDATE_PROFILE_ENDPOINT: string = "/api/users/profile/update-profile-details";
 
 // Follow Endpoints
 export const FOLLOW_ENDPOINT: string = "/api/follow";
@@ -20,7 +20,7 @@ export const GET_PROFILE_POSTS_ENDPOINT: string = "/api/posts/fetch-profile-post
 export const CREATE_POST_ENDPOINT: string = "/api/posts/create-post";
 export const DELETE_POST_ENDPOINT: string = "/api/posts/delete-post";
 export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
-export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
+export const LIKE_POST_ENDPOINT: string = "/api/posts/like-post";
 export const COMMENT_ENDPOINT: string = "/api/posts/comment";
 export const DELETE_COMMENT_ENDPOINT: string = "/api/posts/delete-comment";
 

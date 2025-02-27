@@ -15,7 +15,7 @@ const AccountPrivacy = () => {
         setLoading(true);
 
         try {
-            const res = await updatePrivacy(currentUser?.id, newPrivacyStatus);
+            const res = await updatePrivacy(newPrivacyStatus);
             if (res.success) {
                 currentUser.is_private = newPrivacyStatus;
                 localStorage.setItem("user", JSON.stringify(currentUser));

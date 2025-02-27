@@ -31,7 +31,7 @@ export default function SearchPage() {
     useEffect(() => {
         const loadHistory = async () => {
             try {
-                const response = await getSearchHistory(currentUser?.id);
+                const response = await getSearchHistory();
                 setHistory(response.data);
             } catch (error) {
                 console.error("Failed to load history:", error);
@@ -50,8 +50,8 @@ export default function SearchPage() {
     // Handle user click
     const handleUserClick = async (targetUser: any) => {
         try {
-            await addToSearchHistory(currentUser?.id, targetUser.id);
-            const historyResponse = await getSearchHistory(currentUser?.id);
+            await addToSearchHistory(targetUser.id);
+            const historyResponse = await getSearchHistory();
             setHistory(historyResponse.data.data);
             navigate(`/profile/${targetUser.id}`);
         } catch (error) {

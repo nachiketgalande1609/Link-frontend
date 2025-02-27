@@ -171,9 +171,9 @@ export const uploadProfilePicture = async (userId: string, profilePic: File) => 
     }
 };
 
-export const updateProfileDetails = async (userId: string, updatedProfile: ProfileData) => {
+export const updateProfileDetails = async (updatedProfile: ProfileData) => {
     try {
-        const response = await api.put(UPDATE_PROFILE_ENDPOINT, { userId, updatedProfile });
+        const response = await api.put(UPDATE_PROFILE_ENDPOINT, { updatedProfile });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -280,9 +280,9 @@ export const updatePost = async (postId: string, editContent: string) => {
     }
 };
 
-export const likePost = async (userId: string, postId: string) => {
+export const likePost = async (postId: string) => {
     try {
-        const response = await api.post(LIKE_POST_ENDPOINT, { userId, postId });
+        const response = await api.post(LIKE_POST_ENDPOINT, { postId });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -461,9 +461,9 @@ export const getSearchResults = async (searchQuery: string) => {
     }
 };
 
-export const getSearchHistory = async (userId: number) => {
+export const getSearchHistory = async () => {
     try {
-        const response = await api.get(`${FETCH_SEARCH_HISTORY_ENDPOINT}?userId=${userId}`);
+        const response = await api.get(FETCH_SEARCH_HISTORY_ENDPOINT);
 
         return response.data;
     } catch (error: unknown) {
@@ -476,9 +476,9 @@ export const getSearchHistory = async (userId: number) => {
     }
 };
 
-export const addToSearchHistory = async (currentUserId: number, targetUserId: number) => {
+export const addToSearchHistory = async (targetUserId: number) => {
     try {
-        const response = await api.post(UPDATE_SEARCH_HISTORY_ENDPOINT, { userId: currentUserId, target_user_id: targetUserId });
+        const response = await api.post(UPDATE_SEARCH_HISTORY_ENDPOINT, { target_user_id: targetUserId });
 
         return response.data;
     } catch (error: unknown) {
@@ -512,9 +512,9 @@ export const deleteSearchHistoryItem = async (historyId: number) => {
 //////////////////////////////////// SETTINGS APIS //////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-export const updatePrivacy = async (userId: number, isPrivate: boolean) => {
+export const updatePrivacy = async (isPrivate: boolean) => {
     try {
-        const response = await api.patch(`${SETTINGS_ENDPOINT}/privacy`, { userId, isPrivate });
+        const response = await api.patch(`${SETTINGS_ENDPOINT}/update-account-privacy`, { isPrivate });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
