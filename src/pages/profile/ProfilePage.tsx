@@ -43,7 +43,7 @@ const ProfilePage = () => {
     async function fetchProfile() {
         try {
             if (userId) {
-                const res = await getProfile(userId, currentUser?.id);
+                const res = await getProfile(userId);
                 setProfileData(res.data);
                 setIsFollowing(res.data.is_following);
             }
@@ -55,7 +55,7 @@ const ProfilePage = () => {
     async function fetchUserPosts() {
         try {
             if (userId) {
-                const res = await getUserPosts(currentUser?.id, userId);
+                const res = await getUserPosts(userId);
                 setPosts(res.data);
             }
         } catch (error) {

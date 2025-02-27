@@ -70,7 +70,7 @@ const ProfileDetails = () => {
     async function fetchProfile() {
         try {
             if (user?.id) {
-                const res = await getProfile(user?.id, user?.id);
+                const res = await getProfile(user?.id);
                 setProfileData(res.data);
                 setNewUsername(res.data.username);
                 setNewBio(res.data.bio);

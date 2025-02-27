@@ -200,7 +200,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     const handleDeleteComment = async () => {
         if (selectedCommentId) {
             try {
-                const res = await deleteComment(currentUser?.id, selectedCommentId);
+                const res = await deleteComment(selectedCommentId);
                 if (res?.success) {
                     const updatedComments = postComments.filter((comment) => comment.id !== selectedCommentId);
                     setPostComments(updatedComments);
@@ -242,7 +242,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
 
     const handleSavePost = async () => {
         try {
-            const res = await savePost(currentUser?.id, post.id);
+            const res = await savePost(post.id);
             if (res.success) {
                 fetchPosts();
                 if (!post.saved_by_current_user) {

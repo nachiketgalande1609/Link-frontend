@@ -31,6 +31,7 @@ import {
     FETCH_SEARCH_HISTORY_ENDPOINT,
     UPDATE_SEARCH_HISTORY_ENDPOINT,
     DELETE_SEARCH_HISTORY_ENDPOINT,
+    DELETE_COMMENT_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -129,11 +130,10 @@ export const googleLogin = async (data: { token: string }) => {
 //////////////////////////////////// USER APIS ////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////
 
-export const getProfile = async (userId: string, currentUserId: string) => {
+export const getProfile = async (userId: string) => {
     try {
         const response = await api.get(GET_PROFILE_ENDPOINT, {
             params: {
-                currentUserId,
                 userId,
             },
         });
@@ -308,9 +308,9 @@ export const addComment = async (userId: string, postId: string, comment: string
     }
 };
 
-export const deleteComment = async (userId: string, commentId: number) => {
+export const deleteComment = async (commentId: number) => {
     try {
-        const response = await api.delete(COMMENT_ENDPOINT, { data: { userId, commentId } });
+        const response = await api.delete(DELETE_COMMENT_ENDPOINT, { data: { commentId } });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -322,9 +322,9 @@ export const deleteComment = async (userId: string, commentId: number) => {
     }
 };
 
-export const getSavedPosts = async (userId: string) => {
+export const getSavedPosts = async () => {
     try {
-        const response = await api.get(`${GET_SAVED_POSTS_ENDPOINT}?userId=${userId}`);
+        const response = await api.get(GET_SAVED_POSTS_ENDPOINT);
 
         return response.data;
     } catch (error: unknown) {
@@ -337,12 +337,9 @@ export const getSavedPosts = async (userId: string) => {
     }
 };
 
-export const savePost = async (userId: string, postId: string) => {
+export const savePost = async (postId: string) => {
     try {
-        const response = await api.post(SAVE_POST_ENDPOINT, {
-            userId,
-            postId,
-        });
+        const response = await api.post(SAVE_POST_ENDPOINT, { postId });
 
         return response.data;
     } catch (error: unknown) {
@@ -355,9 +352,9 @@ export const savePost = async (userId: string, postId: string) => {
     }
 };
 
-export const getUserPosts = async (currentUserId: string, userId: string) => {
+export const getUserPosts = async (userId: string) => {
     try {
-        const response = await api.get(GET_PROFILE_POSTS_ENDPOINT, { params: { currentUserId, userId } });
+        const response = await api.get(GET_PROFILE_POSTS_ENDPOINT, { params: { userId } });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -494,10 +491,10 @@ export const addToSearchHistory = async (currentUserId: number, targetUserId: nu
     }
 };
 
-export const deleteSearchHistoryItem = async (currentUserId: number, historyId: number) => {
+export const deleteSearchHistoryItem = async (historyId: number) => {
     try {
         const response = await api.delete(DELETE_SEARCH_HISTORY_ENDPOINT, {
-            params: { userId: currentUserId, historyId: historyId },
+            params: { historyId: historyId },
         });
 
         return response.data;
@@ -548,10 +545,10 @@ export const getAllMessagesData = async () => {
     }
 };
 
-export const deleteMessage = async (messageId: number, currentUserId: number) => {
+export const deleteMessage = async (messageId: number) => {
     try {
         const response = await api.delete(DELETE_MESSAGE_ENDPOINT, {
-            params: { currentUserId, messageId },
+            params: { messageId },
         });
 
         return response.data;

@@ -145,7 +145,7 @@ const ModalPost: React.FC<PostProps> = ({
     const handleDeleteComment = async () => {
         if (selectedCommentId) {
             try {
-                const res = await deleteComment(currentUser?.id, selectedCommentId);
+                const res = await deleteComment(selectedCommentId);
                 if (res?.success) {
                     const updatedComments = postComments.filter((comment) => comment.id !== selectedCommentId);
                     setPostComments(updatedComments);

@@ -14,7 +14,7 @@ const SavedPage = () => {
     const fetchPosts = async () => {
         try {
             if (user) {
-                const res = await getSavedPosts(user?.id);
+                const res = await getSavedPosts();
                 setPosts(res.data);
             }
         } catch (error) {

@@ -22,8 +22,10 @@ export const DELETE_POST_ENDPOINT: string = "/api/posts/delete-post";
 export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like";
 export const COMMENT_ENDPOINT: string = "/api/posts/comment";
-export const GET_SAVED_POSTS_ENDPOINT: string = "/api/posts/saved";
-export const SAVE_POST_ENDPOINT: string = "/api/posts/save";
+export const DELETE_COMMENT_ENDPOINT: string = "/api/posts/delete-comment";
+
+export const GET_SAVED_POSTS_ENDPOINT: string = "/api/posts/fetch-saved-posts";
+export const SAVE_POST_ENDPOINT: string = "/api/posts/save-post";
 
 // Notifications Endpoints
 export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications/fetch-notifications";

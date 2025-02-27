@@ -332,7 +332,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         }
 
         try {
-            const response = await deleteMessage(message.message_id, currentUser?.id);
+            const response = await deleteMessage(message.message_id);
             if (response?.success) {
                 setMessages((prevMessages) => {
                     const updatedMessages = { ...prevMessages };
