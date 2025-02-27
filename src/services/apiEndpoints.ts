@@ -5,7 +5,7 @@ export const GOOGLE_LOGIN_ENDPOINT: string = "/api/auth/google-login";
 
 // User Endpoints
 export const GET_PROFILE_ENDPOINT: string = "/api/users/profile";
-export const UPLOAD_PROFILE_PICTURE_ENDPOINT: string = "/api/users/profile/picture";
+export const UPLOAD_PROFILE_PICTURE_ENDPOINT: string = "/api/users/update-profile-picture";
 export const UPDATE_PROFILE_ENDPOINT: string = "/api/users/profile/update";
 
 // Follow Endpoints
@@ -30,8 +30,10 @@ export const GET_NOTIFICATIONS_ENDPOINT: string = "/api/notifications/fetch-noti
 export const GET_NOTIFICATIONS_COUNT: string = "/api/notifications/fetch-notifications-count";
 
 // Search Endpoints
-export const SEARCH_ENDPOINT: string = "/api/search";
-export const SEARCH_HISTORY_ENDPOINT: string = "/api/search/history";
+export const SEARCH_ENDPOINT: string = "/api/search/search-users";
+export const FETCH_SEARCH_HISTORY_ENDPOINT: string = "/api/search/fetch-search-history";
+export const UPDATE_SEARCH_HISTORY_ENDPOINT: string = "/api/search/update-search-history";
+export const DELETE_SEARCH_HISTORY_ENDPOINT: string = "/api/search/delete-search-history";
 
 // Settings Endpoints
 export const SETTINGS_ENDPOINT: string = "/api/settings";

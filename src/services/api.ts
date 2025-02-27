@@ -14,7 +14,6 @@ import {
     GOOGLE_LOGIN_ENDPOINT,
     GET_NOTIFICATIONS_COUNT,
     FOLLOW_RESPONSE_ENDPOINT,
-    SEARCH_HISTORY_ENDPOINT,
     UPLOAD_PROFILE_PICTURE_ENDPOINT,
     UPDATE_PROFILE_ENDPOINT,
     SETTINGS_ENDPOINT,
@@ -29,6 +28,8 @@ import {
     DELETE_MESSAGE_ENDPOINT,
     CREATE_POST_ENDPOINT,
     DELETE_POST_ENDPOINT,
+    FETCH_SEARCH_HISTORY_ENDPOINT,
+    UPDATE_SEARCH_HISTORY_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -463,7 +464,7 @@ export const getSearchResults = async (searchQuery: string) => {
 
 export const getSearchHistory = async (userId: number) => {
     try {
-        const response = await api.get(`${SEARCH_HISTORY_ENDPOINT}?userId=${userId}`);
+        const response = await api.get(`${FETCH_SEARCH_HISTORY_ENDPOINT}?userId=${userId}`);
 
         return response.data;
     } catch (error: unknown) {
@@ -478,7 +479,7 @@ export const getSearchHistory = async (userId: number) => {
 
 export const addToSearchHistory = async (currentUserId: number, targetUserId: number) => {
     try {
-        const response = await api.post(SEARCH_HISTORY_ENDPOINT, { userId: currentUserId, target_user_id: targetUserId });
+        const response = await api.post(UPDATE_SEARCH_HISTORY_ENDPOINT, { userId: currentUserId, target_user_id: targetUserId });
 
         return response.data;
     } catch (error: unknown) {
@@ -493,7 +494,7 @@ export const addToSearchHistory = async (currentUserId: number, targetUserId: nu
 
 export const deleteSearchHistoryItem = async (currentUserId: number, historyId: number) => {
     try {
-        const response = await api.delete(SEARCH_HISTORY_ENDPOINT, {
+        const response = await api.delete(DELETE_MESSAGE_ENDPOINT, {
             params: { userId: currentUserId, historyId: historyId },
         });
 
