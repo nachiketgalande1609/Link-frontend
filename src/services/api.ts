@@ -32,6 +32,7 @@ import {
     UPDATE_SEARCH_HISTORY_ENDPOINT,
     DELETE_SEARCH_HISTORY_ENDPOINT,
     DELETE_COMMENT_ENDPOINT,
+    GET_ALL_MESSAGE_USERS_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -530,9 +531,28 @@ export const updatePrivacy = async (isPrivate: boolean) => {
 //////////////////////////////////// MESSAGES APIS //////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 
-export const getAllMessagesData = async () => {
+export const getAllMessageUsersData = async () => {
     try {
-        const response = await api.get(GET_ALL_MESSAGES_ENDPOINT);
+        const response = await api.get(GET_ALL_MESSAGE_USERS_ENDPOINT);
+
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getMessagesDataForSelectedUser = async (selectedUserId: number | undefined) => {
+    try {
+        const response = await api.get(GET_ALL_MESSAGES_ENDPOINT, {
+            params: {
+                selectedUserId,
+            },
+        });
 
         return response.data;
     } catch (error: unknown) {

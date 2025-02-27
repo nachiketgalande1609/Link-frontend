@@ -4,7 +4,7 @@ import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
 import { useGlobalStore } from "../../store/store";
-import { deleteMessage, getAllMessagesData, shareChatMedia } from "../../services/api";
+import { deleteMessage, getAllMessageUsersData, getMessagesDataForSelectedUser, shareChatMedia } from "../../services/api";
 import ImageDialog from "../../component/ImageDialog";
 import MessagesContainer from "./messageContainer/MessagesContainer";
 import MessageInput from "./MessageInput";
@@ -44,7 +44,7 @@ type Message = {
 };
 
 type MessagesType = Record<string, Message[]>;
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
+type User = { id: number; username: string; profile_picture: string; isOnline: boolean; latest_message: string; latest_message_timestamp: string };
 
 interface MessageProps {
     onlineUsers: string[];
@@ -93,24 +93,18 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     // Fetch messages initially
     const fetchData = async () => {
         try {
-            const res = await getAllMessagesData();
-            const users = res.data.users;
-            let messages = res.data.messages;
-
-            const updatedMessages = Object.keys(messages).reduce(
-                (acc, userId) => {
-                    acc[userId] = messages[userId].map((msg: MessagesType) => ({
-                        ...msg,
-                        saved: !!msg.message_id,
-                        delivered: msg.delivered,
-                    }));
-                    return acc;
-                },
-                {} as Record<string, any[]>
-            );
-
+            const res = await getAllMessageUsersData();
+            const users = res.data;
             setUsers(users);
-            setMessages(updatedMessages);
+        } catch (error) {
+            console.error("Failed to fetch users and messages:", error);
+        }
+    };
+
+    const fetchMessagesForSelectedUser = async () => {
+        try {
+            const res = await getMessagesDataForSelectedUser(selectedUser?.id);
+            setMessages(res.data);
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
         }
@@ -224,8 +218,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     // Set selected user on clicking the user's chat
     const handleUserClick = (userId: number) => {
+        setMessages({});
         setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
+        fetchMessagesForSelectedUser();
         navigate(`/messages/${userId}`);
     };
 
