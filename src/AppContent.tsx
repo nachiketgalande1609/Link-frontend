@@ -34,10 +34,10 @@ if (currentUser && currentUser.id) {
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
 const AppContent = () => {
-    const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount } = useGlobalStore();
+    const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount, postUploading } =
+        useGlobalStore();
     const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-    const { postUploading } = useGlobalStore();
 
     const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
     const [pc, setPc] = useState<RTCPeerConnection | null>(null);
