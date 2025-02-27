@@ -75,10 +75,10 @@ type Message = {
             username: string;
             profile_picture: string;
         };
-    };
+    } | null;
 };
 
-type MessagesType = Record<string, Message[]>;
+type MessagesType = Record<string, Message>;
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 

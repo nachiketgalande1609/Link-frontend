@@ -41,7 +41,7 @@ type Message = {
             username: string;
             profile_picture: string;
         };
-    };
+    } | null;
 };
 
 type MessageInputProps = {

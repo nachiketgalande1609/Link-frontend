@@ -40,10 +40,11 @@ type Message = {
             username: string;
             profile_picture: string;
         };
-    };
+    } | null;
 };
 
-type MessagesType = Record<string, Message[]>;
+type MessagesType = Record<string, Message>;
+
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean; latest_message: string; latest_message_timestamp: string };
 
 interface MessageProps {
@@ -102,8 +103,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     };
 
     const fetchMessagesForSelectedUser = async () => {
+        if (!selectedUser) return;
+
         try {
-            const res = await getMessagesDataForSelectedUser(selectedUser?.id);
+            const res = await getMessagesDataForSelectedUser(selectedUser.id);
             setMessages(res.data);
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
@@ -134,35 +137,42 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         }
     }, [location.pathname, userId, users, navigatedUser]);
 
+    useEffect(() => {
+        if (userId && selectedUser) {
+            fetchMessagesForSelectedUser();
+        }
+    }, [userId, selectedUser]);
+
     // Socket for receiving messages
     useEffect(() => {
         socket.on("receiveMessage", (data) => {
-            setMessages((prevMessages) => {
+            setMessages((prevMessages: MessagesType) => {
                 const newMessages = { ...prevMessages };
-                const senderId = data.senderId;
+                const senderId = String(data.senderId); // Ensure key is a string
 
-                if (!newMessages[senderId]) {
-                    fetchData();
-                    newMessages[senderId] = [];
+                // If the message already exists, return without updating
+                if (newMessages[senderId]?.message_id === data.messageId) {
+                    return prevMessages;
                 }
 
-                const messageExists = newMessages[senderId].some((message) => message.message_id === data.messageId);
-
-                if (!messageExists) {
-                    newMessages[senderId].push({
-                        message_id: data.messageId,
-                        sender_id: data.senderId,
-                        message_text: data.message_text,
-                        timestamp: new Date().toISOString(),
-                        saved: !!data.message_id,
-                        file_url: data?.fileUrl,
-                        file_name: data.fileName,
-                        file_size: data.fileSize,
-                        reply_to: data.replyTo,
-                        media_width: data.mediaWidth,
-                        media_height: data.mediaHeight,
-                    });
-                }
+                // Otherwise, add the new message
+                newMessages[senderId] = {
+                    message_id: data.messageId,
+                    sender_id: data.senderId,
+                    message_text: data.message_text,
+                    timestamp: new Date().toISOString(),
+                    saved: !!data.message_id,
+                    file_url: data?.fileUrl || null,
+                    file_name: data?.fileName || null,
+                    file_size: data?.fileSize || null,
+                    reply_to: data?.replyTo || null,
+                    media_width: data?.mediaWidth || null,
+                    media_height: data?.mediaHeight || null,
+                    delivered: false, // Assuming the new message isn't delivered yet
+                    read: false, // Assuming it's unread
+                    reactions: null,
+                    post: null,
+                };
 
                 return newMessages;
             });
@@ -256,7 +266,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
         const tempMessageId = Date.now() + Math.floor(Math.random() * 1000);
 
-        const newMessage = {
+        const newMessage: Message = {
             message_id: tempMessageId,
             sender_id: currentUser.id,
             message_text: inputMessage,
@@ -267,18 +277,21 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
             media_height: mediaHeight,
             timestamp: new Date().toISOString(),
             saved: false,
+            delivered: false,
+            read: false,
+            delivered_timestamp: null,
+            read_timestamp: null,
             reply_to: selectedMessageForReply?.message_id || null,
+            reactions: null,
+            post: null,
         };
 
-        setMessages((prevMessages) => {
+        setMessages((prevMessages: MessagesType) => {
             const newMessages = { ...prevMessages };
 
-            if (!newMessages[selectedUser.id]) {
-                newMessages[selectedUser.id] = [];
-            }
-
-            if (!newMessages[selectedUser.id].some((msg) => msg.message_id === tempMessageId)) {
-                newMessages[selectedUser.id].push(newMessage);
+            // If the message doesn't exist, add it
+            if (newMessages[selectedUser.id]?.message_id !== tempMessageId) {
+                newMessages[selectedUser.id] = newMessage;
             }
 
             return newMessages;
@@ -319,16 +332,17 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         try {
             const response = await deleteMessage(message.message_id);
             if (response?.success) {
-                setMessages((prevMessages) => {
+                setMessages((prevMessages: MessagesType) => {
                     const updatedMessages = { ...prevMessages };
                     const chatPartnerId = message.sender_id === currentUser.id ? selectedUser?.id : message.sender_id;
 
-                    if (chatPartnerId && updatedMessages[chatPartnerId]) {
-                        updatedMessages[chatPartnerId] = updatedMessages[chatPartnerId].filter((msg) => msg.message_id !== message.message_id);
+                    if (chatPartnerId && updatedMessages[chatPartnerId]?.message_id === message.message_id) {
+                        delete updatedMessages[chatPartnerId]; // Remove the message object
                     }
 
                     return updatedMessages;
                 });
+
                 notifications.show(`Message deleted successfully!`, {
                     severity: "success",
                     autoHideDuration: 3000,
@@ -341,13 +355,17 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     useEffect(() => {
         socket.on("messageSaved", (data: { tempId: number; messageId: number }) => {
-            setMessages((prevMessages) => {
+            setMessages((prevMessages: MessagesType) => {
                 const newMessages = { ...prevMessages };
 
                 Object.keys(newMessages).forEach((userId) => {
-                    newMessages[userId] = newMessages[userId].map((msg) =>
-                        msg.message_id === data.tempId ? { ...msg, message_id: data.messageId, saved: true } : msg
-                    );
+                    if (newMessages[userId]?.message_id === data.tempId) {
+                        newMessages[userId] = {
+                            ...newMessages[userId],
+                            message_id: data.messageId,
+                            saved: true,
+                        };
+                    }
                 });
 
                 return newMessages;
@@ -361,13 +379,17 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     useEffect(() => {
         socket.on("messageDelivered", (data: { messageId: number; deliveredTimestamp: string | null }) => {
-            setMessages((prevMessages) => {
+            setMessages((prevMessages: MessagesType) => {
                 const newMessages = { ...prevMessages };
 
-                Object.keys(newMessages).forEach((userId) => {
-                    newMessages[userId] = newMessages[userId].map((msg) =>
-                        msg.message_id === data.messageId ? { ...msg, delivered: true, delivered_timestamp: data.deliveredTimestamp } : msg
-                    );
+                Object.keys(newMessages).forEach((key) => {
+                    if (newMessages[key].message_id === data.messageId) {
+                        newMessages[key] = {
+                            ...newMessages[key],
+                            delivered: true,
+                            delivered_timestamp: data.deliveredTimestamp,
+                        };
+                    }
                 });
 
                 return newMessages;
@@ -381,43 +403,41 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     useEffect(() => {
         if (selectedUser && messages[selectedUser.id]) {
-            const unreadMessages = messages[selectedUser.id].filter((msg) => msg.sender_id === selectedUser.id && !msg.read);
+            const message = messages[selectedUser.id];
 
-            if (unreadMessages.length > 0) {
-                const messageIds = unreadMessages.map((msg) => msg.message_id).filter((id) => !!id);
+            if (message.sender_id === selectedUser.id && !message.read) {
+                socket.emit("messageRead", {
+                    senderId: selectedUser.id,
+                    receiverId: currentUser.id,
+                    messageIds: [message.message_id],
+                });
 
-                if (messageIds.length > 0) {
-                    socket.emit("messageRead", {
-                        senderId: selectedUser.id,
-                        receiverId: currentUser.id,
-                        messageIds,
-                    });
+                setMessages((prevMessages: MessagesType) => ({
+                    ...prevMessages,
+                    [selectedUser.id]: { ...prevMessages[selectedUser.id], read: true },
+                }));
 
-                    setMessages((prevMessages) => {
-                        const updatedMessages = { ...prevMessages };
-                        updatedMessages[selectedUser.id] = updatedMessages[selectedUser.id].map((msg) =>
-                            messageIds.includes(msg.message_id) ? { ...msg, read: true } : msg
-                        );
-                        return updatedMessages;
-                    });
-
-                    const newUnreadCount = Math.max((unreadMessagesCount || 0) - unreadMessages.length, 0);
-                    setUnreadMessagesCount(newUnreadCount);
-                }
+                const newUnreadCount = Math.max((unreadMessagesCount || 0) - 1, 0);
+                setUnreadMessagesCount(newUnreadCount);
             }
         }
     }, [selectedUser, messages]);
 
     useEffect(() => {
         socket.on("messageRead", (data: { receiverId: number; messageIds: { messageId: number; readTimestamp: string }[] }) => {
-            setMessages((prevMessages) => {
+            setMessages((prevMessages: MessagesType) => {
                 const updatedMessages = { ...prevMessages };
 
-                if (updatedMessages[data.receiverId]) {
-                    updatedMessages[data.receiverId] = updatedMessages[data.receiverId].map((msg) => {
-                        const readMessage = data.messageIds.find((m) => m.messageId === msg.message_id);
-                        return readMessage ? { ...msg, read: true, read_timestamp: readMessage.readTimestamp } : msg;
-                    });
+                const message = updatedMessages[data.receiverId];
+
+                if (message && data.messageIds.some((m) => m.messageId === message.message_id)) {
+                    const readMessage = data.messageIds.find((m) => m.messageId === message.message_id);
+
+                    updatedMessages[data.receiverId] = {
+                        ...message,
+                        read: true,
+                        read_timestamp: readMessage?.readTimestamp || message.read_timestamp,
+                    };
                 }
 
                 return updatedMessages;
@@ -435,18 +455,16 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         setMessages((prevMessages) => {
             const updatedMessages = { ...prevMessages };
 
-            if (updatedMessages[selectedUser.id]) {
-                updatedMessages[selectedUser.id] = updatedMessages[selectedUser.id].map((msg) =>
-                    msg.message_id === messageId
-                        ? {
-                              ...msg,
-                              reactions: {
-                                  ...msg.reactions,
-                                  [currentUser.id]: reaction,
-                              },
-                          }
-                        : msg
-                );
+            const message = updatedMessages[selectedUser.id];
+
+            if (message && message.message_id === messageId) {
+                updatedMessages[selectedUser.id] = {
+                    ...message,
+                    reactions: {
+                        ...(message.reactions || {}), // Ensure reactions is not null
+                        [currentUser.id]: reaction,
+                    },
+                };
             }
 
             return updatedMessages;
@@ -460,19 +478,19 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
         setMessages((prevMessages) => {
             const updatedMessages = { ...prevMessages };
-            Object.keys(updatedMessages).forEach((senderUserId) => {
-                updatedMessages[senderUserId] = updatedMessages[senderUserId].map((msg) =>
-                    msg.message_id === messageId
-                        ? {
-                              ...msg,
-                              reactions: {
-                                  ...msg.reactions,
-                                  [senderUserId]: reaction,
-                              },
-                          }
-                        : msg
-                );
-            });
+
+            const message = updatedMessages[senderUserId];
+
+            if (message && message.message_id === messageId) {
+                updatedMessages[senderUserId] = {
+                    ...message,
+                    reactions: {
+                        ...(message.reactions || {}), // Ensure reactions is not null
+                        [senderUserId]: reaction,
+                    },
+                };
+            }
+
             return updatedMessages;
         });
     });

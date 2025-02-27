@@ -60,10 +60,10 @@ type Message = {
             username: string;
             profile_picture: string;
         };
-    };
+    } | null;
 };
 
-type MessagesType = Record<string, Message[]>;
+type MessagesType = Record<string, Message>;
 
 const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
     drawerOpen,
@@ -112,11 +112,13 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         </Typography>
                         <List sx={{ padding: 0 }}>
                             {users.map((user) => {
-                                const userMessages = messages[user.id] ? [...messages[user.id]] : [];
-                                const lastMessageText = user.latest_message;
+                                const userMessage = messages[user.id] || null; // Now it's a single message object or null
+                                const lastMessageText = userMessage?.message_text || user.latest_message;
                                 const isOnline = onlineUsers.includes(user.id.toString());
-                                const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
-                                const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
+                                const lastMessageTimestamp = userMessage?.timestamp
+                                    ? timeAgo(userMessage.timestamp)
+                                    : timeAgo(user.latest_message_timestamp);
+                                const unreadCount = userMessage && userMessage.sender_id === user.id && !userMessage.read ? 1 : 0; // Single message check
 
                                 return (
                                     <ListItem
@@ -141,7 +143,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                         width: "10px",
                                                         height: "10px",
                                                         borderRadius: "50%",
-                                                        backgroundColor: isOnline ? "#54ff54" : "#EFAD1D",
+                                                        backgroundColor: "#54ff54",
                                                         position: "absolute",
                                                         bottom: 0,
                                                         right: 13,
@@ -161,7 +163,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                             whiteSpace: "nowrap",
                                                             overflow: "hidden",
                                                             textOverflow: "ellipsis",
-                                                            maxWidth: "calc(100% - 50px)", // Adjust based on your layout, if necessary
+                                                            maxWidth: "calc(100% - 50px)",
                                                         }}
                                                     >
                                                         {lastMessageText}
@@ -171,7 +173,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                         sx={{
                                                             color: "#aaa",
                                                             whiteSpace: "nowrap",
-                                                            marginLeft: "8px", // Optional, adds spacing between message and timestamp
+                                                            marginLeft: "8px",
                                                         }}
                                                     >
                                                         {lastMessageTimestamp}
@@ -191,7 +193,6 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                 }}
                                             />
                                         )}
-
                                         <div
                                             style={{
                                                 position: "absolute",
@@ -243,11 +244,13 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                     />
                     <List sx={{ padding: 0 }}>
                         {users?.map((user) => {
-                            const userMessages = messages[user.id] ? [...messages[user.id]] : [];
-                            const lastMessageText = user.latest_message;
-                            const unreadCount = userMessages.filter((msg) => msg.sender_id === user.id && !msg.read).length;
+                            const userMessage = messages[user.id] || null; // Single message object
+                            const lastMessageText = userMessage?.message_text || user.latest_message;
+                            const unreadCount = userMessage && userMessage.sender_id === user.id && !userMessage.read ? 1 : 0; // Single message check
                             const isOnline = onlineUsers.includes(user.id.toString());
-                            const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
+                            const lastMessageTimestamp = userMessage?.timestamp
+                                ? timeAgo(userMessage.timestamp)
+                                : timeAgo(user.latest_message_timestamp);
 
                             return (
                                 <ListItem
@@ -295,7 +298,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                         whiteSpace: "nowrap",
                                                         overflow: "hidden",
                                                         textOverflow: "ellipsis",
-                                                        maxWidth: "calc(100% - 50px)", // Adjust based on your layout, if necessary
+                                                        maxWidth: "calc(100% - 50px)", // Adjust based on layout
                                                     }}
                                                 >
                                                     {lastMessageText}
@@ -305,7 +308,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                     sx={{
                                                         color: "#aaa",
                                                         whiteSpace: "nowrap",
-                                                        marginLeft: "8px", // Optional, adds spacing between message and timestamp
+                                                        marginLeft: "8px",
                                                     }}
                                                 >
                                                     {lastMessageTimestamp}

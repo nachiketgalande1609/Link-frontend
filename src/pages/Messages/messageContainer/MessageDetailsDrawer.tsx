@@ -29,7 +29,7 @@ type Message = {
             username: string;
             profile_picture: string;
         };
-    };
+    } | null;
 };
 
 interface MessageDetailsDrawerProps {
