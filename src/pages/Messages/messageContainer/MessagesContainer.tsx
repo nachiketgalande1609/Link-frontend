@@ -151,12 +151,12 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                 padding: 2,
                 overflowY: "auto",
                 display: "flex",
-                flexDirection: "column",
                 paddingBottom: "50px",
+                flexDirection: "column-reverse", // Reverse the order of messages
             }}
         >
             {selectedUser ? (
-                messages[selectedUser.id]?.map((msg, index) => {
+                [...(messages[selectedUser.id] || [])].reverse().map((msg, index) => {
                     const originalMessage = msg.reply_to ? findOriginalMessage(msg.reply_to) : null;
 
                     return (

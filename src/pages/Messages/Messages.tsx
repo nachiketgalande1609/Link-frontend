@@ -120,17 +120,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         fetchData();
     }, []);
 
-    // Scroll to bottom on new message and selecting user
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, selectedUser, selectedMessageForReply]);
-
-    const scrollToBottom = () => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-    };
-
     // Setting selected user
     useEffect(() => {
         if (location.pathname === "/messages") {
