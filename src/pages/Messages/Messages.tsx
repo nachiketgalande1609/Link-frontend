@@ -529,10 +529,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                     setAnchorEl={setAnchorEl}
                     handleDeleteMessage={handleDeleteMessage}
                     handleReaction={handleReaction}
+                    typingUser={typingUser}
                 />
-
-                {/* Typing indicator */}
-                {typingUser === selectedUser?.id && <div className="dot-falling"></div>}
 
                 {/* Message Input Box*/}
                 {selectedUser && (
