@@ -99,7 +99,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Fetch messages initially
-    const fetchData = async () => {
+    const fetchUsersData = async () => {
         try {
             const res = await getAllMessageUsersData();
             const users = res.data;
@@ -121,7 +121,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     };
 
     useEffect(() => {
-        fetchData();
+        fetchUsersData();
     }, []);
 
     // Setting selected user
@@ -425,47 +425,39 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     const handleReaction = (messageId: number, reaction: string) => {
         if (!selectedUser) return;
 
-        setMessages((prevMessages) => {
-            const updatedMessages = { ...prevMessages };
-
-            const message = updatedMessages[selectedUser.id];
-
-            if (message && message.message_id === messageId) {
-                updatedMessages[selectedUser.id] = {
-                    ...message,
-                    reactions: {
-                        ...(message.reactions || {}), // Ensure reactions is not null
-                        [currentUser.id]: reaction,
-                    },
-                };
-            }
-
-            return updatedMessages;
-        });
+        setMessages((prevMessages) =>
+            prevMessages.map((message) =>
+                message.message_id === messageId
+                    ? {
+                          ...message,
+                          reactions: {
+                              ...(message.reactions || {}),
+                              [currentUser.id]: reaction,
+                          },
+                      }
+                    : message
+            )
+        );
 
         socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
     };
 
     socket.on("reaction-received", ({ messageId, senderUserId, reaction }) => {
-        console.log(senderUserId);
+        console.log("Reaction Received");
 
-        setMessages((prevMessages) => {
-            const updatedMessages = { ...prevMessages };
-
-            const message = updatedMessages[senderUserId];
-
-            if (message && message.message_id === messageId) {
-                updatedMessages[senderUserId] = {
-                    ...message,
-                    reactions: {
-                        ...(message.reactions || {}), // Ensure reactions is not null
-                        [senderUserId]: reaction,
-                    },
-                };
-            }
-
-            return updatedMessages;
-        });
+        setMessages((prevMessages) =>
+            prevMessages.map((message) =>
+                message.message_id === messageId
+                    ? {
+                          ...message,
+                          reactions: {
+                              ...(message.reactions || {}), // Ensure reactions is not null
+                              [senderUserId]: reaction,
+                          },
+                      }
+                    : message
+            )
+        );
     });
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
