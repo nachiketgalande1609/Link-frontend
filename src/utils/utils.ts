@@ -18,6 +18,7 @@ export function useDebounce(text: string, delay: number) {
 }
 
 export const timeAgo = (timestamp: string) => {
+    if (!timestamp) return "";
     const now = new Date();
     const past = new Date(timestamp);
     const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);

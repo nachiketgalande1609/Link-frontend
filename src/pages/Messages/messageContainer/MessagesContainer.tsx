@@ -35,7 +35,7 @@ import { faComments } from "@fortawesome/free-solid-svg-icons";
 
 interface MessagesContainerProps {
     selectedUser: User | null;
-    messages: MessagesType;
+    messages: Message[];
     currentUser: User;
     handleImageClick: (fileUrl: string) => void;
     messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -49,6 +49,7 @@ interface MessagesContainerProps {
 
 type Message = {
     message_id: number;
+    receiver_id: number;
     sender_id: number;
     message_text: string;
     timestamp: string;
@@ -77,8 +78,6 @@ type Message = {
         };
     } | null;
 };
-
-type MessagesType = Record<string, Message>;
 
 type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
 
