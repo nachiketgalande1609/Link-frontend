@@ -114,8 +114,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
         try {
             const res = await getMessagesDataForSelectedUser(selectedUser.id, offset, limit);
+            // Reverse the array without mutating the original
+            const reversedData = res.data.slice().reverse();
 
-            setMessages((prevMessages) => (offset === 0 ? res.data : [...res.data, ...prevMessages]));
+            setMessages((prevMessages) => (offset === 0 ? reversedData : [...reversedData, ...prevMessages]));
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
         }

@@ -125,6 +125,8 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
 
     const [offset, setOffset] = useState(0); // Track the offset for pagination
     const [allMessages, setAllMessages] = useState<Message[]>(messages); // Store all messages
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMoreMessages, setHasMoreMessages] = useState(true);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -145,19 +147,23 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     }, [messages]);
 
     const loadMoreMessages = async () => {
-        if (!selectedUser) return;
+        if (!selectedUser || isLoading || !hasMoreMessages) return;
+
+        setIsLoading(true);
 
         try {
             const newOffset = offset + 20; // Increment the offset
-            const res = await getMessagesDataForSelectedUser(selectedUser.id, newOffset, 20); // Fetch more messages
-
+            const res = await getMessagesDataForSelectedUser(selectedUser.id, newOffset, 20);
             if (res.data.length > 0) {
-                // Prepend the new messages to the existing list
-                setAllMessages((prevMessages) => [...res.data.reverse(), ...prevMessages]);
-                setOffset(newOffset); // Update the offset
+                setAllMessages((prevMessages) => [...res.data, ...prevMessages]);
+                setOffset(newOffset);
+            } else {
+                setHasMoreMessages(false); // No more messages to load
             }
         } catch (error) {
             console.error("Error loading more messages:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
