@@ -374,13 +374,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     }, []);
 
     useEffect(() => {
-        console.log("Trigerred");
-
         if (!selectedUser || !messages.length) return;
 
-        const unreadMessages = messages.filter(
-            (message) => message.sender_id === selectedUser.id && message.receiver_id === currentUser.id && !message.read
-        );
+        const unreadMessages = messages.filter((message) => message.sender_id === selectedUser.id && !message.read);
 
         if (unreadMessages.length > 0) {
             const messageIds = unreadMessages.map((message) => message.message_id);
@@ -404,8 +400,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     useEffect(() => {
         socket.on("messageRead", (data: { receiverId: number; messageIds: { messageId: number; readTimestamp: string }[] }) => {
-            console.log("Received");
-
             setMessages((prevMessages) =>
                 prevMessages.map((message) => {
                     const readMessage = data.messageIds.find((m) => m.messageId === message.message_id);
