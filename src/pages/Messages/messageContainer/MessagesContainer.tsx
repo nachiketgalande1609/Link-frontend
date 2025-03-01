@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Typography,
     Box,
@@ -34,6 +34,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 
 import TypingIndicator from "../../../component/TypingIndicator"; // Import the TypingIndicator component
+import { getMessagesDataForSelectedUser } from "../../../services/api";
 
 interface MessagesContainerProps {
     selectedUser: User | null;
@@ -122,15 +123,41 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
 
     const [isScrolledUp, setIsScrolledUp] = useState(false);
 
+    const [offset, setOffset] = useState(0); // Track the offset for pagination
+    const [allMessages, setAllMessages] = useState<Message[]>(messages); // Store all messages
+
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        const { scrollTop } = e.currentTarget;
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
-        const isNearBottom = scrollTop > -100;
+        const scrollBottom = scrollHeight - clientHeight - Math.abs(scrollTop);
 
-        if (isNearBottom) {
-            setIsScrolledUp(false);
-        } else {
-            setIsScrolledUp(true);
+        if (scrollBottom < 100) {
+            loadMoreMessages();
+        }
+
+        // Check if the user is near the bottom
+        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+        setIsScrolledUp(!isNearBottom);
+    };
+
+    useEffect(() => {
+        setAllMessages(messages);
+    }, [messages]);
+
+    const loadMoreMessages = async () => {
+        if (!selectedUser) return;
+
+        try {
+            const newOffset = offset + 20; // Increment the offset
+            const res = await getMessagesDataForSelectedUser(selectedUser.id, newOffset, 20); // Fetch more messages
+
+            if (res.data.length > 0) {
+                // Prepend the new messages to the existing list
+                setAllMessages((prevMessages) => [...res.data.reverse(), ...prevMessages]);
+                setOffset(newOffset); // Update the offset
+            }
+        } catch (error) {
+            console.error("Error loading more messages:", error);
         }
     };
 
@@ -184,7 +211,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
             {selectedUser ? (
                 <>
                     {typingUser === selectedUser?.id && <TypingIndicator />}
-                    {Object.values(messages)
+                    {Object.values(allMessages)
                         .flat()
                         .reverse()
                         .map((msg, index) => {

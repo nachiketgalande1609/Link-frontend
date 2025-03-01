@@ -109,12 +109,13 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         }
     };
 
-    const fetchMessagesForSelectedUser = async () => {
+    const fetchMessagesForSelectedUser = async (offset = 0, limit = 20) => {
         if (!selectedUser) return;
 
         try {
-            const res = await getMessagesDataForSelectedUser(selectedUser.id);
-            setMessages(res.data);
+            const res = await getMessagesDataForSelectedUser(selectedUser.id, offset, limit);
+
+            setMessages((prevMessages) => (offset === 0 ? res.data : [...res.data, ...prevMessages]));
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
         }

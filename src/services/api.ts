@@ -546,11 +546,13 @@ export const getAllMessageUsersData = async () => {
     }
 };
 
-export const getMessagesDataForSelectedUser = async (selectedUserId: number | undefined) => {
+export const getMessagesDataForSelectedUser = async (selectedUserId: number | undefined, offset: number = 0, limit: number = 20) => {
     try {
         const response = await api.get(GET_ALL_MESSAGES_ENDPOINT, {
             params: {
                 selectedUserId,
+                offset,
+                limit,
             },
         });
 
