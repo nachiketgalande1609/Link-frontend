@@ -15,7 +15,15 @@ interface messagesTopBarProps {
     setChatTheme: (theme: string) => void;
     openVideoCall: () => void;
 }
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
+type User = {
+    id: number;
+    username: string;
+    profile_picture: string;
+    isOnline: boolean;
+    latest_message: string;
+    latest_message_timestamp: string;
+    unread_count: number;
+};
 
 const themeBackgrounds = ["black", `url(${bg1})`, `url(${bg2})`, `url(${bg3})`, `url(${bg4})`];
 

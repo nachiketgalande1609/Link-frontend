@@ -62,7 +62,6 @@ const ModalPost: React.FC<PostProps> = ({
     fileUrl,
     timeAgo,
     postId,
-    userId,
     fetchPosts,
     hasUserLikedPost,
     initialComments,

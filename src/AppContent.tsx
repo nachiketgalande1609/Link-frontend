@@ -31,7 +31,15 @@ if (currentUser && currentUser.id) {
     socket.emit("registerUser", currentUser.id);
 }
 
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
+type User = {
+    id: number;
+    username: string;
+    profile_picture: string;
+    isOnline: boolean;
+    latest_message: string;
+    latest_message_timestamp: string;
+    unread_count: number;
+};
 
 const AppContent = () => {
     const { user, unreadNotificationsCount, setUnreadNotificationsCount, unreadMessagesCount, setUnreadMessagesCount, postUploading } =

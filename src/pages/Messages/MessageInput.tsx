@@ -11,7 +11,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
+type User = {
+    id: number;
+    username: string;
+    profile_picture: string;
+    isOnline: boolean;
+    latest_message: string;
+    latest_message_timestamp: string;
+    unread_count: number;
+};
 
 type Message = {
     message_id: number;

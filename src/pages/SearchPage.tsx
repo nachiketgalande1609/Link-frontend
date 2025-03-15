@@ -25,8 +25,6 @@ export default function SearchPage() {
     const navigate = useNavigate();
     const searchInputRef = useRef<HTMLInputElement>(null);
 
-    const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
-
     // Load search history
     useEffect(() => {
         const loadHistory = async () => {

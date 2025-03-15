@@ -65,7 +65,15 @@ interface Post {
     }>;
 }
 
-type User = { id: number; username: string; profile_picture: string; isOnline: boolean };
+type User = {
+    id: number;
+    username: string;
+    profile_picture: string;
+    isOnline: boolean;
+    latest_message: string;
+    latest_message_timestamp: string;
+    unread_count: number;
+};
 
 interface PostProps {
     post: Post;
