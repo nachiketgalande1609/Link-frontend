@@ -15,6 +15,7 @@ const RegisterPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [checked, setChecked] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setChecked(true);
@@ -24,15 +25,18 @@ const RegisterPage: React.FC = () => {
         e.preventDefault();
         setError(null);
         setSuccess(null);
+        setLoading(true);
 
         // Validate passwords
         if (password !== confirmPassword) {
             setError("Passwords do not match!");
+            setLoading(false);
             return;
         }
 
         if (password.length < 6) {
             setError("Password must be at least 6 characters.");
+            setLoading(false);
             return;
         }
 
@@ -88,6 +92,8 @@ const RegisterPage: React.FC = () => {
             }
         } catch (err: any) {
             setError(err.response?.data?.error || "Registration failed!");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -254,7 +260,9 @@ const RegisterPage: React.FC = () => {
                             variant="contained"
                             color="primary"
                             fullWidth
+                            loading={loading}
                             onClick={handleRegister}
+                            disabled={loading || !email || !username || !password || !confirmPassword}
                             sx={{ mt: 2, borderRadius: "15px", height: "38.67px" }}
                         >
                             Register

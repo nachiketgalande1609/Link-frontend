@@ -12,6 +12,7 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [checked, setChecked] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setChecked(true);
@@ -22,6 +23,7 @@ const LoginPage: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
+        setLoading(true);
 
         try {
             // Step 1: Call the login API
@@ -52,6 +54,8 @@ const LoginPage: React.FC = () => {
         } catch (err: any) {
             console.error("Login error:", err);
             setError(err.response?.data?.error || "Login failed!"); // Ensure error is a string
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -136,6 +140,9 @@ const LoginPage: React.FC = () => {
                             position: "relative",
                             overflow: "hidden",
                             border: "2px solid transparent",
+                            display: "flex",
+                            justifyContent: "center",
+                            flexDirection: "column",
                             "&::before": {
                                 content: '""',
                                 position: "absolute",
@@ -205,7 +212,15 @@ const LoginPage: React.FC = () => {
                                 }}
                             />
                             {/* Login Button */}
-                            <Button variant="contained" color="primary" fullWidth type="submit" sx={{ mt: 2, borderRadius: "15px" }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                loading={loading}
+                                disabled={loading || !email || !password}
+                                fullWidth
+                                type="submit"
+                                sx={{ mt: 2, borderRadius: "15px" }}
+                            >
                                 Login
                             </Button>
                         </form>
@@ -215,8 +230,12 @@ const LoginPage: React.FC = () => {
                         <GoogleLogin
                             onSuccess={handleGoogleLogin}
                             onError={() => {
-                                setError("Google login failed!"); // Ensure error is a string
+                                setError("Google login failed!");
                             }}
+                            theme="outline"
+                            text="signin_with"
+                            shape="pill"
+                            width="100%"
                         />
 
                         <Typography sx={{ mt: 4 }}>
