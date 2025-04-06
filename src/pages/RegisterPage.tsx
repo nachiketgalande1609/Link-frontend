@@ -260,6 +260,7 @@ const RegisterPage: React.FC = () => {
                             variant="contained"
                             color="primary"
                             fullWidth
+                            type="submit"
                             loading={loading}
                             onClick={handleRegister}
                             disabled={loading || !email || !username || !password || !confirmPassword}

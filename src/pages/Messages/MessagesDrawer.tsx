@@ -11,6 +11,7 @@ import {
     useMediaQuery,
     useTheme,
     Drawer,
+    LinearProgress,
     Badge,
 } from "@mui/material";
 import { ChevronLeft as ChevronLeftIcon, PersonAdd as PersonAddIcon } from "@mui/icons-material";
@@ -52,12 +53,21 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [usersList, setUsersList] = useState<User[]>([]);
+    const [loading, setLoading] = useState(false);
+
     const open = Boolean(anchorEl);
 
     const fetchUsersList = async () => {
-        const response = await getFollowingUsers();
-        if (response.success) {
-            setUsersList(response.data);
+        setLoading(true);
+        try {
+            const response = await getFollowingUsers();
+            if (response.success) {
+                setUsersList(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching users list:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -83,103 +93,116 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         <Typography variant="h6" sx={{ p: "20px", borderBottom: "1px solid #202327" }}>
                             Messages
                         </Typography>
-                        <List sx={{ padding: 0 }}>
-                            {users.map((user) => {
-                                const lastMessageText = user.latest_message;
-                                const isOnline = onlineUsers.includes(user.id.toString());
-                                const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
-                                const unreadCount = 0; // Single message check
+                        {loading ? (
+                            <LinearProgress
+                                sx={{
+                                    width: "100%",
+                                    height: "3px",
+                                    background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                                    "& .MuiLinearProgress-bar": {
+                                        background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                                    },
+                                }}
+                            />
+                        ) : (
+                            <List sx={{ padding: 0 }}>
+                                {users.map((user) => {
+                                    const lastMessageText = user.latest_message;
+                                    const isOnline = onlineUsers.includes(user.id.toString());
+                                    const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
+                                    const unreadCount = 0; // Single message check
 
-                                return (
-                                    <ListItem
-                                        sx={{
-                                            backgroundColor:
-                                                selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
-                                            padding: "12px",
-                                            textAlign: "left",
-                                            width: "100%",
-                                            border: "none",
-                                            position: "relative",
-                                        }}
-                                        component="button"
-                                        key={user.id}
-                                        onClick={() => {
-                                            handleUserClick(user.id);
-                                        }}
-                                    >
-                                        <ListItemAvatar sx={{ position: "relative" }}>
-                                            <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
-                                            {isOnline && (
-                                                <Box
+                                    return (
+                                        <ListItem
+                                            sx={{
+                                                backgroundColor:
+                                                    selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
+                                                padding: "12px",
+                                                textAlign: "left",
+                                                width: "100%",
+                                                border: "none",
+                                                position: "relative",
+                                            }}
+                                            component="button"
+                                            key={user.id}
+                                            onClick={() => {
+                                                handleUserClick(user.id);
+                                            }}
+                                        >
+                                            <ListItemAvatar sx={{ position: "relative" }}>
+                                                <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
+                                                {isOnline && (
+                                                    <Box
+                                                        sx={{
+                                                            width: "10px",
+                                                            height: "10px",
+                                                            borderRadius: "50%",
+                                                            backgroundColor: "#54ff54",
+                                                            position: "absolute",
+                                                            bottom: 0,
+                                                            right: 13,
+                                                            border: "1px solid #000",
+                                                        }}
+                                                    />
+                                                )}
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={user.username}
+                                                secondary={
+                                                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                        <Typography
+                                                            variant="body2"
+                                                            sx={{
+                                                                color: "#aaa",
+                                                                whiteSpace: "nowrap",
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                maxWidth: "calc(100% - 50px)",
+                                                            }}
+                                                        >
+                                                            {lastMessageText}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="caption"
+                                                            sx={{
+                                                                color: "#aaa",
+                                                                whiteSpace: "nowrap",
+                                                                marginLeft: "8px",
+                                                            }}
+                                                        >
+                                                            {lastMessageTimestamp}
+                                                        </Typography>
+                                                    </Box>
+                                                }
+                                            />
+                                            {unreadCount > 0 && (
+                                                <Badge
+                                                    badgeContent={unreadCount}
+                                                    color="primary"
                                                     sx={{
-                                                        width: "10px",
-                                                        height: "10px",
-                                                        borderRadius: "50%",
-                                                        backgroundColor: "#54ff54",
                                                         position: "absolute",
-                                                        bottom: 0,
-                                                        right: 13,
-                                                        border: "1px solid #000",
+                                                        right: "22px",
+                                                        top: "calc(50% - 13px )",
+                                                        transform: "translateY(-50%)",
                                                     }}
                                                 />
                                             )}
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                            primary={user.username}
-                                            secondary={
-                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            color: "#aaa",
-                                                            whiteSpace: "nowrap",
-                                                            overflow: "hidden",
-                                                            textOverflow: "ellipsis",
-                                                            maxWidth: "calc(100% - 50px)",
-                                                        }}
-                                                    >
-                                                        {lastMessageText}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="caption"
-                                                        sx={{
-                                                            color: "#aaa",
-                                                            whiteSpace: "nowrap",
-                                                            marginLeft: "8px",
-                                                        }}
-                                                    >
-                                                        {lastMessageTimestamp}
-                                                    </Typography>
-                                                </Box>
-                                            }
-                                        />
-                                        {unreadCount > 0 && (
-                                            <Badge
-                                                badgeContent={unreadCount}
-                                                color="primary"
-                                                sx={{
+                                            <div
+                                                style={{
                                                     position: "absolute",
-                                                    right: "22px",
-                                                    top: "calc(50% - 13px )",
-                                                    transform: "translateY(-50%)",
+                                                    right: 0,
+                                                    top: "0",
+                                                    bottom: "0",
+                                                    width: "4px",
+                                                    backgroundColor: "#1976D2",
+                                                    visibility: selectedUser?.id === user.id ? "visible" : "hidden",
                                                 }}
                                             />
-                                        )}
-                                        <div
-                                            style={{
-                                                position: "absolute",
-                                                right: 0,
-                                                top: "0",
-                                                bottom: "0",
-                                                width: "4px",
-                                                backgroundColor: "#1976D2",
-                                                visibility: selectedUser?.id === user.id ? "visible" : "hidden",
-                                            }}
-                                        />
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
+                                        </ListItem>
+                                    );
+                                })}
+                            </List>
+                        )}
                     </Box>
                 </Drawer>
             ) : (
@@ -214,107 +237,121 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                         usersList={usersList}
                         handleUserClick={handleUserClick}
                     />
-                    <List sx={{ padding: 0 }}>
-                        {users?.map((user) => {
-                            const lastMessageText = user.latest_message;
-                            const unreadCount = user.unread_count || 0; // Single message check
-                            const isOnline = onlineUsers.includes(user.id.toString());
-                            const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
+                    {loading ? (
+                        <LinearProgress
+                            sx={{
+                                width: "100%",
+                                height: "3px",
+                                background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                                "& .MuiLinearProgress-bar": {
+                                    background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                                },
+                            }}
+                        />
+                    ) : (
+                        <List sx={{ padding: 0 }}>
+                            {users?.map((user) => {
+                                const lastMessageText = user.latest_message;
+                                const unreadCount = user.unread_count || 0; // Single message check
+                                const isOnline = onlineUsers.includes(user.id.toString());
+                                const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
 
-                            return (
-                                <ListItem
-                                    component="button"
-                                    key={user.id}
-                                    onClick={() => handleUserClick(user.id)}
-                                    sx={{
-                                        backgroundColor: selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
-                                        padding: "12px",
-                                        textAlign: "left",
-                                        width: "100%",
-                                        border: "none",
-                                        position: "relative",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    <ListItemAvatar sx={{ position: "relative" }}>
-                                        <Avatar
-                                            sx={{ width: "50px", height: "50px", mr: "12px" }}
-                                            src={user.profile_picture || "https://via.placeholder.com/40"}
+                                return (
+                                    <ListItem
+                                        component="button"
+                                        key={user.id}
+                                        onClick={() => handleUserClick(user.id)}
+                                        sx={{
+                                            backgroundColor:
+                                                selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
+                                            padding: "12px",
+                                            textAlign: "left",
+                                            width: "100%",
+                                            border: "none",
+                                            position: "relative",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <ListItemAvatar sx={{ position: "relative" }}>
+                                            <Avatar
+                                                sx={{ width: "50px", height: "50px", mr: "12px" }}
+                                                src={user.profile_picture || "https://via.placeholder.com/40"}
+                                            />
+                                            {isOnline && (
+                                                <Box
+                                                    sx={{
+                                                        width: "12px",
+                                                        height: "12px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#54ff54",
+                                                        position: "absolute",
+                                                        bottom: 0,
+                                                        right: 10,
+                                                        border: "1px solid #000",
+                                                    }}
+                                                />
+                                            )}
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={user.username}
+                                            secondary={
+                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            color: "#aaa",
+                                                            whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            maxWidth: "calc(100% - 50px)", // Adjust based on layout
+                                                        }}
+                                                    >
+                                                        {lastMessageText}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="caption"
+                                                        sx={{
+                                                            color: "#aaa",
+                                                            whiteSpace: "nowrap",
+                                                            marginLeft: "8px",
+                                                        }}
+                                                    >
+                                                        {lastMessageTimestamp}
+                                                    </Typography>
+                                                </Box>
+                                            }
                                         />
-                                        {isOnline && (
-                                            <Box
+
+                                        {/* Unread Messages Badge */}
+                                        {unreadCount > 0 && (
+                                            <Badge
+                                                badgeContent={unreadCount}
+                                                color="primary"
                                                 sx={{
-                                                    width: "12px",
-                                                    height: "12px",
-                                                    borderRadius: "50%",
-                                                    backgroundColor: "#54ff54",
                                                     position: "absolute",
-                                                    bottom: 0,
-                                                    right: 10,
-                                                    border: "1px solid #000",
+                                                    right: "22px",
+                                                    top: "calc(50% - 13px )",
+                                                    transform: "translateY(-50%)",
                                                 }}
                                             />
                                         )}
-                                    </ListItemAvatar>
-                                    <ListItemText
-                                        primary={user.username}
-                                        secondary={
-                                            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                                <Typography
-                                                    variant="body2"
-                                                    sx={{
-                                                        color: "#aaa",
-                                                        whiteSpace: "nowrap",
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        maxWidth: "calc(100% - 50px)", // Adjust based on layout
-                                                    }}
-                                                >
-                                                    {lastMessageText}
-                                                </Typography>
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        color: "#aaa",
-                                                        whiteSpace: "nowrap",
-                                                        marginLeft: "8px",
-                                                    }}
-                                                >
-                                                    {lastMessageTimestamp}
-                                                </Typography>
-                                            </Box>
-                                        }
-                                    />
 
-                                    {/* Unread Messages Badge */}
-                                    {unreadCount > 0 && (
-                                        <Badge
-                                            badgeContent={unreadCount}
-                                            color="primary"
-                                            sx={{
+                                        <div
+                                            style={{
                                                 position: "absolute",
-                                                right: "22px",
-                                                top: "calc(50% - 13px )",
-                                                transform: "translateY(-50%)",
+                                                right: 0,
+                                                top: "0",
+                                                bottom: "0",
+                                                width: "4px",
+                                                backgroundColor: "#1976D2",
+                                                visibility: selectedUser?.id === user.id ? "visible" : "hidden",
                                             }}
                                         />
-                                    )}
-
-                                    <div
-                                        style={{
-                                            position: "absolute",
-                                            right: 0,
-                                            top: "0",
-                                            bottom: "0",
-                                            width: "4px",
-                                            backgroundColor: "#1976D2",
-                                            visibility: selectedUser?.id === user.id ? "visible" : "hidden",
-                                        }}
-                                    />
-                                </ListItem>
-                            );
-                        })}
-                    </List>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    )}
                 </Box>
             )}
         </div>

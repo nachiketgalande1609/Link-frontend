@@ -86,6 +86,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
     const [chatTheme, setChatTheme] = useState(() => localStorage.getItem("chatTheme") || "");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [initialMessageLoaded, setInitialMessageLoaded] = useState(false);
 
     const handleReply = (msg: Message) => {
         setSelectedMessageForReply(msg);
@@ -111,15 +112,17 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     const fetchMessagesForSelectedUser = async (offset = 0, limit = 20) => {
         if (!selectedUser) return;
+        setInitialMessageLoaded(true);
 
         try {
             const res = await getMessagesDataForSelectedUser(selectedUser.id, offset, limit);
-            // Reverse the array without mutating the original
             const reversedData = res.data.slice().reverse();
 
             setMessages((prevMessages) => (offset === 0 ? reversedData : [...reversedData, ...prevMessages]));
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
+        } finally {
+            setInitialMessageLoaded(false);
         }
     };
 
@@ -446,8 +449,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     };
 
     socket.on("reaction-received", ({ messageId, senderUserId, reaction }) => {
-        console.log("Reaction Received");
-
         setMessages((prevMessages) =>
             prevMessages.map((message) =>
                 message.message_id === messageId
@@ -533,6 +534,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                     handleDeleteMessage={handleDeleteMessage}
                     handleReaction={handleReaction}
                     typingUser={typingUser}
+                    initialMessageLoaded={initialMessageLoaded}
                 />
 
                 {/* Message Input Box*/}

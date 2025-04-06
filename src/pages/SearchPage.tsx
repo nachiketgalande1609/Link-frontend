@@ -10,6 +10,8 @@ import {
     ListItemButton,
     Avatar,
     ListItemAvatar,
+    LinearProgress,
+    Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDebounce } from "../utils/utils";
@@ -28,11 +30,14 @@ export default function SearchPage() {
     // Load search history
     useEffect(() => {
         const loadHistory = async () => {
+            setLoading(true);
             try {
                 const response = await getSearchHistory();
                 setHistory(response.data);
             } catch (error) {
                 console.error("Failed to load history:", error);
+            } finally {
+                setLoading(false);
             }
         };
         loadHistory();
@@ -89,60 +94,86 @@ export default function SearchPage() {
     }, [debouncedQuery]);
 
     return (
-        <Container maxWidth="sm" sx={{ mt: 4 }}>
-            <TextField
-                sx={{
-                    "& .MuiOutlinedInput-root": {
-                        borderRadius: "20px",
-                        mb: 1,
-                    },
-                }}
-                fullWidth
-                placeholder="Search Users"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                inputRef={searchInputRef} // Attach ref here
-            />
-            {loading && <CircularProgress sx={{ display: "block", mx: "auto" }} />}
-            {/* Search Results */}
-            {results.length > 0 && (
-                <List sx={{ padding: 0 }}>
-                    {results.map((user) => (
-                        <ListItem key={user.id} sx={{ padding: "5px 0" }} onClick={() => handleUserClick(user)}>
-                            <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
-                                <ListItemAvatar>
-                                    <Avatar src={user.profile_picture} />
-                                </ListItemAvatar>
-                                <ListItemText primary={user.username} secondary={user.email} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-            )}
-            {/* Search History */}
-            {!debouncedQuery && history?.length > 0 && (
-                <List sx={{ padding: 0 }}>
-                    {history.map((item) => (
-                        <ListItem key={item.history_id} sx={{ padding: "5px 0" }} onClick={() => navigate(`/profile/${item.id}`)}>
-                            <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
-                                <ListItemAvatar>
-                                    <Avatar src={item.profile_picture} />
-                                </ListItemAvatar>
-                                <ListItemText primary={item.username} secondary={item.email} />
-                                <IconButton
-                                    edge="end"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteHistory(item.history_id);
-                                    }}
-                                    sx={{ color: "hsl(226, 11%, 40%)", "&:hover": { backgroundColor: "transparent", color: "#ffffff" } }}
-                                >
-                                    <CloseIcon fontSize="small" />
-                                </IconButton>
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
+        <Container
+            maxWidth="sm"
+            disableGutters
+            sx={{
+                minHeight: "100vh",
+                borderLeft: "1px solid #202327",
+                borderRight: "1px solid #202327",
+                p: 0,
+            }}
+        >
+            <Box sx={{ borderBottom: "1px solid #202327", padding: "20px 20px 10px 20px" }}>
+                <TextField
+                    sx={{
+                        "& .MuiInput-underline:before": { borderBottom: "none !important" },
+                        "& .MuiInput-underline:after": { borderBottom: "none !important" },
+                        "& .MuiInput-underline:hover:before": { borderBottom: "none !important" },
+                    }}
+                    fullWidth
+                    placeholder="Search Users"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    inputRef={searchInputRef}
+                    variant="standard"
+                />
+            </Box>
+
+            {loading ? (
+                <LinearProgress
+                    sx={{
+                        width: "100%",
+                        height: "3px",
+                        background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        "& .MuiLinearProgress-bar": {
+                            background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        },
+                    }}
+                />
+            ) : (
+                <Box sx={{ padding: "10px 20px" }}>
+                    {/* Search Results */}
+                    {results.length > 0 && (
+                        <List sx={{ padding: 0 }}>
+                            {results.map((user) => (
+                                <ListItem key={user.id} sx={{ padding: "5px 0" }} onClick={() => handleUserClick(user)}>
+                                    <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
+                                        <ListItemAvatar>
+                                            <Avatar src={user.profile_picture} />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={user.username} secondary={user.email} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    )}
+                    {/* Search History */}
+                    {!debouncedQuery && history?.length > 0 && (
+                        <List sx={{ padding: 0 }}>
+                            {history.map((item) => (
+                                <ListItem key={item.history_id} sx={{ padding: "5px 0" }} onClick={() => navigate(`/profile/${item.id}`)}>
+                                    <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
+                                        <ListItemAvatar>
+                                            <Avatar src={item.profile_picture} />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={item.username} secondary={item.email} />
+                                        <IconButton
+                                            edge="end"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteHistory(item.history_id);
+                                            }}
+                                            sx={{ color: "hsl(226, 11%, 40%)", "&:hover": { backgroundColor: "transparent", color: "#ffffff" } }}
+                                        >
+                                            <CloseIcon fontSize="small" />
+                                        </IconButton>
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    )}
+                </Box>
             )}
         </Container>
     );
