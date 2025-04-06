@@ -1,4 +1,4 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography, LinearProgress } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, Box, Typography, LinearProgress } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";

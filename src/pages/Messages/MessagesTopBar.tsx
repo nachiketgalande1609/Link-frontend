@@ -9,11 +9,44 @@ import bg4 from "../../static/bg4.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVideoCamera } from "@fortawesome/free-solid-svg-icons";
 
+type Message = {
+    message_id: number;
+    receiver_id: number;
+    sender_id: number;
+    message_text: string;
+    timestamp: string;
+    delivered?: boolean;
+    read?: boolean;
+    saved?: boolean;
+    file_url: string;
+    delivered_timestamp?: string | null;
+    read_timestamp?: string | null;
+    file_name: string | null;
+    file_size: string | null;
+    reply_to: number | null;
+    media_height: number | null;
+    media_width: number | null;
+    reactions?: Record<number, string> | null;
+    post?: {
+        post_id: number;
+        file_url: string;
+        media_width: number;
+        media_height: number;
+        content: string;
+        owner: {
+            user_id: number;
+            username: string;
+            profile_picture: string;
+        };
+    } | null;
+};
+
 interface messagesTopBarProps {
     selectedUser: User | null;
     chatTheme: string;
     setChatTheme: (theme: string) => void;
     openVideoCall: () => void;
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 }
 type User = {
     id: number;
@@ -27,7 +60,7 @@ type User = {
 
 const themeBackgrounds = ["black", `url(${bg1})`, `url(${bg2})`, `url(${bg3})`, `url(${bg4})`];
 
-const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme, setChatTheme, openVideoCall }) => {
+const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme, setChatTheme, openVideoCall, setMessages }) => {
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -48,7 +81,13 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
         >
             <Box sx={{ display: "flex", alignItems: "center" }}>
                 {!isMobile && (
-                    <IconButton onClick={() => navigate("/messages")} sx={{ color: "white", mr: 1, ":hover": { backgroundColor: "transparent" } }}>
+                    <IconButton
+                        onClick={() => {
+                            navigate("/messages");
+                            setMessages([]);
+                        }}
+                        sx={{ color: "white", mr: 1, ":hover": { backgroundColor: "transparent" } }}
+                    >
                         <ChevronLeft />
                     </IconButton>
                 )}

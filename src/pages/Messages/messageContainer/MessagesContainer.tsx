@@ -166,7 +166,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
             const newOffset = offset + 20; // Increment the offset
             const res = await getMessagesDataForSelectedUser(selectedUser.id, newOffset, 20);
             if (res.data.length > 0) {
-                setAllMessages((prevMessages) => [...res.data, ...prevMessages]);
+                setAllMessages((prevMessages) => [...[...res.data].reverse(), ...prevMessages]);
                 setOffset(newOffset);
             } else {
                 setHasMoreMessages(false); // No more messages to load

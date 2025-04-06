@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, List, CircularProgress, Typography, LinearProgress } from "@mui/material";
+import { Container, List, Typography, LinearProgress } from "@mui/material";
 import { followUser, getNotifications, respondToFollowRequest } from "../../services/api";
 import { useGlobalStore } from "../../store/store";
 import NotificationCard from "./NotificationCard";

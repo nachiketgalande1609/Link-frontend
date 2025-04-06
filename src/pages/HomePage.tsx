@@ -1,4 +1,4 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography, Avatar } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, Box, Typography, Avatar, LinearProgress } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import StoryDialog from "../component/stories/StoryDialog";
@@ -150,8 +150,8 @@ const HomePage = () => {
                                 <Box
                                     sx={{
                                         position: "relative",
-                                        width: isMobile ? 65 : 81,
-                                        height: isMobile ? 65 : 81,
+                                        width: isMobile ? 75 : 81,
+                                        height: isMobile ? 75 : 81,
                                         borderRadius: "50%",
                                         display: "flex",
                                         alignItems: "center",
@@ -234,9 +234,16 @@ const HomePage = () => {
 
             {/* Posts Section */}
             {loadingPosts ? (
-                <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexDirection="column" flexGrow={1}>
-                    <CircularProgress />
-                </Box>
+                <LinearProgress
+                    sx={{
+                        width: "100%",
+                        height: "3px",
+                        background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        "& .MuiLinearProgress-bar": {
+                            background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        },
+                    }}
+                />
             ) : posts.length > 0 ? (
                 <Grid container spacing={3} sx={{ marginTop: "10px" }}>
                     {posts.map((post, index) => (

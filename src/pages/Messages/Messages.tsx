@@ -517,7 +517,13 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
             >
                 {/* Top bar */}
                 {selectedUser && (
-                    <MessagesTopBar selectedUser={selectedUser} chatTheme={chatTheme} setChatTheme={setChatTheme} openVideoCall={handleVideoCall} />
+                    <MessagesTopBar
+                        selectedUser={selectedUser}
+                        chatTheme={chatTheme}
+                        setChatTheme={setChatTheme}
+                        openVideoCall={handleVideoCall}
+                        setMessages={setMessages}
+                    />
                 )}
 
                 {/* Messages Container */}
