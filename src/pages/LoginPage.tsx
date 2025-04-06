@@ -236,6 +236,7 @@ const LoginPage: React.FC = () => {
                             text="signin_with"
                             shape="pill"
                             width="100%"
+                            useOneTap={false}
                         />
 
                         <Typography sx={{ mt: 4 }}>
