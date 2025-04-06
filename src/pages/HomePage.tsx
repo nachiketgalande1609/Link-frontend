@@ -186,7 +186,6 @@ const HomePage = () => {
             {loadingPosts ? (
                 <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexDirection="column" flexGrow={1}>
                     <CircularProgress />
-                    <Typography sx={{ mt: 3, fontSize: "0.9rem", color: "#909090" }}>Good things take time. The server is booting up!</Typography>
                 </Box>
             ) : posts.length > 0 ? (
                 <Grid container spacing={3} sx={{ marginTop: "10px" }}>
