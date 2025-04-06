@@ -204,7 +204,7 @@ const RegisterPage: React.FC = () => {
                     <form onSubmit={handleRegister}>
                         <TextField
                             fullWidth
-                            label="Email"
+                            placeholder="Email"
                             variant="outlined"
                             margin="normal"
                             value={email}
@@ -217,7 +217,7 @@ const RegisterPage: React.FC = () => {
                         />
                         <TextField
                             fullWidth
-                            label="Username"
+                            placeholder="Username"
                             variant="outlined"
                             margin="normal"
                             value={username}
@@ -230,7 +230,7 @@ const RegisterPage: React.FC = () => {
                         />
                         <TextField
                             fullWidth
-                            label="Password"
+                            placeholder="Password"
                             type="password"
                             variant="outlined"
                             margin="normal"
@@ -244,7 +244,7 @@ const RegisterPage: React.FC = () => {
                         />
                         <TextField
                             fullWidth
-                            label="Confirm Password"
+                            placeholder="Confirm Password"
                             type="password"
                             variant="outlined"
                             margin="normal"

@@ -185,7 +185,7 @@ const LoginPage: React.FC = () => {
                             {/* Email Field */}
                             <TextField
                                 fullWidth
-                                label="Email"
+                                placeholder="Email"
                                 variant="outlined"
                                 margin="normal"
                                 value={email}
@@ -199,7 +199,7 @@ const LoginPage: React.FC = () => {
                             {/* Password Field */}
                             <TextField
                                 fullWidth
-                                label="Password"
+                                placeholder="Password"
                                 type="password"
                                 variant="outlined"
                                 margin="normal"
