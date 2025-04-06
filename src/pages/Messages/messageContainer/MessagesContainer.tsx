@@ -50,7 +50,7 @@ interface MessagesContainerProps {
     handleDeleteMessage: (message: Message | null) => void;
     handleReaction: (messageId: number, reaction: string) => void;
     typingUser: number | null;
-    initialMessageLoaded: boolean;
+    initialMessageLoading: boolean;
 }
 
 type Message = {
@@ -110,7 +110,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     handleDeleteMessage,
     handleReaction,
     typingUser,
-    initialMessageLoaded,
+    initialMessageLoading,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -214,7 +214,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
 
     return (
         <>
-            {initialMessageLoaded ? (
+            {initialMessageLoading ? (
                 <Box
                     sx={{
                         flexGrow: 1,

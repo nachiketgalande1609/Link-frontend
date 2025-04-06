@@ -20,6 +20,7 @@ const HomePage = () => {
 
     const [selfStories, setSelfStories] = useState<any[]>([]);
     const [followingStories, setFollowingStories] = useState<any[]>([]);
+    const [fetchingStories, setFetchingStories] = useState<boolean>(true);
 
     const fetchPosts = async () => {
         try {
@@ -36,6 +37,7 @@ const HomePage = () => {
 
     const fetchStories = async () => {
         try {
+            setFetchingStories(true);
             const res = await getStories();
 
             // Process self stories
@@ -74,6 +76,8 @@ const HomePage = () => {
             setFollowingStories(Object.values(groupedFollowing));
         } catch (error) {
             console.error("Error fetching stories:", error);
+        } finally {
+            setFetchingStories(false);
         }
     };
 
@@ -140,45 +144,91 @@ const HomePage = () => {
 
                 {/* Other User Stories */}
                 <Box sx={{ display: "flex", gap: "16px" }}>
-                    {followingStories.map((userStory, index) => (
-                        <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    width: isMobile ? 65 : 70,
-                                    height: isMobile ? 65 : 70,
-                                    padding: "3px",
-                                    border: "3px solid #ff8800",
-                                    borderRadius: "50%",
-                                }}
-                            >
-                                <Avatar
-                                    src={userStory.profile_picture || "https://via.placeholder.com/50"}
-                                    onClick={() => {
-                                        // Calculate correct index accounting for self stories
-                                        const actualIndex = selfStories.length + index;
-                                        setSelectedStoryIndex(actualIndex);
-                                        setOpenStoryDialog(true);
+                    {fetchingStories ? (
+                        <>
+                            <Box display="flex" flexDirection="column" alignItems="center" sx={{ marginBottom: "25px" }}>
+                                <Box
+                                    sx={{
+                                        position: "relative",
+                                        width: isMobile ? 65 : 81,
+                                        height: isMobile ? 65 : 81,
+                                        borderRadius: "50%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        overflow: "hidden",
+                                        "&::before": {
+                                            content: '""',
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0,
+                                            margin: "auto",
+                                            borderRadius: "50%",
+                                            padding: "3px",
+                                            background: "conic-gradient(#7a60ff, #ff8800, #7a60ff)",
+                                            WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))",
+                                            mask: "radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))",
+                                            animation: "spin 1s linear infinite",
+                                        },
+                                        "@keyframes spin": {
+                                            "0%": {
+                                                transform: "rotate(0deg)",
+                                            },
+                                            "100%": {
+                                                transform: "rotate(360deg)",
+                                            },
+                                        },
                                     }}
-                                    sx={{ width: "100%", height: "100%", cursor: "pointer" }}
-                                />
+                                >
+                                    {/* Optional inner content, like an icon or image */}
+                                </Box>
                             </Box>
-                            <Typography
-                                sx={{
-                                    fontSize: "0.75rem",
-                                    maxWidth: 70,
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {userStory.username}
-                            </Typography>
-                        </Box>
-                    ))}
+                        </>
+                    ) : (
+                        <>
+                            {followingStories.map((userStory, index) => (
+                                <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            width: isMobile ? 65 : 70,
+                                            height: isMobile ? 65 : 70,
+                                            padding: "3px",
+                                            border: "3px solid #ff8800",
+                                            borderRadius: "50%",
+                                        }}
+                                    >
+                                        <Avatar
+                                            src={userStory.profile_picture || "https://via.placeholder.com/50"}
+                                            onClick={() => {
+                                                // Calculate correct index accounting for self stories
+                                                const actualIndex = selfStories.length + index;
+                                                setSelectedStoryIndex(actualIndex);
+                                                setOpenStoryDialog(true);
+                                            }}
+                                            sx={{ width: "100%", height: "100%", cursor: "pointer" }}
+                                        />
+                                    </Box>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "0.75rem",
+                                            maxWidth: 70,
+                                            whiteSpace: "nowrap",
+                                            overflow: "hidden",
+                                            textOverflow: "ellipsis",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {userStory.username}
+                                    </Typography>
+                                </Box>
+                            ))}
+                        </>
+                    )}
                 </Box>
             </Box>
 

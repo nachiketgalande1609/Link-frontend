@@ -86,7 +86,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     const [selectedMessageForReply, setSelectedMessageForReply] = useState<Message | null>(null);
     const [chatTheme, setChatTheme] = useState(() => localStorage.getItem("chatTheme") || "");
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [initialMessageLoaded, setInitialMessageLoaded] = useState(false);
+    const [initialMessageLoading, setInitialMessageLoading] = useState(false);
 
     const handleReply = (msg: Message) => {
         setSelectedMessageForReply(msg);
@@ -112,7 +112,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     const fetchMessagesForSelectedUser = async (offset = 0, limit = 20) => {
         if (!selectedUser) return;
-        setInitialMessageLoaded(true);
+        setInitialMessageLoading(true);
 
         try {
             const res = await getMessagesDataForSelectedUser(selectedUser.id, offset, limit);
@@ -122,7 +122,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         } catch (error) {
             console.error("Failed to fetch users and messages:", error);
         } finally {
-            setInitialMessageLoaded(false);
+            setInitialMessageLoading(false);
         }
     };
 
@@ -534,7 +534,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                     handleDeleteMessage={handleDeleteMessage}
                     handleReaction={handleReaction}
                     typingUser={typingUser}
-                    initialMessageLoaded={initialMessageLoaded}
+                    initialMessageLoading={initialMessageLoading}
                 />
 
                 {/* Message Input Box*/}

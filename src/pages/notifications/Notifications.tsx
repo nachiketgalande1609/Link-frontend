@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, List, CircularProgress, Typography } from "@mui/material";
+import { Container, List, CircularProgress, Typography, LinearProgress } from "@mui/material";
 import { followUser, getNotifications, respondToFollowRequest } from "../../services/api";
 import { useGlobalStore } from "../../store/store";
 import NotificationCard from "./NotificationCard";
@@ -70,24 +70,37 @@ const NotificationsPage = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: 4 }}>
+        <>
             {loading ? (
-                <CircularProgress sx={{ display: "block", mx: "auto", mt: 3 }} />
-            ) : notifications.length === 0 ? (
-                <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>No new notifications.</Typography>
+                <LinearProgress
+                    sx={{
+                        width: "100%",
+                        height: "3px",
+                        background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        "& .MuiLinearProgress-bar": {
+                            background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        },
+                    }}
+                />
             ) : (
-                <List>
-                    {notifications.map((notification) => (
-                        <NotificationCard
-                            key={notification.id}
-                            notification={notification}
-                            onFollowBack={handleFollowBack}
-                            onFollowRequestResponse={handleFollowRequestResponse}
-                        />
-                    ))}
-                </List>
+                <Container maxWidth="sm" sx={{ mt: 4 }}>
+                    {notifications.length === 0 ? (
+                        <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>No new notifications.</Typography>
+                    ) : (
+                        <List>
+                            {notifications.map((notification) => (
+                                <NotificationCard
+                                    key={notification.id}
+                                    notification={notification}
+                                    onFollowBack={handleFollowBack}
+                                    onFollowRequestResponse={handleFollowRequestResponse}
+                                />
+                            ))}
+                        </List>
+                    )}
+                </Container>
             )}
-        </Container>
+        </>
     );
 };
 

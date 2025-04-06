@@ -1,4 +1,4 @@
-import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography } from "@mui/material";
+import { Container, Grid, useMediaQuery, useTheme, CircularProgress, Box, Typography, LinearProgress } from "@mui/material";
 import { SentimentDissatisfied } from "@mui/icons-material";
 import Post from "../component/post/Post";
 import { useEffect, useState } from "react";
@@ -29,44 +29,55 @@ const SavedPage = () => {
     }, []);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+        <>
             {loading ? (
-                <Box display="flex" justifyContent="center" alignItems="center" width="100%" flexGrow={1}>
-                    <CircularProgress />
-                </Box>
-            ) : posts.length > 0 ? (
-                <Grid container spacing={3} sx={{ marginTop: "10px" }}>
-                    {posts.map((post, index) => (
-                        <Grid
-                            item
-                            xs={12}
-                            sm={12}
-                            md={12}
-                            key={post.id}
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                flexDirection: "column",
-                                paddingTop: isMobile ? "0 !important" : "20px",
-                                marginBottom: isMobile && index !== posts.length - 1 ? "2px" : "none", // Apply border except for last item
-                            }}
-                        >
-                            <Post post={post} fetchPosts={fetchPosts} borderRadius="20px" isSaved={true} />
-                        </Grid>
-                    ))}
-                </Grid>
+                <LinearProgress
+                    sx={{
+                        width: "100%",
+                        height: "3px",
+                        background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        "& .MuiLinearProgress-bar": {
+                            background: "linear-gradient(90deg, #7a60ff, #ff8800)",
+                        },
+                    }}
+                />
             ) : (
-                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
-                    <SentimentDissatisfied sx={{ fontSize: 60, color: "gray" }} />
-                    <Typography variant="h6" color="textSecondary" mt={2}>
-                        You haven't saved any posts yet
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        Browse and save posts to see them here.
-                    </Typography>
-                </Box>
+                <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+                    {posts.length > 0 ? (
+                        <Grid container spacing={3} sx={{ marginTop: "10px" }}>
+                            {posts.map((post, index) => (
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={12}
+                                    md={12}
+                                    key={post.id}
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        flexDirection: "column",
+                                        paddingTop: isMobile ? "0 !important" : "20px",
+                                        marginBottom: isMobile && index !== posts.length - 1 ? "2px" : "none", // Apply border except for last item
+                                    }}
+                                >
+                                    <Post post={post} fetchPosts={fetchPosts} borderRadius="20px" isSaved={true} />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    ) : (
+                        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1}>
+                            <SentimentDissatisfied sx={{ fontSize: 60, color: "gray" }} />
+                            <Typography variant="h6" color="textSecondary" mt={2}>
+                                You haven't saved any posts yet
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Browse and save posts to see them here.
+                            </Typography>
+                        </Box>
+                    )}
+                </Container>
             )}
-        </Container>
+        </>
     );
 };
 

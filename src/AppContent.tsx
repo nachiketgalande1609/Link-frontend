@@ -490,7 +490,7 @@ const AppContent = () => {
                     <LinearProgress
                         sx={{
                             width: "100%",
-                            height: "5px",
+                            height: "3px",
                             background: "linear-gradient(90deg, #7a60ff, #ff8800)",
                             "& .MuiLinearProgress-bar": {
                                 background: "linear-gradient(90deg, #7a60ff, #ff8800)",
