@@ -11,6 +11,7 @@ import {
     ListItemAvatar,
     LinearProgress,
     Box,
+    Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDebounce } from "../utils/utils";
@@ -131,13 +132,19 @@ export default function SearchPage() {
                     }}
                 />
             ) : (
-                <Box sx={{ padding: "10px 20px" }}>
+                <Box sx={{ padding: "8px 10px" }}>
                     {/* Search Results */}
-                    {results.length > 0 && (
+                    {results.length > 0 ? (
                         <List sx={{ padding: 0 }}>
                             {results.map((user) => (
                                 <ListItem key={user.id} sx={{ padding: "5px 0" }} onClick={() => handleUserClick(user)}>
-                                    <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
+                                    <ListItemButton
+                                        sx={{
+                                            padding: "4px 16px",
+                                            borderRadius: "20px",
+                                            "&:hover": { backgroundColor: "#202327" },
+                                        }}
+                                    >
                                         <ListItemAvatar>
                                             <Avatar src={user.profile_picture} />
                                         </ListItemAvatar>
@@ -146,13 +153,23 @@ export default function SearchPage() {
                                 </ListItem>
                             ))}
                         </List>
-                    )}
-                    {/* Search History */}
-                    {!debouncedQuery && history?.length > 0 && (
+                    ) : debouncedQuery ? (
+                        // No users found
+                        <Box sx={{ padding: "10px", textAlign: "center", color: "gray" }}>
+                            <Typography>No users found</Typography>
+                        </Box>
+                    ) : history?.length > 0 ? (
+                        // Search history
                         <List sx={{ padding: 0 }}>
                             {history.map((item) => (
                                 <ListItem key={item.history_id} sx={{ padding: "5px 0" }} onClick={() => navigate(`/profile/${item.id}`)}>
-                                    <ListItemButton sx={{ padding: "4px 16px", borderRadius: "20px", "&:hover": { backgroundColor: "#202327" } }}>
+                                    <ListItemButton
+                                        sx={{
+                                            padding: "4px 16px",
+                                            borderRadius: "20px",
+                                            "&:hover": { backgroundColor: "#202327" },
+                                        }}
+                                    >
                                         <ListItemAvatar>
                                             <Avatar src={item.profile_picture} />
                                         </ListItemAvatar>
@@ -163,7 +180,10 @@ export default function SearchPage() {
                                                 e.stopPropagation();
                                                 handleDeleteHistory(item.history_id);
                                             }}
-                                            sx={{ color: "hsl(226, 11%, 40%)", "&:hover": { backgroundColor: "transparent", color: "#ffffff" } }}
+                                            sx={{
+                                                color: "hsl(226, 11%, 40%)",
+                                                "&:hover": { backgroundColor: "transparent", color: "#ffffff" },
+                                            }}
                                         >
                                             <CloseIcon fontSize="small" />
                                         </IconButton>
@@ -171,6 +191,11 @@ export default function SearchPage() {
                                 </ListItem>
                             ))}
                         </List>
+                    ) : (
+                        // No search input and no history
+                        <Box sx={{ padding: "10px", textAlign: "center", color: "gray" }}>
+                            <Typography> Search for users</Typography>
+                        </Box>
                     )}
                 </Box>
             )}
