@@ -133,7 +133,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                 <Avatar
                                                     src={
                                                         user.profile_picture ||
-                                                        "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                                                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
                                                     }
                                                 />
                                                 {isOnline && (
@@ -282,7 +282,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                                 sx={{ width: "50px", height: "50px", mr: "12px" }}
                                                 src={
                                                     user.profile_picture ||
-                                                    "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
                                                 }
                                             />
                                             {isOnline && (

@@ -116,8 +116,8 @@ export default function ScrollableCommentsDrawer({
                     padding: isMobile ? "8px 8px 0 8px" : "16px 16px 0 16px",
                 }}
             >
-                <Box sx={{ display: "flex", gap: 1.5, mb: 2, alignItems: "center" }}>
-                    <Avatar src={avatarUrl} />
+                <Box sx={{ display: "flex", gap: 1.0, mb: 2, alignItems: "center" }}>
+                    <Avatar src={avatarUrl || "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"} />
                     <Box
                         sx={{
                             padding: "8px",
@@ -145,7 +145,12 @@ export default function ScrollableCommentsDrawer({
                             onMouseEnter={() => setHoveredCommentId(comment.id)}
                             onMouseLeave={() => setHoveredCommentId(null)}
                         >
-                            <Avatar src={comment.commenter_profile_picture} />
+                            <Avatar
+                                src={
+                                    comment.commenter_profile_picture ||
+                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                }
+                            />
                             <Box
                                 sx={{
                                     backgroundColor: "#202327",

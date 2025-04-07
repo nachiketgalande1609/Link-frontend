@@ -166,7 +166,7 @@ const ProfilePage = () => {
                                 <Avatar
                                     src={
                                         profileData?.profile_picture ||
-                                        "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
                                     }
                                     sx={{
                                         width: { xs: 100, sm: 110, md: 120, lg: 140 },

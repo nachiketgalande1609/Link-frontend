@@ -150,7 +150,12 @@ export default function SearchPage() {
                                         }}
                                     >
                                         <ListItemAvatar>
-                                            <Avatar src={user.profile_picture} />
+                                            <Avatar
+                                                src={
+                                                    user.profile_picture ||
+                                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                }
+                                            />
                                         </ListItemAvatar>
                                         <ListItemText primary={user.username} secondary={user.email} />
                                     </ListItemButton>
@@ -175,7 +180,12 @@ export default function SearchPage() {
                                         }}
                                     >
                                         <ListItemAvatar>
-                                            <Avatar src={item.profile_picture} />
+                                            <Avatar
+                                                src={
+                                                    item.profile_picture ||
+                                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                }
+                                            />
                                         </ListItemAvatar>
                                         <ListItemText primary={item.username} secondary={item.email} />
                                         <IconButton

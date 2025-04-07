@@ -400,7 +400,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                         <Avatar
                             src={
                                 post.profile_picture ||
-                                "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
                             }
                             alt={post.username}
                             sx={{ width: 52, height: 52, cursor: "pointer" }}
@@ -706,7 +706,13 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                                 }}
                                 onClick={() => handleUserClick(user)}
                             >
-                                <Avatar src={user.profile_picture} sx={{ width: 40, height: 40, mr: 2 }} />
+                                <Avatar
+                                    src={
+                                        user.profile_picture ||
+                                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                    }
+                                    sx={{ width: 40, height: 40, mr: 2 }}
+                                />
                                 <Typography sx={{ fontSize: "0.9rem" }}>{user.username}</Typography>
                             </Box>
                         ))

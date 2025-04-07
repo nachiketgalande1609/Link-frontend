@@ -206,7 +206,12 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             navigate(`/profile/${stories[selectedStoryIndex].user_id}`);
                         }}
                     >
-                        <Avatar src={stories[selectedStoryIndex].profile_picture} />
+                        <Avatar
+                            src={
+                                stories[selectedStoryIndex].profile_picture ||
+                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                            }
+                        />
                         <Typography color="white" sx={{ fontSize: "0.85rem" }}>
                             {stories[selectedStoryIndex].username}
                         </Typography>
@@ -447,7 +452,10 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                 {selectedUserStories[currentIndex].viewers.map((viewer, index) => (
                                     <Stack key={index} direction="row" spacing={1.5} alignItems="center" sx={{ marginBottom: 1 }}>
                                         <Avatar
-                                            src={viewer.viewer_profile_picture}
+                                            src={
+                                                viewer.viewer_profile_picture ||
+                                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                            }
                                             sx={{ width: isMobile ? "45px" : "50px", height: isMobile ? "45px" : "50px", cursor: "pointer" }}
                                             alt={viewer.viewer_username}
                                             onClick={() => navigate(`/profile/${viewer.viewer_id}`)}

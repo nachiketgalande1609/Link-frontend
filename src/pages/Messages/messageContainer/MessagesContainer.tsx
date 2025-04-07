@@ -526,7 +526,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             >
                                                                 <Box
                                                                     component="img"
-                                                                    src={msg.post.owner.profile_picture}
+                                                                    src={
+                                                                        msg.post.owner.profile_picture ||
+                                                                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                                    }
                                                                     alt="Owner Profile"
                                                                     sx={{
                                                                         width: "32px",

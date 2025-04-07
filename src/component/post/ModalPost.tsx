@@ -258,7 +258,10 @@ const ModalPost: React.FC<PostProps> = ({
                             <Box>
                                 <Box sx={{ display: "flex", alignItems: "center", padding: isMobile ? "0 10px 10px 10px" : "35px 15px 5px 15px" }}>
                                     <Avatar
-                                        src={avatarUrl || "https://via.placeholder.com/40"}
+                                        src={
+                                            avatarUrl ||
+                                            "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                        }
                                         alt={username}
                                         sx={{ width: isMobile ? 42 : 52, height: isMobile ? 42 : 52 }}
                                     />
@@ -434,7 +437,10 @@ const ModalPost: React.FC<PostProps> = ({
                                                         onMouseLeave={() => setHoveredCommentId(null)}
                                                     >
                                                         <Avatar
-                                                            src={comment.commenter_profile_picture}
+                                                            src={
+                                                                comment.commenter_profile_picture ||
+                                                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                            }
                                                             alt={comment.commenter_username}
                                                             sx={{ width: isMobile ? 30 : 40, height: isMobile ? 30 : 40 }}
                                                         />

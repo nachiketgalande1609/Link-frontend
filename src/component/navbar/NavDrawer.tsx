@@ -130,7 +130,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                       <img
                           src={
                               currentUser?.profile_picture_url ||
-                              "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                              "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
                           }
                           alt="Profile"
                           style={{
@@ -146,7 +146,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                       <img
                           src={
                               currentUser?.profile_picture_url ||
-                              "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                              "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
                           }
                           alt="Profile"
                           style={{
@@ -154,7 +154,6 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                               height: "33px",
                               borderRadius: "50%",
                               objectFit: "cover",
-                              outline: "2px solid #000000",
                           }}
                       />
                   ),
