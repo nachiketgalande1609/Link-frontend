@@ -151,10 +151,11 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     }, [location.pathname, userId, users, navigatedUser]);
 
     useEffect(() => {
-        if (userId && selectedUser) {
+        if (selectedUser) {
+            setMessages([]);
             fetchMessagesForSelectedUser();
         }
-    }, [userId, selectedUser]);
+    }, [selectedUser]);
 
     // Socket for receiving messages
     useEffect(() => {
@@ -248,6 +249,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         setUsers((prevUsers) => prevUsers.map((user) => (user.id === userId ? { ...user, unread_count: 0 } : user)));
         navigate(`/messages/${userId}`);
     };
+
+    console.log("selectedUser", selectedUser?.id);
 
     // Socket to send messages and emit stop typing
     const handleSendMessage = async () => {
