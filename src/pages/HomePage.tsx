@@ -99,7 +99,7 @@ const HomePage = () => {
             }}
         >
             {/* Stories Section */}
-            <Box display="flex" gap="16px" sx={{ padding: isMobile ? "15px 10px 10px 10px" : "10px 0 15px 0" }}>
+            <Box display="flex" gap="16px" sx={{ padding: isMobile ? "15px 10px 10px 10px" : "10px 0 15px 0", height: "100px" }}>
                 {/* Current User Story */}
                 <Box
                     sx={{
