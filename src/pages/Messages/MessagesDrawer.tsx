@@ -130,7 +130,12 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             }}
                                         >
                                             <ListItemAvatar sx={{ position: "relative" }}>
-                                                <Avatar src={user.profile_picture || "https://via.placeholder.com/40"} />
+                                                <Avatar
+                                                    src={
+                                                        user.profile_picture ||
+                                                        "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                                                    }
+                                                />
                                                 {isOnline && (
                                                     <Box
                                                         sx={{
@@ -275,7 +280,10 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                         <ListItemAvatar sx={{ position: "relative" }}>
                                             <Avatar
                                                 sx={{ width: "50px", height: "50px", mr: "12px" }}
-                                                src={user.profile_picture || "https://via.placeholder.com/40"}
+                                                src={
+                                                    user.profile_picture ||
+                                                    "https://static.vecteezy.com/system/resources/previews/005/544/718/non_2x/profile-icon-design-free-vector.jpg"
+                                                }
                                             />
                                             {isOnline && (
                                                 <Box

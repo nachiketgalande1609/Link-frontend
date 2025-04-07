@@ -296,10 +296,29 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                             width: "100%",
                             height: postWidth ? (post.media_height / post.media_width) * postWidth : postWidth || "400px",
                             cursor: "pointer",
+                            overflow: "hidden", // Ensure the blur effect stays within bounds
                         }}
                         onDoubleClick={handleDoubleClickLike}
                         onClick={() => setOpenImageDialog(true)}
                     >
+                        {/* Blurred placeholder that shows while loading */}
+                        {isImageLoading && (
+                            <CardMedia
+                                component="img"
+                                image={post.file_url}
+                                alt="Post Image Loading"
+                                sx={{
+                                    position: "absolute",
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    filter: "blur(20px)",
+                                    transform: "scale(1.1)", // Ensure blur covers edges
+                                }}
+                            />
+                        )}
+
+                        {/* Loading spinner */}
                         {isImageLoading && (
                             <Box
                                 sx={{
@@ -307,13 +326,14 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                                     top: "50%",
                                     left: "50%",
                                     transform: "translate(-50%, -50%)",
-                                    zIndex: 1,
+                                    zIndex: 2,
                                 }}
                             >
                                 <CircularProgress color="inherit" />
                             </Box>
                         )}
 
+                        {/* Actual image */}
                         <CardMedia
                             component="img"
                             image={post.file_url}
@@ -321,7 +341,9 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                             sx={{
                                 width: "100%",
                                 height: "100%",
-                                objectFit: "cover",
+                                objectFit: "contain",
+                                transition: "opacity 0.3s ease",
+                                opacity: isImageLoading ? 0 : 1, // Fade in when loaded
                             }}
                             onLoad={handleImageLoad}
                         />

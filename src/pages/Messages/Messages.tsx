@@ -97,6 +97,9 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     };
 
     const navigatedUser = location.state || {};
+
+    console.log("navigatedUser", navigatedUser);
+
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Fetch messages initially
@@ -110,12 +113,11 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         }
     };
 
-    const fetchMessagesForSelectedUser = async (offset = 0, limit = 20) => {
-        if (!selectedUser) return;
+    const fetchMessagesForSelectedUser = async (userId: number, offset = 0, limit = 20) => {
         setInitialMessageLoading(true);
 
         try {
-            const res = await getMessagesDataForSelectedUser(selectedUser.id, offset, limit);
+            const res = await getMessagesDataForSelectedUser(userId, offset, limit);
             const reversedData = res.data.slice().reverse();
 
             setMessages((prevMessages) => (offset === 0 ? reversedData : [...reversedData, ...prevMessages]));
@@ -134,28 +136,40 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     useEffect(() => {
         if (location.pathname === "/messages") {
             setSelectedUser(null);
+            setMessages([]);
+            return;
         }
 
         if (userId) {
             const user = users.find((user) => user.id === parseInt(userId));
-            setSelectedUser(user || null);
+            // Only update if user actually changed
+            if (user && (!selectedUser || user.id !== selectedUser.id)) {
+                setSelectedUser(user);
+                setMessages([]);
+                fetchMessagesForSelectedUser(parseInt(userId));
+            }
         }
 
         if (navigatedUser && navigatedUser.id) {
-            const userExists = users.some((user) => user.id === navigatedUser.id);
-            if (!userExists) {
-                setUsers((prevUsers) => [...prevUsers, navigatedUser]);
+            // Check if we really need to update
+            if (!selectedUser || navigatedUser.id !== selectedUser.id) {
+                const userExists = users.some((user) => user.id === navigatedUser.id);
+                if (!userExists) {
+                    setUsers((prevUsers) => [...prevUsers, navigatedUser]);
+                }
+                setSelectedUser(navigatedUser);
+                setMessages([]);
+                fetchMessagesForSelectedUser(navigatedUser.id);
             }
-            setSelectedUser(navigatedUser);
         }
-    }, [location.pathname, userId, users, navigatedUser]);
+    }, [location.pathname, userId, navigatedUser?.id]);
 
-    useEffect(() => {
-        if (selectedUser) {
-            setMessages([]);
-            fetchMessagesForSelectedUser();
-        }
-    }, [selectedUser]);
+    // useEffect(() => {
+    //     if (selectedUser) {
+    //         setMessages([]);
+    //         fetchMessagesForSelectedUser(selectedUser.id);
+    //     }
+    // }, [selectedUser]);
 
     // Socket for receiving messages
     useEffect(() => {
@@ -245,12 +259,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         setMessages([]);
         setDrawerOpen(false);
         setSelectedUser(users.find((user) => user.id === userId) || null);
-        fetchMessagesForSelectedUser();
+        fetchMessagesForSelectedUser(userId);
         setUsers((prevUsers) => prevUsers.map((user) => (user.id === userId ? { ...user, unread_count: 0 } : user)));
         navigate(`/messages/${userId}`);
     };
-
-    console.log("selectedUser", selectedUser?.id);
 
     // Socket to send messages and emit stop typing
     const handleSendMessage = async () => {

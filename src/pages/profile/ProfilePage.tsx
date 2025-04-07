@@ -309,9 +309,23 @@ const ProfilePage = () => {
                                 ))
                             ) : (
                                 <Grid item xs={12}>
-                                    <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
-                                        No posts available.
-                                    </Typography>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            mt: 6,
+                                            mb: 6,
+                                        }}
+                                    >
+                                        <Typography variant="h6" sx={{ mt: 2, color: "text.secondary", textAlign: "center" }}>
+                                            No posts yet
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: "text.secondary", textAlign: "center", mt: 1 }}>
+                                            This user hasn't shared anything yet.
+                                        </Typography>
+                                    </Box>
                                 </Grid>
                             )}
                         </Grid>
