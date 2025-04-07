@@ -51,15 +51,19 @@ export default function SearchPage() {
     }, []);
 
     // Handle user click
-    const handleUserClick = async (targetUser: any) => {
-        try {
-            await addToSearchHistory(targetUser.id);
-            const historyResponse = await getSearchHistory();
-            setHistory(historyResponse.data.data);
-            navigate(`/profile/${targetUser.id}`);
-        } catch (error) {
-            console.error("Error saving history:", error);
-        }
+    const handleUserClick = (targetUser: any) => {
+        // Navigate immediately
+        navigate(`/profile/${targetUser.id}`);
+
+        // Fire off background tasks without awaiting
+        addToSearchHistory(targetUser.id)
+            .then(() => getSearchHistory())
+            .then((historyResponse) => {
+                setHistory(historyResponse.data.data);
+            })
+            .catch((error) => {
+                console.error("Error saving history:", error);
+            });
     };
 
     // Delete history item
