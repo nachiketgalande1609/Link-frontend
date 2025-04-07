@@ -115,10 +115,7 @@ const HomePage = () => {
                     }}
                 >
                     <Avatar
-                        src={
-                            currentUser?.profile_picture_url ||
-                            "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                        }
+                        src={currentUser?.profile_picture_url || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                         onClick={() => {
                             selfStories.length > 0 ? (setSelectedStoryIndex(0), setOpenStoryDialog(true)) : setOpenUploadDialog(true);
                         }}
@@ -212,7 +209,7 @@ const HomePage = () => {
                                         <Avatar
                                             src={
                                                 userStory.profile_picture ||
-                                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                             }
                                             onClick={() => {
                                                 // Calculate correct index accounting for self stories

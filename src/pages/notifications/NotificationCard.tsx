@@ -52,10 +52,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
             >
                 <ListItemAvatar>
                     <Avatar
-                        src={
-                            notification.profile_picture ||
-                            "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                        }
+                        src={notification.profile_picture || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                         alt={notification.username}
                         sx={{ height: isMobile ? "50px" : "58px", width: isMobile ? "50px" : "58px", mr: 2 }}
                     />

@@ -93,10 +93,7 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                 )}
                 <Avatar
                     sx={{ width: "40px", height: "40px", mr: 1, cursor: "pointer", ml: isMobile ? "20px" : null }}
-                    src={
-                        selectedUser?.profile_picture ||
-                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                    }
+                    src={selectedUser?.profile_picture || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                     onClick={() => navigate(`/profile/${selectedUser?.id}`)}
                 />
                 <Typography

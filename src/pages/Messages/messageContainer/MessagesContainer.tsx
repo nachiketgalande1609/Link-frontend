@@ -528,7 +528,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                     component="img"
                                                                     src={
                                                                         msg.post.owner.profile_picture ||
-                                                                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                                        "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                                                     }
                                                                     alt="Owner Profile"
                                                                     sx={{

@@ -178,7 +178,7 @@ const ProfileDetails = () => {
                         src={
                             user?.profile_picture_url
                                 ? `${user.profile_picture_url}?t=${new Date().getTime()}`
-                                : "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                : "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                         }
                         sx={{ width: 120, height: 120, marginBottom: 2, border: "4px solid #fff" }}
                     />

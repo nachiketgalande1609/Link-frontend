@@ -128,10 +128,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   title: "Profile",
                   icon: (
                       <img
-                          src={
-                              currentUser?.profile_picture_url ||
-                              "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                          }
+                          src={currentUser?.profile_picture_url || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                           alt="Profile"
                           style={{
                               width: "33px",
@@ -144,10 +141,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   ),
                   filledIcon: (
                       <img
-                          src={
-                              currentUser?.profile_picture_url ||
-                              "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                          }
+                          src={currentUser?.profile_picture_url || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                           alt="Profile"
                           style={{
                               width: "33px",

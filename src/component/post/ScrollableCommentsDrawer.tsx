@@ -117,7 +117,7 @@ export default function ScrollableCommentsDrawer({
                 }}
             >
                 <Box sx={{ display: "flex", gap: 1.0, mb: 2, alignItems: "center" }}>
-                    <Avatar src={avatarUrl || "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"} />
+                    <Avatar src={avatarUrl || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"} />
                     <Box
                         sx={{
                             padding: "8px",
@@ -148,7 +148,7 @@ export default function ScrollableCommentsDrawer({
                             <Avatar
                                 src={
                                     comment.commenter_profile_picture ||
-                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                    "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                 }
                             />
                             <Box

@@ -525,10 +525,7 @@ const AppContent = () => {
                     }}
                 >
                     <img
-                        src={
-                            incomingCall?.callerProfilePicture ||
-                            "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                        }
+                        src={incomingCall?.callerProfilePicture || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                         alt="Caller Profile"
                         style={{
                             width: 100,

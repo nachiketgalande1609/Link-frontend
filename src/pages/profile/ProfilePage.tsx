@@ -166,7 +166,7 @@ const ProfilePage = () => {
                                 <Avatar
                                     src={
                                         profileData?.profile_picture ||
-                                        "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                        "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                     }
                                     sx={{
                                         width: { xs: 100, sm: 110, md: 120, lg: 140 },

@@ -258,10 +258,7 @@ const ModalPost: React.FC<PostProps> = ({
                             <Box>
                                 <Box sx={{ display: "flex", alignItems: "center", padding: isMobile ? "0 10px 10px 10px" : "35px 15px 5px 15px" }}>
                                     <Avatar
-                                        src={
-                                            avatarUrl ||
-                                            "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                                        }
+                                        src={avatarUrl || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                                         alt={username}
                                         sx={{ width: isMobile ? 42 : 52, height: isMobile ? 42 : 52 }}
                                     />
@@ -439,7 +436,7 @@ const ModalPost: React.FC<PostProps> = ({
                                                         <Avatar
                                                             src={
                                                                 comment.commenter_profile_picture ||
-                                                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                                "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                                             }
                                                             alt={comment.commenter_username}
                                                             sx={{ width: isMobile ? 30 : 40, height: isMobile ? 30 : 40 }}

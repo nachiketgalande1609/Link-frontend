@@ -153,7 +153,7 @@ export default function SearchPage() {
                                             <Avatar
                                                 src={
                                                     user.profile_picture ||
-                                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                    "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                                 }
                                             />
                                         </ListItemAvatar>
@@ -183,7 +183,7 @@ export default function SearchPage() {
                                             <Avatar
                                                 src={
                                                     item.profile_picture ||
-                                                    "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                    "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                                 }
                                             />
                                         </ListItemAvatar>

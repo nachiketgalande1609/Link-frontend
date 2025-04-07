@@ -209,7 +209,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         <Avatar
                             src={
                                 stories[selectedStoryIndex].profile_picture ||
-                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                             }
                         />
                         <Typography color="white" sx={{ fontSize: "0.85rem" }}>
@@ -454,7 +454,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                         <Avatar
                                             src={
                                                 viewer.viewer_profile_picture ||
-                                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                                                "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                                             }
                                             sx={{ width: isMobile ? "45px" : "50px", height: isMobile ? "45px" : "50px", cursor: "pointer" }}
                                             alt={viewer.viewer_username}

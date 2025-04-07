@@ -93,10 +93,7 @@ const NewChatUsersList = ({ anchorEl, open, setAnchorEl, usersList }: NewChatUse
                 filteredUsers.map((user) => (
                     <MenuItem key={user.id} onClick={() => handleUserClick(user)} sx={{ p: "10px 12px" }}>
                         <Avatar
-                            src={
-                                user.profile_picture ||
-                                "https://png.pngitem.com/pimgs/s/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-                            }
+                            src={user.profile_picture || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                             sx={{ mr: 2 }}
                         />
                         <Typography sx={{ fontSize: "0.9rem" }}>{user.username}</Typography>
