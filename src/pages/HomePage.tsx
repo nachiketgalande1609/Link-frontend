@@ -146,7 +146,7 @@ const HomePage = () => {
                 <Box sx={{ display: "flex", gap: "16px" }}>
                     {fetchingStories ? (
                         <>
-                            <Box display="flex" flexDirection="column" alignItems="center" sx={{ marginBottom: "25px" }}>
+                            <Box display="flex" flexDirection="column" alignItems="center" sx={{ height: "106px" }}>
                                 <Box
                                     sx={{
                                         position: "relative",
@@ -181,15 +181,19 @@ const HomePage = () => {
                                             },
                                         },
                                     }}
-                                >
-                                    {/* Optional inner content, like an icon or image */}
-                                </Box>
+                                ></Box>
                             </Box>
                         </>
                     ) : (
                         <>
                             {followingStories.map((userStory, index) => (
-                                <Box key={userStory.user_id} display="flex" flexDirection="column" alignItems="center" sx={{ gap: 0.75 }}>
+                                <Box
+                                    key={userStory.user_id}
+                                    display="flex"
+                                    flexDirection="column"
+                                    alignItems="center"
+                                    sx={{ gap: 0.75, height: "106px" }}
+                                >
                                     <Box
                                         sx={{
                                             display: "flex",
