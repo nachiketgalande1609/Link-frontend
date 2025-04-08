@@ -98,8 +98,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     const navigatedUser = location.state || {};
 
-    console.log("navigatedUser", navigatedUser);
-
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
     // Fetch messages initially

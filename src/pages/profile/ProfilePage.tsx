@@ -73,21 +73,14 @@ const ProfilePage = () => {
 
     useEffect(() => {
         fetchProfile();
-    }, [userId]);
+    }, []);
 
     useEffect(() => {
-        if (!profileData) return;
-
-        if (currentUser?.id == userId || !profileData.is_private || profileData.is_following) {
+        if (!postUploading && profileData && (currentUser?.id === userId || !profileData.is_private || profileData.is_following)) {
             fetchUserPosts();
+            console.log("Fetching posts...");
         }
-    }, [profileData, userId, currentUser?.id]);
-
-    useEffect(() => {
-        if (!postUploading) {
-            fetchUserPosts();
-        }
-    }, [postUploading]);
+    }, [postUploading, profileData, userId, currentUser?.id]);
 
     const handleOpenModal = (post: any) => {
         setSelectedPost(post);
