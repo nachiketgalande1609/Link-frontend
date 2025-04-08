@@ -77,6 +77,8 @@ const VideoCallModal: React.FC<VideoCallModalProps> = ({ open, onClose, localStr
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
+    console.log(remoteStream, "remoteStream");
+
     // Handle local stream
     useEffect(() => {
         if (localStream && localVideoRef.current) {

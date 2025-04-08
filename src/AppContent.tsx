@@ -53,6 +53,8 @@ const AppContent = () => {
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+    const pendingCandidates = useRef<RTCIceCandidateInit[]>([]);
+
     const [callParticipantId, setCallParticipantId] = useState<number | null>(null);
 
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -205,36 +207,60 @@ const AppContent = () => {
 
     useEffect(() => {
         const handleIceCandidate = (data: { candidate: RTCIceCandidateInit }) => {
-            if (pc) {
+            console.log("Received ICE candidate:", data.candidate);
+
+            if (pc?.remoteDescription) {
                 pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(console.error);
+            } else {
+                pendingCandidates.current.push(data.candidate); // Queue for later
             }
         };
 
-        socket.on("iceCandidate", handleIceCandidate);
+        socket.on("iceCandidateReceived", handleIceCandidate);
 
         return () => {
-            socket.off("iceCandidate", handleIceCandidate);
+            socket.off("iceCandidateReceived", handleIceCandidate);
         };
     }, [pc]);
 
     useEffect(() => {
-        socket.on("answerCall", (data: { signal: RTCSessionDescriptionInit }) => {
+        socket.on("callAnswered", async (data: { signal: RTCSessionDescriptionInit }) => {
             if (pc) {
-                pc.setRemoteDescription(new RTCSessionDescription(data.signal)).catch(console.error);
+                try {
+                    await pc.setRemoteDescription(new RTCSessionDescription(data.signal));
+
+                    // Flush pending ICE candidates after setting remote description
+                    pendingCandidates.current.forEach((candidate) => {
+                        pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(console.error);
+                    });
+                    pendingCandidates.current = [];
+                } catch (error) {
+                    console.error("Failed to set remote description:", error);
+                }
             }
         });
 
         return () => {
-            socket.off("answerCall");
+            socket.off("callAnswered");
         };
     }, [pc]);
 
+    console.log("Remote video tracks:", remoteStream?.getVideoTracks());
+
     const handleTrackEvent = (event: RTCTrackEvent) => {
+        console.log("Tracks received:", event.streams[0]?.getTracks());
+
         if (event.streams && event.streams[0]) {
             const newRemoteStream = new MediaStream();
             event.streams[0].getTracks().forEach((track) => {
                 newRemoteStream.addTrack(track);
             });
+
+            // 🔒 Safely access getTracks only if remoteStream is not null
+            if (remoteStream) {
+                console.log("Previous remote stream tracks:", remoteStream.getTracks());
+            }
+
             setRemoteStream(newRemoteStream);
         }
     };
@@ -291,49 +317,59 @@ const AppContent = () => {
         setIncomingCall(null);
     };
 
-    const handleVideoCall = () => {
-        if (selectedUser) {
-            setCallParticipantId(selectedUser.id);
-            setIsVideoModalOpen(true);
+    const handleVideoCall = async () => {
+        if (!selectedUser) return;
 
-            const newPc = new RTCPeerConnection(iceServers);
+        setCallParticipantId(selectedUser.id);
+        setIsVideoModalOpen(true);
 
-            // Add state change listeners for debugging
-            newPc.oniceconnectionstatechange = () => console.log("ICE Connection State:", newPc.iceConnectionState);
-            newPc.onsignalingstatechange = () => console.log("Signaling State:", newPc.signalingState);
-            newPc.onicegatheringstatechange = () => console.log("ICE Gathering State:", newPc.iceGatheringState);
+        const newPc = new RTCPeerConnection(iceServers);
+        setPc(newPc);
 
-            newPc.ontrack = (event) => setRemoteStream(event.streams[0]);
+        // Debug logs
+        newPc.oniceconnectionstatechange = () => console.log("ICE Connection State:", newPc.iceConnectionState);
+        newPc.onsignalingstatechange = () => console.log("Signaling State:", newPc.signalingState);
+        newPc.onicegatheringstatechange = () => console.log("ICE Gathering State:", newPc.iceGatheringState);
 
-            navigator.mediaDevices
-                .getUserMedia({ video: true, audio: true })
-                .then((stream) => {
-                    setLocalStream(stream);
-                    stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
-                })
-                .catch(console.error);
+        // Track remote stream
+        newPc.ontrack = (event) => {
+            console.log("Running");
 
-            newPc.onicecandidate = (event) => {
-                if (event.candidate) {
-                    socket.emit("iceCandidate", { to: selectedUser.id, candidate: event.candidate });
-                }
-            };
+            setRemoteStream(event.streams[0]);
+        };
 
-            newPc
-                .createOffer()
-                .then((offer) => newPc.setLocalDescription(offer))
-                .then(() => {
-                    socket.emit("callUser", {
-                        from: currentUser.id,
-                        to: selectedUser.id,
-                        signal: newPc.localDescription,
-                        callerUsername: currentUser.username,
-                        callerProfilePicture: currentUser.profile_picture_url,
-                    });
-                })
-                .catch((err) => console.error("Offer Error:", err));
+        // ICE candidate handler
+        newPc.onicecandidate = (event) => {
+            if (event.candidate) {
+                socket.emit("iceCandidate", {
+                    to: selectedUser.id,
+                    candidate: event.candidate,
+                });
+            }
+        };
 
-            setPc(newPc); // Update state after setup
+        try {
+            // 🔑 Wait for media before proceeding
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+            setLocalStream(stream);
+            stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
+
+            // Now safely create offer
+            const offer = await newPc.createOffer();
+
+            await newPc.setLocalDescription(offer);
+
+            // Send offer to the callee
+            socket.emit("callUser", {
+                from: currentUser.id,
+                to: selectedUser.id,
+                signal: newPc.localDescription,
+                callerUsername: currentUser.username,
+                callerProfilePicture: currentUser.profile_picture_url,
+            });
+        } catch (err) {
+            console.error("Error in handleVideoCall:", err);
         }
     };
 
