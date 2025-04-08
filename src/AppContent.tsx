@@ -207,8 +207,6 @@ const AppContent = () => {
 
     useEffect(() => {
         const handleIceCandidate = (data: { candidate: RTCIceCandidateInit }) => {
-            console.log("Received ICE candidate:", data.candidate);
-
             if (pc?.remoteDescription) {
                 pc.addIceCandidate(new RTCIceCandidate(data.candidate)).catch(console.error);
             } else {
@@ -245,27 +243,17 @@ const AppContent = () => {
         };
     }, [pc]);
 
-    console.log("Remote video tracks:", remoteStream?.getVideoTracks());
-
     const handleTrackEvent = (event: RTCTrackEvent) => {
-        console.log("Tracks received:", event.streams[0]?.getTracks());
-
         if (event.streams && event.streams[0]) {
             const newRemoteStream = new MediaStream();
             event.streams[0].getTracks().forEach((track) => {
                 newRemoteStream.addTrack(track);
             });
-
-            // 🔒 Safely access getTracks only if remoteStream is not null
-            if (remoteStream) {
-                console.log("Previous remote stream tracks:", remoteStream.getTracks());
-            }
-
             setRemoteStream(newRemoteStream);
         }
     };
 
-    const handleAcceptCall = () => {
+    const handleAcceptCall = async () => {
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
@@ -277,13 +265,18 @@ const AppContent = () => {
             const newPc = new RTCPeerConnection(iceServers);
             setPc(newPc);
 
-            navigator.mediaDevices
-                .getUserMedia({ video: true, audio: true })
-                .then((stream) => {
-                    setLocalStream(stream);
-                    stream.getTracks().forEach((track) => newPc.addTrack(track, stream));
-                })
-                .catch(console.error);
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                console.log("🎥 Callee got media stream:", stream.getTracks());
+
+                setLocalStream(stream); // setState is async; localStream won't update immediately
+
+                stream.getTracks().forEach((track) => {
+                    newPc.addTrack(track, stream);
+                });
+            } catch (err) {
+                console.error("❌ Error getting user media on callee:", err);
+            }
 
             newPc.ontrack = handleTrackEvent;
 
