@@ -68,11 +68,17 @@ export default function SearchPage() {
 
     // Delete history item
     const handleDeleteHistory = async (historyId: number) => {
+        const deletedItem = history.find((item) => item.history_id === historyId);
+        setHistory((prev) => prev.filter((item) => item.history_id !== historyId));
+
         try {
             await deleteSearchHistoryItem(historyId);
-            setHistory((prev) => prev.filter((item) => item.history_id !== historyId));
         } catch (error) {
             console.error("Delete failed:", error);
+            // Re-add item if API call fails
+            if (deletedItem) {
+                setHistory((prev) => [deletedItem, ...prev]);
+            }
         }
     };
 
