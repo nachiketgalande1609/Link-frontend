@@ -27,6 +27,34 @@ export default function SearchPage() {
     const navigate = useNavigate();
     const searchInputRef = useRef<HTMLInputElement>(null);
 
+    const fullPlaceholder = "Search Users";
+    const [placeholder, setPlaceholder] = useState("");
+
+    useEffect(() => {
+        let index = 0;
+        let typingInterval: NodeJS.Timeout;
+
+        const startTyping = () => {
+            typingInterval = setInterval(() => {
+                setPlaceholder(fullPlaceholder.slice(0, index + 1));
+                index++;
+
+                if (index === fullPlaceholder.length) {
+                    clearInterval(typingInterval);
+                    setTimeout(() => {
+                        setPlaceholder("");
+                        index = 0;
+                        startTyping();
+                    }, 1500); // Pause after full text before restarting
+                }
+            }, 100); // Typing speed
+        };
+
+        startTyping();
+
+        return () => clearInterval(typingInterval);
+    }, []);
+
     // Load search history
     useEffect(() => {
         const loadHistory = async () => {
@@ -122,7 +150,7 @@ export default function SearchPage() {
                         "& .MuiInput-underline:hover:before": { borderBottom: "none !important" },
                     }}
                     fullWidth
-                    placeholder="Search Users"
+                    placeholder={placeholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     inputRef={searchInputRef}
