@@ -101,15 +101,19 @@ const ModalPost: React.FC<PostProps> = ({
     };
 
     const handleLike = async () => {
+        const previousIsLiked = isLiked;
+        const previousLikes = likes;
+
+        setIsLiked(!previousIsLiked);
+        setLikes(previousIsLiked ? previousLikes - 1 : previousLikes + 1);
+
         try {
             await likePost(postId);
-            setIsLiked((prevIsLiked) => {
-                setLikes((prevLikes) => (prevIsLiked ? prevLikes - 1 : prevLikes + 1));
-                return !prevIsLiked;
-            });
             fetchPosts();
         } catch (error) {
             console.log(error);
+            setIsLiked(previousIsLiked);
+            setLikes(previousLikes);
         }
     };
 
@@ -325,20 +329,20 @@ const ModalPost: React.FC<PostProps> = ({
                                         }}
                                     >
                                         <Box>
-                                            <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", padding: "0" }}>
+                                            <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "#787a7a", padding: "0" }}>
                                                 {isLiked ? (
                                                     <Favorite sx={{ fontSize: "35px", mr: 1 }} />
                                                 ) : (
                                                     <FavoriteBorder sx={{ fontSize: "35px", mr: 1 }} />
                                                 )}
                                             </IconButton>
-                                            <Typography variant="body2" component="span" sx={{ mr: 2 }}>
+                                            <Typography variant="body2" component="span" sx={{ mr: 2, color: "#787a7a" }}>
                                                 {likes}
                                             </Typography>
-                                            <IconButton onClick={handleFocusCommentField} sx={{ color: "#ffffff", padding: "0", mr: 1 }}>
+                                            <IconButton onClick={handleFocusCommentField} sx={{ color: "#787a7a", padding: "0", mr: 1 }}>
                                                 <FontAwesomeIcon icon={faComment} style={{ fontSize: "31px" }} />
                                             </IconButton>
-                                            <Typography variant="body2" component="span" sx={{ mr: 1 }}>
+                                            <Typography variant="body2" component="span" sx={{ mr: 1, color: "#787a7a" }}>
                                                 {commentCount}
                                             </Typography>
                                         </Box>
@@ -414,7 +418,7 @@ const ModalPost: React.FC<PostProps> = ({
                                 <Box sx={{ padding: isMobile ? "0 10px 10px 10px" : "15px", borderTop: "1px solid #202327" }}>
                                     {visibleComments.length === 0 ? (
                                         <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                            <Typography variant="body2" color="text.secondary">
+                                            <Typography variant="body2" color="#787a7a">
                                                 No comments yet
                                             </Typography>
                                         </Box>

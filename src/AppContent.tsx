@@ -67,6 +67,11 @@ const AppContent = () => {
             {
                 urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
             },
+            {
+                urls: "turn:relay1.expressturn.com:3478",
+                username: "efBWO11LZUDOHPDC84",
+                credential: "y0Da1Uz9asLPxFpC",
+            },
         ],
         iceCandidatePoolSize: 10,
     };

@@ -23,7 +23,7 @@ export default function SearchPage() {
     const [results, setResults] = useState<any[]>([]);
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const debouncedQuery = useDebounce(searchQuery, 300);
+    const debouncedQuery = useDebounce(searchQuery, 750);
     const navigate = useNavigate();
     const searchInputRef = useRef<HTMLInputElement>(null);
 

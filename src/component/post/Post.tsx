@@ -90,6 +90,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
 
     const [commentText, setCommentText] = useState("");
     const [comment_count, setCommentCount] = useState(post.comment_count);
+    const [likeCount, setLikeCount] = useState(post.like_count);
     const [postComments, setPostComments] = useState(post.comments);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
@@ -156,12 +157,23 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     };
 
     const handleLike = async () => {
+        const previousLikeState = isLiked;
+        const previousLikeCount = likeCount;
+
+        setIsLiked(!previousLikeState);
+        setLikeCount(previousLikeState ? previousLikeCount - 1 : previousLikeCount + 1);
+
         try {
             await likePost(post.id);
-            setIsLiked(!isLiked);
-            fetchPosts();
         } catch (error) {
             console.log(error);
+            setIsLiked(previousLikeState);
+            setLikeCount(previousLikeCount);
+
+            notifications.show("Failed to update like", {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         }
     };
 
@@ -362,33 +374,33 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
             >
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "white", ":hover": { backgroundColor: "transparent" } }}>
+                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "#787a7a", ":hover": { backgroundColor: "transparent" } }}>
                             {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                         </IconButton>
-                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                            {post.like_count}
+                        <Typography variant="body2" component="span" sx={{ mr: 1, color: "#787a7a" }}>
+                            {likeCount}
                         </Typography>
 
-                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
+                        <IconButton sx={{ color: "#787a7a", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
                             <FontAwesomeIcon icon={faComment} style={{ fontSize: "28px" }} onClick={() => setDrawerOpen(true)} />
                         </IconButton>
-                        <Typography variant="body2" component="span" sx={{ mr: 1 }}>
+                        <Typography variant="body2" component="span" sx={{ mr: 1, color: "#787a7a" }}>
                             {post.comment_count}
                         </Typography>
 
-                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handlePaperPlaneClick}>
+                        <IconButton sx={{ color: "#787a7a", ":hover": { backgroundColor: "transparent" } }} onClick={handlePaperPlaneClick}>
                             <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "26 px" }} />
                         </IconButton>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <IconButton sx={{ color: "#ffffff", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>
+                        <IconButton sx={{ color: "#787a7a", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>
                             {post.saved_by_current_user || isSaved ? (
                                 <Bookmark sx={{ fontSize: isMobile ? "26px" : "30px" }} />
                             ) : (
                                 <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
                             )}
                         </IconButton>
-                        <IconButton onClick={handleOptionsDialogOpen} sx={{ padding: "0" }}>
+                        <IconButton onClick={handleOptionsDialogOpen} sx={{ padding: "0", color: "#787a7a" }}>
                             <MoreVert />
                         </IconButton>
                     </Box>
@@ -435,11 +447,11 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                 </Grid>
             </Box>
             <Box sx={{ padding: "16px", backgroundColor: isMobile ? "#000000" : "#101114", display: "flex", justifyContent: "space-between" }}>
-                <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#666666" }}>{post.timeAgo}</Typography>
+                <Typography sx={{ fontSize: isMobile ? "0.65rem" : "0.8rem", color: "#787a7a" }}>{post.timeAgo}</Typography>
                 {post.location && (
                     <Box sx={{ display: "flex" }}>
-                        <LocationOn sx={{ fontSize: isMobile ? "0.8rem" : "1.1rem", color: "#666666", mr: 0.5 }} />
-                        <Typography sx={{ fontSize: "0.8rem", color: "#666666" }}>{post.location}</Typography>
+                        <LocationOn sx={{ fontSize: isMobile ? "0.8rem" : "1.1rem", color: "#787a7a", mr: 0.5 }} />
+                        <Typography sx={{ fontSize: "0.8rem", color: "#787a7a" }}>{post.location}</Typography>
                     </Box>
                 )}
             </Box>

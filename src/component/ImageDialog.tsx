@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, IconButton } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface DialogProps {
     openDialog: boolean;
@@ -80,7 +81,7 @@ const ImageDialog: React.FC<DialogProps> = ({ openDialog, handleCloseDialog, sel
                     sx={{
                         position: "absolute",
                         top: 10,
-                        right: 10,
+                        right: 50,
                         width: "35px",
                         height: "35px",
                         color: "white",
@@ -92,6 +93,24 @@ const ImageDialog: React.FC<DialogProps> = ({ openDialog, handleCloseDialog, sel
                     }}
                 >
                     <DownloadIcon sx={{ fontSize: "18px" }} />
+                </IconButton>
+                <IconButton
+                    onClick={handleCloseDialog}
+                    sx={{
+                        position: "absolute",
+                        top: 10,
+                        right: 10,
+                        width: "35px",
+                        height: "35px",
+                        color: "white",
+                        backgroundColor: "rgb(0, 0, 0, 0.5)",
+                        borderRadius: 2,
+                        ":hover": {
+                            backgroundColor: "rgb(0, 0, 0, 1)",
+                        },
+                    }}
+                >
+                    <CloseIcon sx={{ fontSize: "18px" }} />
                 </IconButton>
             </DialogContent>
         </Dialog>
