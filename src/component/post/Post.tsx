@@ -79,10 +79,9 @@ interface PostProps {
     post: Post;
     fetchPosts: () => Promise<void>;
     borderRadius: string;
-    isSaved?: boolean;
 }
 
-const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) => {
+const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -104,6 +103,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     const postWidth = postRef?.current?.offsetWidth || 0;
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
+    const [isSaved, setIsSaved] = useState(post.saved_by_current_user);
 
     const [usersModalOpen, setUsersModalOpen] = useState(false);
     const [usersList, setUsersList] = useState([]);
@@ -261,20 +261,30 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
     };
 
     const handleSavePost = async () => {
+        const previousSavedState = isSaved;
+
+        setIsSaved(!previousSavedState);
+
         try {
             const res = await savePost(post.id);
             if (res.success) {
-                fetchPosts();
-                if (!post.saved_by_current_user) {
+                if (!previousSavedState) {
                     notifications.show(`Post has been saved!`, {
                         severity: "success",
                         autoHideDuration: 3000,
                     });
                 }
+            } else {
+                setIsSaved(previousSavedState);
+                throw new Error("Failed to save post");
             }
         } catch (error) {
             console.error("Error saving post:", error);
-            alert("An error occurred while saving the post.");
+            setIsSaved(previousSavedState);
+            notifications.show(previousSavedState ? "Failed to unsave post" : "Failed to save post", {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         }
     };
 
@@ -394,7 +404,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius, isSaved }) 
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <IconButton sx={{ color: "#787a7a", ":hover": { backgroundColor: "transparent" } }} onClick={handleSavePost}>
-                            {post.saved_by_current_user || isSaved ? (
+                            {isSaved ? (
                                 <Bookmark sx={{ fontSize: isMobile ? "26px" : "30px" }} />
                             ) : (
                                 <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
