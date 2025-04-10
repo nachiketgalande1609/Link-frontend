@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, List, Typography, LinearProgress } from "@mui/material";
+import { Container, List, Typography, LinearProgress, useMediaQuery } from "@mui/material";
 import { followUser, getNotifications, respondToFollowRequest } from "../../services/api";
 import { useGlobalStore } from "../../store/store";
 import NotificationCard from "./NotificationCard";
@@ -25,6 +25,7 @@ const NotificationsPage = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     async function fetchNotifications() {
         if (!currentUser?.id) return;
@@ -83,7 +84,7 @@ const NotificationsPage = () => {
                     }}
                 />
             ) : (
-                <Container maxWidth="sm" sx={{ mt: 4 }}>
+                <Container sx={{ width: isLarge ? "600px" : "525px", mt: 4 }}>
                     {notifications.length === 0 ? (
                         <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>No new notifications.</Typography>
                     ) : (

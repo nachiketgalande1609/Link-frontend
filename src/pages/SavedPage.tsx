@@ -10,6 +10,7 @@ const SavedPage = () => {
     const user = JSON.parse(localStorage.getItem("user") || "");
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     const fetchPosts = async () => {
         try {
@@ -42,7 +43,18 @@ const SavedPage = () => {
                     }}
                 />
             ) : (
-                <Container maxWidth="sm" sx={{ padding: isMobile ? 0 : "10px", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+                <Container
+                    sx={{
+                        width: isLarge ? "600px" : "525px",
+                        padding: isMobile ? 0 : "10px",
+                        minHeight: "100vh",
+                        display: "flex",
+                        flexDirection: "column",
+                        borderLeft: "1px solid #202327",
+                        borderRight: "1px solid #202327",
+                        margin: "0 auto",
+                    }}
+                >
                     {posts.length > 0 ? (
                         <Grid container spacing={3} sx={{ marginTop: "10px" }}>
                             {posts.map((post, index) => (

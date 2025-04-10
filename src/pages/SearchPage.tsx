@@ -12,6 +12,7 @@ import {
     LinearProgress,
     Box,
     Typography,
+    useMediaQuery,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDebounce } from "../utils/utils";
@@ -29,6 +30,7 @@ export default function SearchPage() {
 
     const fullPlaceholder = "Search Users";
     const [placeholder, setPlaceholder] = useState("");
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     useEffect(() => {
         let index = 0;
@@ -133,10 +135,10 @@ export default function SearchPage() {
 
     return (
         <Container
-            maxWidth="sm"
             disableGutters
             sx={{
                 minHeight: "100vh",
+                width: isLarge ? "600px" : "525px",
                 borderLeft: "1px solid #202327",
                 borderRight: "1px solid #202327",
                 p: 0,
