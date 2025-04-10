@@ -130,7 +130,7 @@ const LoginPage: React.FC = () => {
 
     return (
         <GoogleOAuthProvider clientId={"702353220748-2lmc03lb4tcfnuqds67h8bbupmb1aa0q.apps.googleusercontent.com"}>
-            <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>
                 <Fade in={checked} timeout={1500}>
                     <Box
                         sx={{
@@ -139,7 +139,7 @@ const LoginPage: React.FC = () => {
                             borderRadius: "20px",
                             position: "relative",
                             overflow: "hidden",
-                            border: "2px solid transparent",
+                            border: { xs: "none", sm: "2px solid transparent" }, // Hide border on mobile (xs)
                             display: "flex",
                             justifyContent: "center",
                             flexDirection: "column",
@@ -157,6 +157,7 @@ const LoginPage: React.FC = () => {
                                 WebkitMaskComposite: "destination-out",
                                 maskComposite: "exclude",
                                 zIndex: "-100",
+                                display: { xs: "none", sm: "block" },
                             },
                         }}
                     >

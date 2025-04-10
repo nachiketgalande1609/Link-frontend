@@ -157,7 +157,7 @@ const RegisterPage: React.FC = () => {
     // };
 
     return (
-        <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>
             <Fade in={checked} timeout={2000}>
                 <Box
                     sx={{
@@ -166,7 +166,7 @@ const RegisterPage: React.FC = () => {
                         borderRadius: "20px",
                         position: "relative",
                         overflow: "hidden",
-                        border: "2px solid transparent",
+                        border: { xs: "none", sm: "2px solid transparent" },
                         "&::before": {
                             content: '""',
                             position: "absolute",
@@ -181,6 +181,7 @@ const RegisterPage: React.FC = () => {
                             WebkitMaskComposite: "destination-out",
                             maskComposite: "exclude",
                             zIndex: "-100",
+                            display: { xs: "none", sm: "block" },
                         },
                     }}
                 >

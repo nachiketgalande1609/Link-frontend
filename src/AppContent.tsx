@@ -133,7 +133,7 @@ const AppContent = () => {
 
     // Windows Notifications Permission
     useEffect(() => {
-        if (Notification.permission !== "granted") {
+        if (typeof Notification !== "undefined" && Notification.permission !== "granted") {
             Notification.requestPermission();
         }
     }, []);
@@ -177,11 +177,14 @@ const AppContent = () => {
         if (!user) return;
 
         const handleNotificationAlertResponse = (data: { targetUserId: string; notificationMessage: string }) => {
-            if (Notification.permission === "granted") {
+            if (typeof Notification !== "undefined" && Notification.permission === "granted") {
                 new Notification("Link", {
                     body: data.notificationMessage,
-                    icon: "https://t4.ftcdn.net/jpg/01/33/48/03/360_F_133480376_PWlsZ1Bdr2SVnTRpb8jCtY59CyEBdoUt.jpg", // Optional icon URL
+                    icon: "https://t4.ftcdn.net/jpg/01/33/48/03/360_F_133480376_PWlsZ1Bdr2SVnTRpb8jCtY59CyEBdoUt.jpg",
                 });
+            } else {
+                console.log("Notification API not supported or permission not granted.");
+                // Optional fallback: play a sound, show a modal, light a candle, etc.
             }
         };
 

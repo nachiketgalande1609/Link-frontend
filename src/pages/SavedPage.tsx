@@ -60,7 +60,7 @@ const SavedPage = () => {
                                         marginBottom: isMobile && index !== posts.length - 1 ? "2px" : "none", // Apply border except for last item
                                     }}
                                 >
-                                    <Post post={post} fetchPosts={fetchPosts} borderRadius="20px" isSaved={true} />
+                                    <Post post={post} fetchPosts={fetchPosts} borderRadius="20px" />
                                 </Grid>
                             ))}
                         </Grid>

@@ -21,6 +21,7 @@ const HomePage = () => {
     const [selfStories, setSelfStories] = useState<any[]>([]);
     const [followingStories, setFollowingStories] = useState<any[]>([]);
     const [fetchingStories, setFetchingStories] = useState<boolean>(true);
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     const fetchPosts = async () => {
         try {
@@ -88,14 +89,16 @@ const HomePage = () => {
 
     return (
         <Container
-            maxWidth="sm"
+            maxWidth={false}
             sx={{
+                width: isLarge ? "600px" : "525px",
                 padding: isMobile ? 0 : "10px",
                 minHeight: "100vh",
                 display: "flex",
                 flexDirection: "column",
                 borderLeft: "1px solid #202327",
                 borderRight: "1px solid #202327",
+                margin: "0 auto",
             }}
         >
             {/* Stories Section */}
