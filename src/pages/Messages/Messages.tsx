@@ -498,7 +498,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     };
 
     return (
-        <Box sx={{ display: "flex", height: "100vh" }}>
+        <Box sx={{ display: "flex", height: "100svh" }}>
             <MessagesDrawer
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}
@@ -510,7 +510,18 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                 setAnchorEl={setAnchorEl}
             />
             {isMobile && (
-                <IconButton sx={{ position: "absolute", left: 5, top: 15 }} onClick={() => setDrawerOpen(true)}>
+                <IconButton
+                    sx={{
+                        position: "absolute",
+                        left: 5,
+                        top: 15,
+                        zIndex: 2000, // Add this
+                    }}
+                    onClick={() => {
+                        setDrawerOpen(true);
+                        console.log("Clicked");
+                    }}
+                >
                     <ChevronRightIcon sx={{ color: "white" }} />
                 </IconButton>
             )}
