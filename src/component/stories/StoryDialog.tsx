@@ -62,6 +62,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
     const [paused, setPaused] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false); // Drawer state for viewers
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -187,7 +188,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         alignItems: "center",
                         justifyContent: "center",
                         height: "100vh",
-                        width: "100vw",
+                        width: isLarge ? "444px" : "300px",
                         padding: "0 !important",
                     }}
                 >
@@ -299,7 +300,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                             <Typography
                                 sx={{
                                     position: "absolute",
-                                    bottom: 60,
+                                    bottom: isLarge ? 50 : 20,
                                     left: 0,
                                     right: 0,
                                     color: "white",
@@ -309,6 +310,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                     maxWidth: "100%",
                                     margin: "0 auto",
                                     wordBreak: "break-word",
+                                    fontSize: isLarge ? "1rem" : "0.85rem",
                                 }}
                             >
                                 {selectedUserStories[currentIndex].caption}

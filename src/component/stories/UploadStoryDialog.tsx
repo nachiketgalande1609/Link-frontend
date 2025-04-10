@@ -7,9 +7,10 @@ import { uploadStory } from "../../services/api"; // Import the API function
 interface UploadStoryDialogProps {
     open: boolean;
     onClose: () => void;
+    fetchStories: () => Promise<void>;
 }
 
-const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose }) => {
+const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fetchStories }) => {
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const [media, setMedia] = useState<File | null>(null);
     const [caption, setCaption] = useState("");
@@ -41,6 +42,7 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose }) 
                 setMedia(null);
                 setCaption("");
                 onClose();
+                fetchStories();
             }
         } catch (error) {
             console.error("Failed to upload story:", error);
@@ -139,7 +141,9 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose }) 
                         variant="contained"
                         color="primary"
                         fullWidth
-                        onClick={handleUpload}
+                        onClick={() => {
+                            handleUpload();
+                        }}
                         disabled={!media || loading}
                         sx={{ borderRadius: "15px", height: "45px" }}
                     >

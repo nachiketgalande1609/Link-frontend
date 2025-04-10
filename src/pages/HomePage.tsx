@@ -295,7 +295,7 @@ const HomePage = () => {
                 stories={[...selfStories, ...followingStories]} // Combine for navigation
                 selectedStoryIndex={selectedStoryIndex}
             />
-            <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} />
+            <UploadStoryDialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)} fetchStories={fetchStories} />
         </Container>
     );
 };
