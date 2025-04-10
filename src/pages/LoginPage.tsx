@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Container, Typography, Box, Alert, Link, Fade } from "@mui/material";
+import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery } from "@mui/material";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { loginUser, googleLogin } from "../services/api";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ const LoginPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [checked, setChecked] = useState(false);
     const [loading, setLoading] = useState(false);
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     useEffect(() => {
         setChecked(true);
@@ -130,16 +131,24 @@ const LoginPage: React.FC = () => {
 
     return (
         <GoogleOAuthProvider clientId={"702353220748-2lmc03lb4tcfnuqds67h8bbupmb1aa0q.apps.googleusercontent.com"}>
-            <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>
+            <Container
+                sx={{
+                    width: isLarge ? "440px" : "400px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100svh",
+                }}
+            >
                 <Fade in={checked} timeout={1500}>
                     <Box
                         sx={{
                             textAlign: "center",
-                            padding: "80px 30px",
+                            padding: isLarge ? "80px 30px" : "40px 30px",
                             borderRadius: "20px",
                             position: "relative",
                             overflow: "hidden",
-                            border: { xs: "none", sm: "2px solid transparent" }, // Hide border on mobile (xs)
+                            border: { xs: "none", sm: "2px solid transparent" },
                             display: "flex",
                             justifyContent: "center",
                             flexDirection: "column",
@@ -167,9 +176,9 @@ const LoginPage: React.FC = () => {
                                 backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
-                                marginBottom: "20px",
+                                marginBottom: isLarge ? "20px" : "5px",
+                                fontSize: isLarge ? "50px" : "40px",
                             }}
-                            variant="h3"
                             className="lily-script-one-regular"
                         >
                             Ripple
@@ -191,6 +200,15 @@ const LoginPage: React.FC = () => {
                                 margin="normal"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                size={isLarge ? "medium" : "small"}
+                                slotProps={{
+                                    input: {
+                                        style: {
+                                            fontSize: isLarge ? "1rem" : "0.85rem",
+                                            padding: isLarge ? "0px" : "5px",
+                                        },
+                                    },
+                                }}
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: "20px",
@@ -206,6 +224,15 @@ const LoginPage: React.FC = () => {
                                 margin="normal"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                size={isLarge ? "medium" : "small"}
+                                slotProps={{
+                                    input: {
+                                        style: {
+                                            fontSize: isLarge ? "1rem" : "0.85rem",
+                                            padding: isLarge ? "0px" : "5px",
+                                        },
+                                    },
+                                }}
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: "20px",
@@ -220,13 +247,13 @@ const LoginPage: React.FC = () => {
                                 disabled={loading || !email || !password}
                                 fullWidth
                                 type="submit"
-                                sx={{ mt: 2, borderRadius: "15px" }}
+                                sx={{ mt: 2, borderRadius: "15px", fontSize: isLarge ? "1rem" : "0.85rem" }}
                             >
                                 Login
                             </Button>
                         </form>
 
-                        <Typography sx={{ mt: 2, mb: 2 }}>OR</Typography>
+                        <Typography sx={{ mt: 2, mb: 2, fontSize: isLarge ? "1rem" : "0.85rem" }}>OR</Typography>
 
                         <GoogleLogin
                             onSuccess={handleGoogleLogin}
@@ -239,7 +266,7 @@ const LoginPage: React.FC = () => {
                             width="100%"
                         />
 
-                        <Typography sx={{ mt: 4 }}>
+                        <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
                             Don't have an account?{" "}
                             <Link href="/register" sx={{ textDecoration: "none", fontWeight: "bold" }}>
                                 Create an account

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Container, Typography, Box, Alert, Link, Fade } from "@mui/material";
+import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery } from "@mui/material";
 import { registerUser } from "../services/api";
 import { useGlobalStore } from "../store/store";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ const RegisterPage: React.FC = () => {
     const [success, setSuccess] = useState<string | null>(null);
     const [checked, setChecked] = useState(false);
     const [loading, setLoading] = useState(false);
+    const isLarge = useMediaQuery("(min-width:1281px)");
 
     useEffect(() => {
         setChecked(true);
@@ -157,12 +158,12 @@ const RegisterPage: React.FC = () => {
     // };
 
     return (
-        <Container maxWidth="xs" sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>
+        <Container sx={{ width: isLarge ? "440px" : "400px", display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>
             <Fade in={checked} timeout={2000}>
                 <Box
                     sx={{
                         textAlign: "center",
-                        padding: "80px 30px",
+                        padding: isLarge ? "80px 30px" : "30px 30px",
                         borderRadius: "20px",
                         position: "relative",
                         overflow: "hidden",
@@ -191,13 +192,14 @@ const RegisterPage: React.FC = () => {
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
                             marginBottom: "20px",
+                            fontSize: isLarge ? "50px" : "40px",
                         }}
                         variant="h3"
                         className="lily-script-one-regular"
                     >
                         Ripple
                     </Typography>
-                    <Typography variant="body1" gutterBottom>
+                    <Typography gutterBottom sx={{ fontSize: isLarge ? "1rem" : "0.85rem" }}>
                         Sign up to see photos and videos from your friends.
                     </Typography>
                     {error && <Alert severity="error">{error}</Alert>}
@@ -210,6 +212,15 @@ const RegisterPage: React.FC = () => {
                             margin="normal"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            size={isLarge ? "medium" : "small"}
+                            slotProps={{
+                                input: {
+                                    style: {
+                                        fontSize: isLarge ? "1rem" : "0.85rem",
+                                        padding: isLarge ? "0px" : "5px",
+                                    },
+                                },
+                            }}
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
@@ -223,6 +234,15 @@ const RegisterPage: React.FC = () => {
                             margin="normal"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            size={isLarge ? "medium" : "small"}
+                            slotProps={{
+                                input: {
+                                    style: {
+                                        fontSize: isLarge ? "1rem" : "0.85rem",
+                                        padding: isLarge ? "0px" : "5px",
+                                    },
+                                },
+                            }}
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
@@ -237,6 +257,15 @@ const RegisterPage: React.FC = () => {
                             margin="normal"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            size={isLarge ? "medium" : "small"}
+                            slotProps={{
+                                input: {
+                                    style: {
+                                        fontSize: isLarge ? "1rem" : "0.85rem",
+                                        padding: isLarge ? "0px" : "5px",
+                                    },
+                                },
+                            }}
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
@@ -251,6 +280,15 @@ const RegisterPage: React.FC = () => {
                             margin="normal"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            size={isLarge ? "medium" : "small"}
+                            slotProps={{
+                                input: {
+                                    style: {
+                                        fontSize: isLarge ? "1rem" : "0.85rem",
+                                        padding: isLarge ? "0px" : "5px",
+                                    },
+                                },
+                            }}
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
@@ -265,12 +303,12 @@ const RegisterPage: React.FC = () => {
                             loading={loading}
                             onClick={handleRegister}
                             disabled={loading || !email || !username || !password || !confirmPassword}
-                            sx={{ mt: 2, borderRadius: "15px", height: "38.67px" }}
+                            sx={{ mt: 2, borderRadius: "15px", fontSize: isLarge ? "1rem" : "0.85rem" }}
                         >
                             Register
                         </Button>
                     </form>
-                    <Typography sx={{ mt: 4 }}>
+                    <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
                         Already have an account?{" "}
                         <Link href="/login" sx={{ textDecoration: "none", fontWeight: "bold" }}>
                             Log in
