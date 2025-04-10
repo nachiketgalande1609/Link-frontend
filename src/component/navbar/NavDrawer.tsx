@@ -281,7 +281,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                         src={Logo}
                                                         alt="Logo"
                                                         style={{
-                                                            width: isLarge ? "54.22px" : "45px",
+                                                            width: isLarge ? "54.22px" : "48px",
                                                             transition: "width 0.3s ease-in-out",
                                                             cursor: "pointer",
                                                         }}
