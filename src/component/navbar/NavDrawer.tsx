@@ -39,9 +39,6 @@ import {
     Bookmark,
 } from "@mui/icons-material";
 
-const DrawerWidth = 240;
-const CollapsedDrawerWidth = 72.67;
-
 interface NavDrawerProps {
     unreadMessagesCount: number | null;
     unreadNotificationsCount: number | null;
@@ -61,6 +58,11 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")!) : null;
     const [openDialog, setOpenDialog] = useState(false);
 
+    const isLarge = useMediaQuery("(min-width:1281px)");
+
+    const DrawerWidth = isLarge ? 240 : 220;
+    const CollapsedDrawerWidth = isLarge ? 72.67 : 68;
+
     const toggleDrawer = () => setOpen(!open);
     const handleOpen = () => setModalOpen(true);
 
@@ -75,15 +77,17 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   kind: "item",
                   segment: "",
                   title: "Home",
-                  icon: <HomeOutlined sx={{ fontSize: "2rem" }} />,
-                  filledIcon: <HomeFilled sx={{ fontSize: "2rem", color: "#000000" }} />,
+                  icon: <HomeOutlined sx={{ fontSize: isLarge ? "2rem" : "1.65rem" }} />,
+                  filledIcon: <HomeFilled sx={{ fontSize: isLarge ? "2rem" : "1.65rem", color: "#000000" }} />,
               },
               {
                   kind: "item",
                   segment: "search",
                   title: "Search",
-                  icon: <FontAwesomeIcon icon={faSearch} style={{ fontSize: "26.67px", paddingLeft: "1px" }} />,
-                  filledIcon: <FontAwesomeIcon icon={faSearch} style={{ fontSize: "26.67px", paddingLeft: "1px", color: "#000000" }} />,
+                  icon: <FontAwesomeIcon icon={faSearch} style={{ fontSize: isLarge ? "26.67px" : "21.33px", paddingLeft: "1px" }} />,
+                  filledIcon: (
+                      <FontAwesomeIcon icon={faSearch} style={{ fontSize: isLarge ? "26.67px" : "21.33px", paddingLeft: "1px", color: "#000000" }} />
+                  ),
               },
               {
                   kind: "item",
@@ -91,12 +95,15 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   title: "Messages",
                   icon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <FontAwesomeIcon icon={faComment} style={{ fontSize: "30px", paddingLeft: "1px" }} />
+                          <FontAwesomeIcon icon={faComment} style={{ fontSize: isLarge ? "30px" : "24.33px", paddingLeft: "1px" }} />
                       </Badge>
                   ),
                   filledIcon: (
                       <Badge badgeContent={unreadMessagesCount} color="error">
-                          <FontAwesomeIcon icon={faCommentSolid} style={{ fontSize: "30px", color: "#000000", paddingLeft: "1px" }} />
+                          <FontAwesomeIcon
+                              icon={faCommentSolid}
+                              style={{ fontSize: isLarge ? "30px" : "24.33px", color: "#000000", paddingLeft: "1px" }}
+                          />
                       </Badge>
                   ),
               },
@@ -106,12 +113,12 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   title: "Notifications",
                   icon: (
                       <Badge badgeContent={unreadNotificationsCount} color="error">
-                          <FavoriteBorder sx={{ fontSize: "2rem" }} />
+                          <FavoriteBorder sx={{ fontSize: isLarge ? "2rem" : "1.65rem" }} />
                       </Badge>
                   ),
                   filledIcon: (
                       <Badge badgeContent={unreadNotificationsCount} color="error">
-                          <Favorite sx={{ fontSize: "2rem", color: "#000000" }} />
+                          <Favorite sx={{ fontSize: isLarge ? "2rem" : "1.65rem", color: "#000000" }} />
                       </Badge>
                   ),
               },
@@ -119,8 +126,8 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   kind: "item",
                   segment: "saved",
                   title: "Saved",
-                  icon: <BookmarkBorderOutlined sx={{ fontSize: "2rem" }} />,
-                  filledIcon: <Bookmark sx={{ fontSize: "2rem", color: "#000000" }} />,
+                  icon: <BookmarkBorderOutlined sx={{ fontSize: isLarge ? "2rem" : "1.65rem" }} />,
+                  filledIcon: <Bookmark sx={{ fontSize: isLarge ? "2rem" : "1.65rem", color: "#000000" }} />,
               },
               {
                   kind: "item",
@@ -131,8 +138,8 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                           src={currentUser?.profile_picture_url || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                           alt="Profile"
                           style={{
-                              width: "33px",
-                              height: "33px",
+                              width: isLarge ? "33px" : "28px",
+                              height: isLarge ? "33px" : "28px",
                               borderRadius: "50%",
                               objectFit: "cover",
                               outline: "2px solid #ffffff",
@@ -144,8 +151,8 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                           src={currentUser?.profile_picture_url || "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"}
                           alt="Profile"
                           style={{
-                              width: "33px",
-                              height: "33px",
+                              width: isLarge ? "33px" : "28px",
+                              height: isLarge ? "33px" : "28px",
                               borderRadius: "50%",
                               objectFit: "cover",
                           }}
@@ -159,13 +166,18 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                   kind: "item",
                   segment: "login",
                   title: "Login",
-                  icon: <FontAwesomeIcon icon={faSignIn} style={{ fontSize: "26.67px", paddingLeft: "1px" }} />,
+                  icon: <FontAwesomeIcon icon={faSignIn} style={{ fontSize: isLarge ? "26.67px" : "21.33px", paddingLeft: "1px" }} />,
               },
               {
                   kind: "item",
                   segment: "register",
                   title: "Register",
-                  icon: <FontAwesomeIcon icon={faUserPlus} style={{ fontSize: "20.67px", paddingLeft: "1px", marginLeft: "3px" }} />,
+                  icon: (
+                      <FontAwesomeIcon
+                          icon={faUserPlus}
+                          style={{ fontSize: isLarge ? "26.67px" : "21.33px", paddingLeft: "1px", marginLeft: "3px" }}
+                      />
+                  ),
               },
           ];
 
@@ -242,7 +254,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                     justifyContent: "space-between",
                                                     alignItems: "center",
                                                     padding: open ? 2 : "21px 0",
-                                                    height: "90px",
+                                                    height: isLarge ? "90px" : "70px",
                                                 }}
                                             >
                                                 {open ? (
@@ -257,8 +269,8 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                             sx={{
                                                                 transition: "opacity 0.3s ease-in-out, visibility 0.9s ease-in-out",
                                                                 opacity: open ? 1 : 0,
+                                                                fontSize: isLarge ? "45px" : "35px",
                                                             }}
-                                                            variant="h3"
                                                             className="lily-script-one-regular"
                                                         >
                                                             Ripple
@@ -269,7 +281,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                         src={Logo}
                                                         alt="Logo"
                                                         style={{
-                                                            width: "54.22px",
+                                                            width: isLarge ? "54.22px" : "45px",
                                                             transition: "width 0.3s ease-in-out",
                                                             cursor: "pointer",
                                                         }}
@@ -283,12 +295,12 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                             color: "white",
                                                             position: "absolute",
                                                             right: open ? 0 : 8,
-                                                            top: 24,
+                                                            top: isLarge ? 27 : 18,
                                                             borderRadius: "50%",
                                                             "&:hover": { backgroundColor: "#000000" },
                                                         }}
                                                     >
-                                                        <ChevronLeft />
+                                                        <ChevronLeft sx={{ fontSize: isLarge ? "1.5rem" : "1.25rem" }} />
                                                     </IconButton>
                                                 ) : null}
                                             </ListItem>
@@ -310,7 +322,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                             }}
                                             sx={{
                                                 textDecoration: "none",
-                                                padding: "12px 12px",
+                                                padding: isLarge ? "12px 12px" : "10px 12px",
                                                 borderRadius: "20px",
                                                 backgroundColor: isActive ? "#ffffff" : "transparent",
                                                 "&:hover": isActive ? { backgroundColor: "#ffffff" } : { backgroundColor: "#202327" },
@@ -325,7 +337,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                             </ListItemIcon>
                                             <Typography
                                                 sx={{
-                                                    fontSize: "1rem",
+                                                    fontSize: "clamp(0.85rem, 1.05vw, 1rem)",
                                                     color: isActive ? "#000000" : "white",
                                                     visibility: open ? "visible" : "hidden",
                                                     transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
@@ -343,7 +355,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                         onClick={handleOpen}
                                         sx={{
                                             textDecoration: "none",
-                                            padding: "12px 12px",
+                                            padding: isLarge ? "12px 12px" : "10px 12px",
                                             cursor: "pointer",
                                             borderRadius: "20px",
                                             "&:hover": { backgroundColor: "#202327" },
@@ -353,11 +365,11 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                         }}
                                     >
                                         <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
-                                            <AddIcon sx={{ fontSize: "2rem" }} />
+                                            <AddIcon sx={{ fontSize: isLarge ? "2rem" : "1.65rem" }} />
                                         </ListItemIcon>
                                         <Typography
                                             sx={{
-                                                fontSize: "1rem",
+                                                fontSize: "clamp(0.85rem, 1.05vw, 1rem)",
                                                 color: "white",
                                                 visibility: open ? "visible" : "hidden",
                                                 transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
@@ -377,7 +389,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                         onClick={handleMenuClick}
                                         sx={{
                                             textDecoration: "none",
-                                            padding: "12px 12px",
+                                            padding: isLarge ? "12px 12px" : "10px 12px",
                                             cursor: "pointer",
                                             borderRadius: "20px",
                                             "&:hover": { backgroundColor: "#202327" },
@@ -387,11 +399,11 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                         }}
                                     >
                                         <ListItemIcon sx={{ minWidth: open ? 56 : "auto" }}>
-                                            <MenuIcon sx={{ fontSize: "2rem" }} />
+                                            <MenuIcon sx={{ fontSize: isLarge ? "2rem" : "1.65rem" }} />
                                         </ListItemIcon>
                                         <Typography
                                             sx={{
-                                                fontSize: "1rem",
+                                                fontSize: "clamp(0.85rem, 1.05vw, 1rem)",
                                                 color: "white",
                                                 visibility: open ? "visible" : "hidden",
                                                 transition: "opacity 0.5s ease-in-out, transform 0.4s ease-in-out",
