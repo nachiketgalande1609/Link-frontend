@@ -195,16 +195,17 @@ const LoginPage: React.FC = () => {
 
                         <Typography sx={{ mt: 2, mb: 2, fontSize: isLarge ? "1rem" : "0.85rem" }}>OR</Typography>
 
-                        <GoogleLogin
-                            onSuccess={handleGoogleLogin}
-                            onError={() => {
-                                setError("Google login failed!");
-                            }}
-                            theme="outline"
-                            text="signin_with"
-                            shape="pill"
-                            width="100%"
-                        />
+                        <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mb: 2 }}>
+                            <GoogleLogin
+                                onSuccess={handleGoogleLogin}
+                                onError={() => {
+                                    setError("Google login failed!");
+                                }}
+                                theme="outline"
+                                text="signin_with"
+                                shape="pill"
+                            />
+                        </Box>
 
                         <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
                             Don't have an account?{" "}
