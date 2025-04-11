@@ -76,7 +76,10 @@ const ProfilePage = () => {
     }, []);
 
     useEffect(() => {
-        if (!postUploading && profileData && (currentUser?.id === userId || !profileData.is_private || profileData.is_following)) {
+        const isOwnProfile = currentUser?.id == userId;
+        const canView = profileData && (isOwnProfile || !profileData.is_private || profileData.is_following);
+
+        if (!postUploading && canView) {
             fetchUserPosts();
         }
     }, [postUploading, profileData, userId, currentUser?.id]);

@@ -147,27 +147,19 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                 fetchMessagesForSelectedUser(parseInt(userId));
             }
         }
+    }, [location.pathname, userId]);
+
+    useEffect(() => {
+        if (navigatedUser && navigatedUser.id && !users.some((user) => user.id === navigatedUser.id)) {
+            setUsers((prevUsers) => [...prevUsers, navigatedUser]);
+        }
 
         if (navigatedUser && navigatedUser.id) {
-            // Check if we really need to update
-            if (!selectedUser || navigatedUser.id !== selectedUser.id) {
-                const userExists = users.some((user) => user.id === navigatedUser.id);
-                if (!userExists) {
-                    setUsers((prevUsers) => [...prevUsers, navigatedUser]);
-                }
-                setSelectedUser(navigatedUser);
-                setMessages([]);
-                fetchMessagesForSelectedUser(navigatedUser.id);
-            }
+            setSelectedUser(navigatedUser);
+            setMessages([]);
+            fetchMessagesForSelectedUser(navigatedUser.id);
         }
-    }, [location.pathname, userId, navigatedUser?.id]);
-
-    // useEffect(() => {
-    //     if (selectedUser) {
-    //         setMessages([]);
-    //         fetchMessagesForSelectedUser(selectedUser.id);
-    //     }
-    // }, [selectedUser]);
+    }, [navigatedUser.id, users.length]);
 
     // Socket for receiving messages
     useEffect(() => {

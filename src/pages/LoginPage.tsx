@@ -193,9 +193,9 @@ const LoginPage: React.FC = () => {
                             </Button>
                         </form>
 
-                        <Typography sx={{ mt: 2, mb: 2, fontSize: isLarge ? "1rem" : "0.85rem" }}>OR</Typography>
+                        <Typography sx={{ mt: 2, mb: 2, fontSize: isLarge ? "1rem" : "0.85rem", display: "none" }}>OR</Typography>
 
-                        <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mb: 2 }}>
+                        <Box sx={{ display: "none", justifyContent: "center", width: "100%", mb: 2 }}>
                             <GoogleLogin
                                 onSuccess={handleGoogleLogin}
                                 onError={() => {
