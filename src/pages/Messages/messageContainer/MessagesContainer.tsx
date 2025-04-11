@@ -149,7 +149,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
         }
 
         // Check if the user is near the bottom
-        const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
+        const isNearBottom = scrollTop > -10;
         setIsScrolledUp(!isNearBottom);
     };
 
