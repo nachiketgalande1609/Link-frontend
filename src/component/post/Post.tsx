@@ -410,7 +410,10 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                                 <BookmarkBorderOutlined sx={{ fontSize: isMobile ? "26px" : "30px" }} />
                             )}
                         </IconButton>
-                        <IconButton onClick={handleOptionsDialogOpen} sx={{ padding: "0", color: "#787a7a" }}>
+                        <IconButton
+                            onClick={handleOptionsDialogOpen}
+                            sx={{ padding: "0", color: "#787a7a", ":hover": { backgroundColor: "transparent" } }}
+                        >
                             <MoreVert />
                         </IconButton>
                     </Box>

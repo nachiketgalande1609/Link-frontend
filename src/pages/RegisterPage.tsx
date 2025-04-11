@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery } from "@mui/material";
 import { registerUser } from "../services/api";
-import { useGlobalStore } from "../store/store";
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage: React.FC = () => {
-    const { setUser } = useGlobalStore();
-    const navigate = useNavigate();
-
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -42,52 +38,14 @@ const RegisterPage: React.FC = () => {
         }
 
         try {
-            // // Step 1: Generate the public-private key pair
-            // const keyPair = await window.crypto.subtle.generateKey(
-            //     {
-            //         name: "RSA-OAEP",
-            //         modulusLength: 2048, // Key size
-            //         publicExponent: new Uint8Array([0x01, 0x00, 0x01]), // 65537
-            //         hash: { name: "SHA-256" }, // Hash algorithm
-            //     },
-            //     true, // Whether the key is extractable
-            //     ["encrypt", "decrypt"] // Key usages
-            // );
-
-            // // Step 2: Export the public key
-            // const exportedPublicKey = await window.crypto.subtle.exportKey("spki", keyPair.publicKey);
-
-            // // Step 3: Export the private key
-            // const exportedPrivateKey = await window.crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
-
-            // // Step 4: Convert exported keys to base64 strings
-            // const publicKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(exportedPublicKey)));
-            // const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(exportedPrivateKey)));
-
-            // // Step 5: Encrypt the private key with the user's password
-            // const encryptedPrivateKeyBase64 = await encryptPrivateKey(privateKeyBase64, password);
-
-            // Step 6: Send the registration data to the backend
             const response = await registerUser({
                 email,
                 username,
                 password,
-                publicKey: "publicKeyBase64",
-                encryptedPrivateKey: "encryptedPrivateKeyBase64",
             });
 
             if (response.success) {
-                // Store the token and user details in localStorage
-                const { token, user } = response.data;
-                localStorage.setItem("token", token);
-                localStorage.setItem("user", JSON.stringify(user));
-
-                // Save the unencrypted private key in localStorage (temporarily)
-                localStorage.setItem("privateKey", "privateKeyBase64");
-
-                setUser(user);
-                setSuccess("Registration successful!");
-                navigate("/");
+                setSuccess("Registration successful! A verification link has been sent to your email.");
             } else {
                 setError(response.error || "Registration failed!");
             }
@@ -97,65 +55,6 @@ const RegisterPage: React.FC = () => {
             setLoading(false);
         }
     };
-
-    // const encryptPrivateKey = async (privateKeyBase64: string, password: string) => {
-    //     try {
-    //         // Step 1: Generate a random 12-byte IV for AES-GCM
-    //         const iv = window.crypto.getRandomValues(new Uint8Array(12));
-
-    //         // Step 2: Derive a valid AES key from the password
-    //         const aesKey = await deriveAesKeyFromPassword(password);
-
-    //         // Step 3: Convert the private key (base64 string) to an ArrayBuffer
-    //         const privateKeyArrayBuffer = Uint8Array.from(atob(privateKeyBase64), (c) => c.charCodeAt(0));
-
-    //         // Step 4: Encrypt the private key using AES-GCM
-    //         const encryptedPrivateKey = await window.crypto.subtle.encrypt(
-    //             {
-    //                 name: "AES-GCM",
-    //                 iv: iv, // Use the random IV
-    //             },
-    //             aesKey, // Derived AES key
-    //             privateKeyArrayBuffer // Private key as ArrayBuffer
-    //         );
-
-    //         // Step 5: Combine the IV and encrypted private key into a single ArrayBuffer
-    //         const combinedBuffer = new Uint8Array(iv.length + encryptedPrivateKey.byteLength);
-    //         combinedBuffer.set(iv, 0); // Add the IV at the beginning
-    //         combinedBuffer.set(new Uint8Array(encryptedPrivateKey), iv.length); // Add the encrypted data
-
-    //         // Step 6: Convert the combined buffer to a base64 string
-    //         const encryptedPrivateKeyBase64 = btoa(String.fromCharCode(...combinedBuffer));
-
-    //         return encryptedPrivateKeyBase64;
-    //     } catch (error) {
-    //         console.error("Error encrypting private key:", error);
-    //         throw error;
-    //     }
-    // };
-
-    // const deriveAesKeyFromPassword = async (password: string) => {
-    //     const encoder = new TextEncoder();
-    //     const passwordBuffer = encoder.encode(password);
-
-    //     // Use PBKDF2 to derive a 256-bit (32-byte) key from the password
-    //     const baseKey = await window.crypto.subtle.importKey("raw", passwordBuffer, { name: "PBKDF2" }, false, ["deriveKey"]);
-
-    //     const aesKey = await window.crypto.subtle.deriveKey(
-    //         {
-    //             name: "PBKDF2",
-    //             salt: new TextEncoder().encode("some-random-salt"), // Use a random or fixed salt
-    //             iterations: 100000, // Number of iterations
-    //             hash: "SHA-256", // Hash function
-    //         },
-    //         baseKey,
-    //         { name: "AES-GCM", length: 256 }, // Derive a 256-bit AES key
-    //         false, // Not extractable
-    //         ["encrypt", "decrypt"] // Key usages
-    //     );
-
-    //     return aesKey;
-    // };
 
     return (
         <Container sx={{ width: isLarge ? "440px" : "400px", display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>

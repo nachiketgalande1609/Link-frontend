@@ -24,6 +24,7 @@ import SavedPage from "./pages/SavedPage";
 import VideoCallModal from "./component/VideoCallModal";
 import Ringtone from "./static/ringtone.mp3";
 import HangUpTone from "./static/hangup.mp3";
+import VerifyAccount from "./pages/VerifyAccount";
 
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -334,8 +335,6 @@ const AppContent = () => {
 
         // Track remote stream
         newPc.ontrack = (event) => {
-            console.log("Running");
-
             setRemoteStream(event.streams[0]);
         };
 
@@ -509,6 +508,14 @@ const AppContent = () => {
                             <PrivateRoute>
                                 <SettingsPage />
                             </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path="/verify-account"
+                        element={
+                            <PublicRoute>
+                                <VerifyAccount />
+                            </PublicRoute>
                         }
                     />
                     <Route path="*" element={<NotFoundPage />} />

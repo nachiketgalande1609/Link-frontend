@@ -27,87 +27,27 @@ const LoginPage: React.FC = () => {
         setLoading(true);
 
         try {
-            // Step 1: Call the login API
             const response = await loginUser({ email, password });
 
             if (response.success) {
-                const { token, user, encryptedPrivateKey } = response.data;
+                const { token, user } = response.data;
 
-                console.log(encryptedPrivateKey);
-
-                // Step 2: Decrypt the private key using the user's password
-                // const privateKeyBase64 = await decryptPrivateKey(encryptedPrivateKey, password);
-
-                // Step 3: Store the token, user details, and decrypted private key in localStorage
                 localStorage.setItem("token", token);
                 localStorage.setItem("user", JSON.stringify(user));
-                // localStorage.setItem("privateKey", privateKeyBase64); // Store the decrypted private key
 
-                // Step 4: Register the user with the socket (if needed)
                 socket.emit("registerUser", user.id);
 
-                // Step 5: Update the user state and navigate to the home page
                 setUser(user);
                 navigate("/");
             } else {
-                setError(response.error || "Login failed!"); // Ensure error is a string
+                setError(response.error || "Login failed!");
             }
         } catch (err: any) {
             console.error("Login error:", err);
-            setError(err.response?.data?.error || "Login failed!"); // Ensure error is a string
-        } finally {
+            setError(err.response?.data?.error || "Login failed!");
             setLoading(false);
         }
     };
-
-    // const decryptPrivateKey = async (encryptedPrivateKeyBase64: string, password: string) => {
-    //     try {
-    //         // Step 1: Decode the base64 string into an ArrayBuffer
-    //         const combinedBuffer = Uint8Array.from(atob(encryptedPrivateKeyBase64), (c) => c.charCodeAt(0));
-
-    //         // Step 2: Extract the IV (first 12 bytes)
-    //         const iv = combinedBuffer.slice(0, 12);
-
-    //         // Step 3: Extract the encrypted data (remaining bytes)
-    //         const encryptedData = combinedBuffer.slice(12);
-
-    //         // Step 4: Derive the AES key from the password
-    //         const aesKey = await deriveAesKeyFromPassword(password);
-
-    //         // Step 5: Decrypt the data
-    //         const decryptedPrivateKey = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, aesKey, encryptedData);
-
-    //         // Step 6: Convert the decrypted data to a base64 string
-    //         const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(decryptedPrivateKey)));
-    //         return privateKeyBase64;
-    //     } catch (error) {
-    //         console.error("Error decrypting private key:", error);
-    //         throw error;
-    //     }
-    // };
-
-    // const deriveAesKeyFromPassword = async (password: string) => {
-    //     const encoder = new TextEncoder();
-    //     const passwordBuffer = encoder.encode(password);
-
-    //     // Use PBKDF2 to derive a 256-bit (32-byte) key from the password
-    //     const baseKey = await window.crypto.subtle.importKey("raw", passwordBuffer, { name: "PBKDF2" }, false, ["deriveKey"]);
-
-    //     const aesKey = await window.crypto.subtle.deriveKey(
-    //         {
-    //             name: "PBKDF2",
-    //             salt: new TextEncoder().encode("some-random-salt"), // Use a random or fixed salt
-    //             iterations: 100000, // Number of iterations
-    //             hash: "SHA-256", // Hash function
-    //         },
-    //         baseKey,
-    //         { name: "AES-GCM", length: 256 }, // Derive a 256-bit AES key
-    //         false, // Not extractable
-    //         ["encrypt", "decrypt"] // Key usages
-    //     );
-
-    //     return aesKey;
-    // };
 
     const handleGoogleLogin = async (credentialResponse: any) => {
         try {
@@ -121,11 +61,11 @@ const LoginPage: React.FC = () => {
                 setUser(user);
                 navigate("/");
             } else {
-                setError(response.error || "Google login failed!"); // Ensure error is a string
+                setError(response.error || "Google login failed!");
             }
         } catch (err: any) {
             console.log(err);
-            setError(err.response?.data?.error || "Google login failed!"); // Ensure error is a string
+            setError(err.response?.data?.error || "Google login failed!");
         }
     };
 

@@ -33,14 +33,13 @@ import {
     DELETE_SEARCH_HISTORY_ENDPOINT,
     DELETE_COMMENT_ENDPOINT,
     GET_ALL_MESSAGE_USERS_ENDPOINT,
+    VERIFY_USER_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
     email: string;
     username: string;
     password: string;
-    publicKey?: string;
-    encryptedPrivateKey?: string;
 }
 
 interface UserLoginData {
@@ -181,6 +180,20 @@ export const updateProfileDetails = async (updatedProfile: ProfileData) => {
             console.error("Failed to update profile:", error.message);
         } else {
             console.error("Failed to update profile: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const verifyUser = async (token: string) => {
+    try {
+        const response = await api.get(`${VERIFY_USER_ENDPOINT}?token=${encodeURIComponent(token)}`);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
         }
         throw error;
     }

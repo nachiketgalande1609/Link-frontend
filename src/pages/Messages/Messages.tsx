@@ -519,7 +519,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                     }}
                     onClick={() => {
                         setDrawerOpen(true);
-                        console.log("Clicked");
                     }}
                 >
                     <ChevronRightIcon sx={{ color: "white" }} />

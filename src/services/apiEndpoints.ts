@@ -2,6 +2,7 @@
 export const REGISTER_ENDPOINT: string = "/api/auth/register";
 export const LOGIN_ENDPOINT: string = "/api/auth/login";
 export const GOOGLE_LOGIN_ENDPOINT: string = "/api/auth/google-login";
+export const VERIFY_USER_ENDPOINT: string = "/api/auth/verify";
 
 // User Endpoints
 export const GET_PROFILE_ENDPOINT: string = "/api/users/fetch-profile-details";
