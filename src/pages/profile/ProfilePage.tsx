@@ -174,28 +174,23 @@ const ProfilePage = () => {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} md={9}>
+                            <Grid item xs={12} md={9} sx={{ marginTop: isMobile ? 0 : "20px" }}>
                                 <Typography
                                     sx={{
                                         fontWeight: "bold",
-                                        textAlign: { xs: "center", sm: "center", md: "left" },
-                                        fontSize: isMobile ? "1.3rem" : "2rem",
+                                        textAlign: "center",
+                                        fontSize: isMobile ? "1.3rem" : "1.8rem",
                                     }}
                                 >
                                     {profileData?.username}
                                 </Typography>
 
-                                <Typography sx={{ textAlign: { xs: "center", sm: "center", md: "left" }, fontSize: isMobile ? "0.85rem" : "1rem" }}>
-                                    {profileData?.email}
-                                </Typography>
-
                                 {profileData?.bio && (
                                     <Typography
-                                        variant="body2"
                                         sx={{
                                             mt: 1,
                                             fontStyle: "italic",
-                                            textAlign: { xs: "center", sm: "center", md: "left" },
+                                            textAlign: "center",
                                         }}
                                     >
                                         {profileData?.bio}
