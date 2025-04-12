@@ -122,6 +122,13 @@ const RegisterPage: React.FC = () => {
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
+                                    "&:hover fieldset": {
+                                        borderColor: "#767676",
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                        borderColor: "#767676",
+                                        boxShadow: "none",
+                                    },
                                 },
                             }}
                         />
@@ -144,6 +151,13 @@ const RegisterPage: React.FC = () => {
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
+                                    "&:hover fieldset": {
+                                        borderColor: "#767676",
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                        borderColor: "#767676",
+                                        boxShadow: "none",
+                                    },
                                 },
                             }}
                         />
@@ -167,6 +181,13 @@ const RegisterPage: React.FC = () => {
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
+                                    "&:hover fieldset": {
+                                        borderColor: "#767676",
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                        borderColor: "#767676",
+                                        boxShadow: "none",
+                                    },
                                 },
                             }}
                         />
@@ -190,9 +211,17 @@ const RegisterPage: React.FC = () => {
                             sx={{
                                 "& .MuiOutlinedInput-root": {
                                     borderRadius: "20px",
+                                    "&:hover fieldset": {
+                                        borderColor: "#767676",
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                        borderColor: "#767676",
+                                        boxShadow: "none",
+                                    },
                                 },
                             }}
                         />
+
                         <Button
                             variant="contained"
                             color="primary"
@@ -201,7 +230,18 @@ const RegisterPage: React.FC = () => {
                             loading={loading}
                             onClick={handleRegister}
                             disabled={loading || !email || !username || !password || !confirmPassword}
-                            sx={{ mt: 2, borderRadius: "15px", fontSize: isLarge ? "1rem" : "0.85rem" }}
+                            sx={{
+                                mt: 2,
+                                borderRadius: "15px",
+                                fontSize: isLarge ? "1rem" : "0.85rem",
+                                backgroundColor: "#ffffff",
+                                ":disabled": {
+                                    backgroundColor: "#202327",
+                                    color: "#000000",
+                                },
+                                animation:
+                                    loading || !email || !username || !password || !confirmPassword ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                            }}
                         >
                             Register
                         </Button>

@@ -5,6 +5,8 @@ import { useDropzone } from "react-dropzone";
 import { createPost } from "../../services/api";
 import { useGlobalStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import { LocationOn } from "@mui/icons-material";
+import { InputAdornment } from "@mui/material";
 
 interface CreatePostModalProps {
     open: boolean;
@@ -28,6 +30,13 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
         }
     };
 
+    const handleModalClose = () => {
+        setImageFile(null);
+        setPostContent("");
+        setLocation("");
+        handleClose();
+    };
+
     const { getRootProps, getInputProps } = useDropzone({
         onDrop,
         accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif"] },
@@ -49,10 +58,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                 });
 
                 if (res?.success) {
-                    setPostContent("");
-                    setImageFile(null);
-                    setLocation("");
-                    handleClose();
+                    handleModalClose();
                 }
             }
         } catch (error) {
@@ -67,7 +73,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     return (
         <Modal
             open={open}
-            onClose={handleClose}
+            onClose={handleModalClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -87,14 +93,14 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         boxShadow: 24,
                         p: "60px 20px 20px 20px",
                         borderRadius: "20px",
-                        width: "80%",
-                        maxWidth: "600px",
+                        width: "90%",
+                        maxWidth: "900px",
                         position: "relative",
                     }}
                 >
                     {/* Close Button */}
                     <IconButton
-                        onClick={handleClose}
+                        onClick={handleModalClose}
                         sx={{
                             position: "absolute",
                             top: 8,
@@ -105,60 +111,113 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         <Close />
                     </IconButton>
 
-                    <Box
-                        {...getRootProps()}
-                        sx={{
-                            border: "2px dashed gray",
-                            borderRadius: "20px",
-                            padding: 0,
-                            textAlign: "center",
-                            cursor: "pointer",
-                            marginBottom: 2,
-                            height: "500px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <input {...getInputProps()} />
-                        {imageFile ? (
-                            <img
-                                src={URL.createObjectURL(imageFile)}
-                                alt="Preview"
-                                style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "20px" }}
+                    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
+                        {/* Left: Dropzone */}
+                        <Box
+                            {...getRootProps()}
+                            sx={{
+                                border: "1.5px dashed gray",
+                                borderRadius: "20px",
+                                flex: 1,
+                                minHeight: 400,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                overflow: "hidden",
+                            }}
+                        >
+                            <input {...getInputProps()} />
+                            {imageFile ? (
+                                <img
+                                    src={URL.createObjectURL(imageFile)}
+                                    alt="Preview"
+                                    style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "contain",
+                                        borderRadius: "20px",
+                                    }}
+                                />
+                            ) : (
+                                <Typography>Drag & drop an image, or click to select one</Typography>
+                            )}
+                        </Box>
+
+                        {/* Right: Inputs */}
+                        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={5}
+                                variant="outlined"
+                                placeholder="Write a caption"
+                                value={postContent}
+                                onChange={(e) => setPostContent(e.target.value)}
+                                sx={{
+                                    marginBottom: 2,
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "20px",
+                                        "&:hover fieldset": {
+                                            borderColor: "#767676",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#767676",
+                                            boxShadow: "none",
+                                        },
+                                    },
+                                }}
                             />
-                        ) : (
-                            <Typography>Drag & drop an image, or click to select one</Typography>
-                        )}
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                placeholder="Location"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                sx={{
+                                    marginBottom: 2,
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "20px",
+                                        "&:hover fieldset": {
+                                            borderColor: "#767676",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#767676",
+                                            boxShadow: "none",
+                                        },
+                                    },
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <LocationOn color="action" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                                onClick={handleSubmit}
+                                disabled={!postContent.trim()}
+                                sx={{
+                                    borderRadius: "15px",
+                                    height: "45px",
+                                    mt: "auto",
+                                    backgroundColor: "#ffffff",
+                                    ":disabled": {
+                                        backgroundColor: "#202327",
+                                        color: "#000000",
+                                    },
+                                    animation: !postContent.trim() ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                                }}
+                            >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : "Post"}
+                            </Button>
+                        </Box>
                     </Box>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={3}
-                        variant="outlined"
-                        label="Write a caption"
-                        value={postContent}
-                        onChange={(e) => setPostContent(e.target.value)}
-                        sx={{ marginBottom: 2, "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
-                    />
-                    <TextField
-                        fullWidth
-                        variant="outlined"
-                        label="Location"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        sx={{ marginBottom: 2, "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
-                    />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        onClick={handleSubmit}
-                        disabled={!postContent.trim()}
-                        sx={{ borderRadius: "15px", height: "45px" }}
-                    >
-                        {loading ? <CircularProgress size={24} color="inherit" /> : "Post"}
-                    </Button>
                 </Box>
             </Fade>
         </Modal>

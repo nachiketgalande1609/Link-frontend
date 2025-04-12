@@ -203,6 +203,16 @@ const ProfileDetails = () => {
                         marginBottom: 3,
                         "& .MuiOutlinedInput-root": {
                             borderRadius: "20px",
+                            "&:hover fieldset": {
+                                borderColor: "#767676",
+                            },
+                            "&.Mui-focused fieldset": {
+                                borderColor: "#767676",
+                                boxShadow: "none",
+                            },
+                        },
+                        "& .MuiFormLabel-root ": {
+                            color: "#767676",
                         },
                     }}
                 />
@@ -216,21 +226,34 @@ const ProfileDetails = () => {
                     onChange={(e) => setNewBio(e.target.value)}
                     sx={{
                         marginBottom: 3,
-                        "& .MuiOutlinedInput-root": { borderRadius: "20px" },
+                        "& .MuiOutlinedInput-root": {
+                            borderRadius: "20px",
+                            "&:hover fieldset": {
+                                borderColor: "#767676",
+                            },
+                            "&.Mui-focused fieldset": {
+                                borderColor: "#767676",
+                                boxShadow: "none",
+                            },
+                        },
+                        "& .MuiFormLabel-root ": {
+                            color: "#767676",
+                        },
                     }}
                 />
                 <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
                     <Button
-                        variant="outlined"
-                        color="primary"
+                        variant="contained"
                         onClick={handleUpdateProfile}
                         disabled={!isModified || profileUpdating}
                         sx={{
                             borderRadius: "15px",
-                            textTransform: "uppercase",
-                            fontWeight: "bold",
-                            "&:hover": { backgroundColor: "#007bb5" },
-                            width: "150px",
+                            backgroundColor: "#ffffff",
+                            ":disabled": {
+                                backgroundColor: "#000000",
+                                color: "#505050",
+                            },
+                            animation: !isModified || profileUpdating ? "" : "buttonEnabledAnimation 0.6s ease-out",
                         }}
                     >
                         {profileUpdating ? <CircularProgress size={24} color="inherit" /> : "Save Changes"}

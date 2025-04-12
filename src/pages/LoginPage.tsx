@@ -152,6 +152,13 @@ const LoginPage: React.FC = () => {
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: "20px",
+                                        "&:hover fieldset": {
+                                            borderColor: "#767676",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#767676",
+                                            boxShadow: "none",
+                                        },
                                     },
                                 }}
                             />
@@ -176,18 +183,34 @@ const LoginPage: React.FC = () => {
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: "20px",
+                                        "&:hover fieldset": {
+                                            borderColor: "#767676",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#767676",
+                                            boxShadow: "none",
+                                        },
                                     },
                                 }}
                             />
                             {/* Login Button */}
                             <Button
                                 variant="contained"
-                                color="primary"
                                 loading={loading}
                                 disabled={loading || !email || !password}
                                 fullWidth
                                 type="submit"
-                                sx={{ mt: 2, borderRadius: "15px", fontSize: isLarge ? "1rem" : "0.85rem" }}
+                                sx={{
+                                    mt: 2,
+                                    borderRadius: "15px",
+                                    fontSize: isLarge ? "1rem" : "0.85rem",
+                                    backgroundColor: "#ffffff",
+                                    ":disabled": {
+                                        backgroundColor: "#202327",
+                                        color: "#000000",
+                                    },
+                                    animation: loading || !email || !password ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                                }}
                             >
                                 Login
                             </Button>

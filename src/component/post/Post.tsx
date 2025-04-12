@@ -391,8 +391,14 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                             {likeCount}
                         </Typography>
 
-                        <IconButton sx={{ color: "#787a7a", ":hover": { backgroundColor: "transparent" } }} onClick={handleFocusCommentField}>
-                            <FontAwesomeIcon icon={faComment} style={{ fontSize: "28px" }} onClick={() => setDrawerOpen(true)} />
+                        <IconButton
+                            sx={{ color: "#787a7a", ":hover": { backgroundColor: "transparent" } }}
+                            onClick={() => {
+                                handleFocusCommentField();
+                                setDrawerOpen(true);
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faComment} style={{ fontSize: "28px" }} />
                         </IconButton>
                         <Typography variant="body2" component="span" sx={{ mr: 1, color: "#787a7a" }}>
                             {post.comment_count}

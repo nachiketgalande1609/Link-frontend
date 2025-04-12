@@ -74,14 +74,22 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                 />
                 {notification.type === "follow" && (
                     <Button
-                        variant="outlined"
+                        variant="contained"
                         size="small"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (notification.request_status !== "pending") onFollowBack(notification.sender_id);
                         }}
                         disabled={notification.request_status === "pending"}
-                        sx={{ ml: 2, borderRadius: "10px" }}
+                        sx={{
+                            ml: 2,
+                            borderRadius: "10px",
+                            backgroundColor: "#ffffff",
+                            ":disabled": {
+                                backgroundColor: "#202327",
+                                color: "#000000",
+                            },
+                        }}
                     >
                         {notification.request_status === "accepted" ? "Following" : "Follow Back"}
                     </Button>
@@ -91,30 +99,49 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                         {notification.request_status === "pending" ? (
                             <>
                                 <Button
-                                    variant="outlined"
+                                    variant="contained"
                                     size="small"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onFollowRequestResponse(notification.request_id, "accepted");
                                     }}
-                                    sx={{ borderRadius: "10px" }}
+                                    sx={{
+                                        borderRadius: "10px",
+                                        backgroundColor: "#ffffff",
+                                    }}
                                 >
                                     Accept
                                 </Button>
                                 <Button
-                                    variant="outlined"
+                                    variant="contained"
                                     size="small"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onFollowRequestResponse(notification.request_id, "rejected");
                                     }}
-                                    sx={{ borderRadius: "10px" }}
+                                    sx={{
+                                        borderRadius: "10px",
+                                        backgroundColor: "#ffffff",
+                                    }}
                                 >
                                     Reject
                                 </Button>
                             </>
                         ) : (
-                            <Button variant="outlined" size="small" disabled sx={{ ml: 2, borderRadius: "10px" }}>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                disabled
+                                sx={{
+                                    ml: 2,
+                                    borderRadius: "10px",
+                                    backgroundColor: "#ffffff",
+                                    ":disabled": {
+                                        backgroundColor: "#000000",
+                                        color: "#505050",
+                                    },
+                                }}
+                            >
                                 {notification.request_status === "accepted"
                                     ? "Accepted"
                                     : notification.request_status === "rejected"

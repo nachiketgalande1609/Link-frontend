@@ -206,8 +206,16 @@ const ProfilePage = () => {
                                                     : handleFollow
                                             }
                                             disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
-                                            variant="outlined"
-                                            sx={{ mt: 2, borderRadius: "15px" }}
+                                            variant="contained"
+                                            sx={{
+                                                mt: 2,
+                                                borderRadius: "15px",
+                                                backgroundColor: "#ffffff",
+                                                ":disabled": {
+                                                    backgroundColor: "#000000",
+                                                    color: "#202327",
+                                                },
+                                            }}
                                         >
                                             {profileData?.is_request_active
                                                 ? "Request Pending"
@@ -215,7 +223,21 @@ const ProfilePage = () => {
                                                   ? "Following"
                                                   : "Follow"}
                                         </Button>
-                                        <Button onClick={handleSendMessage} variant="outlined" sx={{ mt: 2, ml: 2, borderRadius: "15px" }}>
+                                        <Button
+                                            onClick={handleSendMessage}
+                                            variant="outlined"
+                                            sx={{
+                                                mt: 2,
+                                                ml: 2,
+                                                color: "#000000",
+                                                borderRadius: "15px",
+                                                backgroundColor: "#ffffff",
+                                                ":disabled": {
+                                                    backgroundColor: "#202327",
+                                                    color: "#000000",
+                                                },
+                                            }}
+                                        >
                                             Message
                                         </Button>
                                     </Box>
