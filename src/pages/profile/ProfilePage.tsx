@@ -387,6 +387,7 @@ const ProfilePage = () => {
                         userId={userId}
                         fetchProfile={fetchProfile}
                         fetchUserPosts={fetchUserPosts}
+                        isFollowing={profileData?.is_following}
                     />
                 </Container>
             )}

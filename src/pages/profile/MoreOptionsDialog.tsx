@@ -8,11 +8,19 @@ interface MoreOptionsDialogProps {
     openDialog: boolean;
     handleCloseDialog: () => void;
     userId: string | undefined;
-    fetchProfile: () => void; // Add this
+    fetchProfile: () => void;
     fetchUserPosts: () => void;
+    isFollowing: boolean | undefined;
 }
 
-export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userId, fetchProfile, fetchUserPosts }: MoreOptionsDialogProps) {
+export default function MoreOptionsDialog({
+    openDialog,
+    handleCloseDialog,
+    userId,
+    fetchProfile,
+    fetchUserPosts,
+    isFollowing,
+}: MoreOptionsDialogProps) {
     const navigate = useNavigate();
     const location = useLocation();
     const notifications = useNotifications();
@@ -91,7 +99,7 @@ export default function MoreOptionsDialog({ openDialog, handleCloseDialog, userI
                 },
             }}
         >
-            {currentUser?.id != userId && (
+            {currentUser?.id != userId && isFollowing && (
                 <Button
                     fullWidth
                     onClick={handleUnfollow}
