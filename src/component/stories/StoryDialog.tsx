@@ -180,7 +180,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
             <DialogContent sx={{ backgroundColor: "black", padding: 0 }}>
                 <Container
                     ref={containerRef}
-                    maxWidth="xs"
+                    maxWidth={isMobile ? "lg" : "xs"}
                     sx={{
                         position: "relative",
                         display: "flex",
@@ -188,7 +188,7 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                         alignItems: "center",
                         justifyContent: "center",
                         height: "100vh",
-                        width: isLarge ? "444px" : "300px",
+                        width: isLarge ? "444px" : isMobile ? "100%" : "300px",
                         padding: "0 !important",
                     }}
                 >
@@ -196,12 +196,16 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                     <Box
                         sx={{
                             position: "absolute",
-                            top: 30,
-                            left: 10,
+                            top: 0,
+                            left: 0,
                             display: "flex",
                             alignItems: "center",
                             gap: 1.5,
                             cursor: "pointer",
+                            zIndex: 1,
+                            backgroundColor: "#000000",
+                            width: "calc(100% - 32px)",
+                            padding: "16px 16px",
                         }}
                         onClick={() => {
                             navigate(`/profile/${stories[selectedStoryIndex].user_id}`);
@@ -212,8 +216,9 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                                 stories[selectedStoryIndex].profile_picture ||
                                 "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
                             }
+                            sx={isMobile ? { width: 60, height: 60 } : { width: 50, height: 50 }}
                         />
-                        <Typography color="white" sx={{ fontSize: "0.85rem" }}>
+                        <Typography color="white" sx={{ fontSize: isMobile ? "1rem" : "0.85rem" }}>
                             {stories[selectedStoryIndex].username}
                         </Typography>
                         <Typography color="gray" sx={{ fontSize: "0.75rem" }}>
@@ -341,13 +346,14 @@ const StoryDialog: React.FC<StoryDialogProps> = ({ open, onClose, stories, selec
                     <IconButton
                         sx={{
                             position: "absolute",
-                            top: 15,
-                            right: 5,
+                            top: isMobile ? 25 : 15,
+                            right: isMobile ? 10 : 5,
                             color: "white",
                             backgroundColor: "transparent",
                             "&:hover": {
                                 backgroundColor: "transparent",
                             },
+                            zIndex: 1,
                         }}
                         onClick={handleClose}
                     >
