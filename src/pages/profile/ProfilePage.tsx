@@ -213,7 +213,7 @@ const ProfilePage = () => {
                                                 backgroundColor: "#ffffff",
                                                 ":disabled": {
                                                     backgroundColor: "#000000",
-                                                    color: "#202327",
+                                                    color: "#505050",
                                                 },
                                             }}
                                         >
@@ -225,7 +225,7 @@ const ProfilePage = () => {
                                         </Button>
                                         <Button
                                             onClick={handleSendMessage}
-                                            variant="outlined"
+                                            variant="contained"
                                             sx={{
                                                 mt: 2,
                                                 ml: 2,
@@ -234,7 +234,7 @@ const ProfilePage = () => {
                                                 backgroundColor: "#ffffff",
                                                 ":disabled": {
                                                     backgroundColor: "#202327",
-                                                    color: "#000000",
+                                                    color: "#505050",
                                                 },
                                             }}
                                         >

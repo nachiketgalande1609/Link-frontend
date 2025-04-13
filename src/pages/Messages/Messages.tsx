@@ -507,7 +507,8 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                         position: "absolute",
                         left: 5,
                         top: 15,
-                        zIndex: 2000, // Add this
+                        zIndex: 2000,
+                        visibility: drawerOpen ? "hidden" : "visible",
                     }}
                     onClick={() => {
                         setDrawerOpen(true);
