@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Avatar, Button, Box, TextField, IconButton, CircularProgress, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { useDropzone } from "react-dropzone";
@@ -9,6 +8,9 @@ import { useGlobalStore } from "../../store/store";
 import { updateProfileDetails } from "../../services/api";
 import { getProfile } from "../../services/api";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { SentimentSatisfiedAlt as EmojiIcon, CameraAlt as CameraAltIcon } from "@mui/icons-material";
+import Popover from "@mui/material/Popover";
 
 interface Profile {
     username: string;
@@ -42,6 +44,11 @@ const ProfileDetails = () => {
     const [uploading, setUploading] = useState(false);
 
     const [isModified, setIsModified] = useState(false);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
+
+    const handleEmojiClick = (emojiData: any) => {
+        setNewBio((prev) => prev + emojiData.emoji);
+    };
 
     useEffect(() => {
         if (profileData) {
@@ -216,31 +223,44 @@ const ProfileDetails = () => {
                         },
                     }}
                 />
-                <TextField
-                    label="Bio"
-                    variant="outlined"
-                    fullWidth
-                    multiline
-                    rows={3}
-                    value={newBio}
-                    onChange={(e) => setNewBio(e.target.value)}
-                    sx={{
-                        marginBottom: 3,
-                        "& .MuiOutlinedInput-root": {
-                            borderRadius: "20px",
-                            "&:hover fieldset": {
-                                borderColor: "#767676",
+                <Box sx={{ position: "relative", marginBottom: 2, width: "100%" }}>
+                    <TextField
+                        label="Bio"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={3}
+                        value={newBio}
+                        onChange={(e) => setNewBio(e.target.value)}
+                        sx={{
+                            marginBottom: 3,
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "20px",
+                                "&:hover fieldset": {
+                                    borderColor: "#767676",
+                                },
+                                "&.Mui-focused fieldset": {
+                                    borderColor: "#767676",
+                                    boxShadow: "none",
+                                },
                             },
-                            "&.Mui-focused fieldset": {
-                                borderColor: "#767676",
-                                boxShadow: "none",
+                            "& .MuiFormLabel-root ": {
+                                color: "#767676",
                             },
-                        },
-                        "& .MuiFormLabel-root ": {
-                            color: "#767676",
-                        },
-                    }}
-                />
+                        }}
+                    />
+                    <IconButton
+                        onClick={(e) => setEmojiAnchorEl(e.currentTarget)}
+                        sx={{
+                            position: "absolute",
+                            top: 10,
+                            right: 8,
+                            zIndex: 1,
+                        }}
+                    >
+                        <EmojiIcon color="action" />
+                    </IconButton>
+                </Box>
                 <Box sx={{ display: "flex", width: "100%", justifyContent: "flex-end" }}>
                     <Button
                         variant="contained"
@@ -336,6 +356,26 @@ const ProfileDetails = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Popover
+                open={Boolean(emojiAnchorEl)}
+                anchorEl={emojiAnchorEl}
+                onClose={() => setEmojiAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                }}
+                transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                }}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px",
+                    },
+                }}
+            >
+                <EmojiPicker theme={Theme.AUTO} onEmojiClick={handleEmojiClick} />
+            </Popover>
         </Box>
     );
 };
