@@ -26,6 +26,7 @@ import { faComment } from "@fortawesome/free-regular-svg-icons";
 import ImageDialog from "../ImageDialog";
 import { SentimentSatisfiedAlt as EmojiIcon } from "@mui/icons-material";
 import EmojiPicker, { Theme } from "emoji-picker-react";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 interface PostProps {
     username: string;
@@ -85,6 +86,7 @@ const ModalPost: React.FC<PostProps> = ({
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
     const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
     const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
+    const notifications = useNotifications();
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
@@ -115,6 +117,10 @@ const ModalPost: React.FC<PostProps> = ({
             await likePost(postId);
             fetchPosts();
         } catch (error) {
+            notifications.show(`Failed to ${isLiked ? "unlike" : "like"} the post. Please try again later.`, {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
             console.log(error);
             setIsLiked(previousIsLiked);
             setLikes(previousLikes);

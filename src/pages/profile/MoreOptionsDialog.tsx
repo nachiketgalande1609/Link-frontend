@@ -46,6 +46,10 @@ export default function MoreOptionsDialog({
             handleCloseDialog();
         } catch (err) {
             console.error("Failed to copy:", err);
+            notifications.show("Failed to copy link. Please try again later.", {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         }
     };
 
@@ -75,6 +79,10 @@ export default function MoreOptionsDialog({
             }
         } catch (err) {
             console.error("Unfollow reuest failed:", err);
+            notifications.show("Failed to unfollow user. Please try again later.", {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         }
     };
 

@@ -8,6 +8,7 @@ import { InputAdornment } from "@mui/material";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { SentimentSatisfiedAlt as EmojiIcon, LocationOn, Close } from "@mui/icons-material";
 import Popover from "@mui/material/Popover";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 interface CreatePostModalProps {
     open: boolean;
@@ -23,6 +24,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     const [location, setLocation] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
+    const notifications = useNotifications();
 
     const { user, setPostUploading } = useGlobalStore();
 
@@ -68,8 +70,11 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                 }
             }
         } catch (error) {
-            console.error("Error creating post:", error);
-            alert("Failed to create post. Please try again.");
+            console.error("Error uploading the post:", error);
+            notifications.show("Error uploading the post. Please try again later.", {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         } finally {
             setLoading(false);
             setPostUploading(false);

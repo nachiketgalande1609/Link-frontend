@@ -25,6 +25,7 @@ import VideoCallModal from "./component/VideoCallModal";
 import Ringtone from "./static/ringtone.mp3";
 import HangUpTone from "./static/hangup.mp3";
 import VerifyAccount from "./pages/VerifyAccount";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
 
@@ -47,6 +48,7 @@ const AppContent = () => {
         useGlobalStore();
     const [notificationAlert, setNotificationAlert] = useState<string | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+    const notifications = useNotifications();
 
     const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
     const [pc, setPc] = useState<RTCPeerConnection | null>(null);
@@ -111,7 +113,10 @@ const AppContent = () => {
                     }
                 } catch (error) {
                     console.error("Audio play failed:", error);
-                    // Show UI indication that audio is blocked
+                    notifications.show("Audio play failed. Please try again later.", {
+                        severity: "error",
+                        autoHideDuration: 3000,
+                    });
                 }
             };
 
@@ -151,6 +156,10 @@ const AppContent = () => {
                 }
             } catch (error) {
                 console.error("Error fetching notification count:", error);
+                notifications.show("Error fetching notification count. Please try again later.", {
+                    severity: "error",
+                    autoHideDuration: 3000,
+                });
             }
         };
 
