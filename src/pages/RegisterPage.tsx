@@ -23,6 +23,11 @@ const RegisterPage: React.FC = () => {
         setSuccess(null);
         setLoading(true);
 
+        const validUsername = /^[a-zA-Z0-9_]+$/.test(username);
+        if (!validUsername) {
+            setError("Only letters, numbers, underscores (_) are allowed in username.");
+        }
+
         // Validate passwords
         if (password !== confirmPassword) {
             setError("Passwords do not match!");

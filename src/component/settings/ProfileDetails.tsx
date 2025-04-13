@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Avatar, Button, Box, TextField, IconButton, CircularProgress, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
+import { Avatar, Button, Box, TextField, IconButton, CircularProgress, Dialog, DialogActions, DialogContent, Typography, Alert } from "@mui/material";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { useDropzone } from "react-dropzone";
@@ -45,6 +45,8 @@ const ProfileDetails = () => {
 
     const [isModified, setIsModified] = useState(false);
     const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
+
+    const [usernameError, setUsernameError] = useState("");
 
     const handleEmojiClick = (emojiData: any) => {
         setNewBio((prev) => prev + emojiData.emoji);
@@ -205,9 +207,18 @@ const ProfileDetails = () => {
                     variant="outlined"
                     fullWidth
                     value={newUsername}
-                    onChange={(e) => setNewUsername(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setNewUsername(value);
+                        const validUsername = /^[a-zA-Z0-9_]+$/.test(value);
+                        if (!validUsername) {
+                            setUsernameError("Only letters, numbers, underscores (_) are allowed.");
+                        } else {
+                            setUsernameError("");
+                        }
+                    }}
                     sx={{
-                        marginBottom: 3,
+                        marginBottom: 1.5,
                         "& .MuiOutlinedInput-root": {
                             borderRadius: "20px",
                             "&:hover fieldset": {
@@ -223,7 +234,15 @@ const ProfileDetails = () => {
                         },
                     }}
                 />
-                <Box sx={{ position: "relative", marginBottom: 2, width: "100%" }}>
+                {usernameError && (
+                    <Box sx={{ width: "100%", marginTop: 1 }}>
+                        <Alert severity="error" sx={{ borderRadius: "10px", mb: 1 }}>
+                            {usernameError}
+                        </Alert>
+                    </Box>
+                )}
+
+                <Box sx={{ position: "relative", marginBottom: 2, width: "100%", mt: 1.5 }}>
                     <TextField
                         label="Bio"
                         variant="outlined"
@@ -265,7 +284,7 @@ const ProfileDetails = () => {
                     <Button
                         variant="contained"
                         onClick={handleUpdateProfile}
-                        disabled={!isModified || profileUpdating}
+                        disabled={!isModified || profileUpdating || !!usernameError}
                         sx={{
                             borderRadius: "15px",
                             backgroundColor: "#ffffff",
