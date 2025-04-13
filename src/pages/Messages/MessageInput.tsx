@@ -4,7 +4,7 @@ import {
     CancelOutlined as DeleteIcon,
     InsertDriveFile as FileIcon,
     Close as CloseIcon,
-    EmojiEmotionsOutlined as EmojiIcon,
+    SentimentSatisfiedAlt as EmojiIcon,
 } from "@mui/icons-material";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

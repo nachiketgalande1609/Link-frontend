@@ -4,6 +4,9 @@ import { MoreHoriz } from "@mui/icons-material";
 import { grey } from "@mui/material/colors";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { SentimentSatisfiedAlt as EmojiIcon } from "@mui/icons-material";
+import Popover from "@mui/material/Popover";
 
 interface ScrollableCommentsDrawerProps {
     drawerOpen: boolean;
@@ -52,6 +55,7 @@ export default function ScrollableCommentsDrawer({
     const [dialogOpen, setDialogOpen] = useState(false);
     const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
     const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleOpenDialog = (commentId: number) => {
         setSelectedCommentId(commentId);
@@ -83,6 +87,10 @@ export default function ScrollableCommentsDrawer({
             backgroundColor: grey[900],
         }),
     }));
+
+    const handleEmojiClick = (emojiData: any) => {
+        setCommentText(commentText + emojiData.emoji);
+    };
 
     return (
         <SwipeableDrawer
@@ -197,33 +205,41 @@ export default function ScrollableCommentsDrawer({
                 sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 1,
+                    gap: 0.5,
                     padding: isMobile ? "10px 8px" : "10px 16px",
                     backgroundColor: "#202327",
                     borderTop: "1px solid #505050",
+                    position: "relative", // Important for absolute positioning
                 }}
             >
-                <TextField
-                    fullWidth
-                    variant="standard"
-                    placeholder="Write a comment..."
-                    value={commentText}
-                    size={isMobile ? "small" : "medium"}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleComment()}
-                    sx={{
-                        "& .MuiInput-underline:before": {
-                            borderBottom: "none !important",
-                        },
-                        "& .MuiInput-underline:after": {
-                            borderBottom: "none !important",
-                        },
-                        "& .MuiInput-underline:hover:before": {
-                            borderBottom: "none !important",
-                        },
-                    }}
-                    inputRef={commentInputRef}
-                />
+                <Box sx={{ position: "relative", flex: 1 }}>
+                    <TextField
+                        fullWidth
+                        variant="standard"
+                        placeholder="Write a comment..."
+                        value={commentText}
+                        size={isMobile ? "small" : "medium"}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleComment()}
+                        sx={{
+                            "& .MuiInput-underline:before": {
+                                borderBottom: "none !important",
+                            },
+                            "& .MuiInput-underline:after": {
+                                borderBottom: "none !important",
+                            },
+                            "& .MuiInput-underline:hover:before": {
+                                borderBottom: "none !important",
+                            },
+                            paddingRight: "40px", // space for icon
+                        }}
+                        inputRef={commentInputRef}
+                    />
+                </Box>
+                <IconButton onClick={(e) => setEmojiAnchorEl(e.currentTarget)} sx={{ color: "white" }}>
+                    <EmojiIcon sx={{ fontSize: "22px" }} />
+                </IconButton>
+
                 <IconButton onClick={handleComment} sx={{ color: "white" }} disabled={!commentText}>
                     <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "22px" }} />
                 </IconButton>
@@ -297,6 +313,26 @@ export default function ScrollableCommentsDrawer({
                     Cancel
                 </Button>
             </Dialog>
+            <Popover
+                open={Boolean(emojiAnchorEl)}
+                anchorEl={emojiAnchorEl}
+                onClose={() => setEmojiAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                }}
+                transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                }}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px",
+                    },
+                }}
+            >
+                <EmojiPicker theme={Theme.AUTO} onEmojiClick={handleEmojiClick} />
+            </Popover>
         </SwipeableDrawer>
     );
 }

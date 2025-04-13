@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton, CircularProgress } from "@mui/material";
-import { Close } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import { createPost } from "../../services/api";
 import { useGlobalStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import { LocationOn } from "@mui/icons-material";
 import { InputAdornment } from "@mui/material";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { SentimentSatisfiedAlt as EmojiIcon, LocationOn, Close } from "@mui/icons-material";
+import Popover from "@mui/material/Popover";
 
 interface CreatePostModalProps {
     open: boolean;
@@ -21,6 +22,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [location, setLocation] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
 
     const { user, setPostUploading } = useGlobalStore();
 
@@ -42,6 +44,10 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
         accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif"] },
         multiple: false,
     });
+
+    const handleEmojiClick = (emojiData: any) => {
+        setPostContent((prev) => prev + emojiData.emoji);
+    };
 
     const handleSubmit = async () => {
         try {
@@ -146,28 +152,42 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
 
                         {/* Right: Inputs */}
                         <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={5}
-                                variant="outlined"
-                                placeholder="Write a caption"
-                                value={postContent}
-                                onChange={(e) => setPostContent(e.target.value)}
-                                sx={{
-                                    marginBottom: 2,
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "20px",
-                                        "&:hover fieldset": {
-                                            borderColor: "#767676",
+                            <Box sx={{ position: "relative", marginBottom: 2 }}>
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={5}
+                                    variant="outlined"
+                                    placeholder="Write a caption"
+                                    value={postContent}
+                                    onChange={(e) => setPostContent(e.target.value)}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: "20px",
+                                            "&:hover fieldset": {
+                                                borderColor: "#767676",
+                                            },
+                                            "&.Mui-focused fieldset": {
+                                                borderColor: "#767676",
+                                                boxShadow: "none",
+                                            },
+                                            paddingRight: "45px", // Make space for icon
                                         },
-                                        "&.Mui-focused fieldset": {
-                                            borderColor: "#767676",
-                                            boxShadow: "none",
-                                        },
-                                    },
-                                }}
-                            />
+                                    }}
+                                />
+                                <IconButton
+                                    onClick={(e) => setEmojiAnchorEl(e.currentTarget)}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 10,
+                                        right: 8,
+                                        zIndex: 1,
+                                    }}
+                                >
+                                    <EmojiIcon color="action" />
+                                </IconButton>
+                            </Box>
+
                             <TextField
                                 fullWidth
                                 variant="outlined"
@@ -216,6 +236,28 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                             >
                                 {loading ? <CircularProgress size={24} color="inherit" /> : "Post"}
                             </Button>
+                            <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
+                                <Popover
+                                    open={Boolean(emojiAnchorEl)}
+                                    anchorEl={emojiAnchorEl}
+                                    onClose={() => setEmojiAnchorEl(null)}
+                                    anchorOrigin={{
+                                        vertical: "top",
+                                        horizontal: "left",
+                                    }}
+                                    transformOrigin={{
+                                        vertical: "bottom",
+                                        horizontal: "left",
+                                    }}
+                                    PaperProps={{
+                                        sx: {
+                                            borderRadius: "20px",
+                                        },
+                                    }}
+                                >
+                                    <EmojiPicker theme={Theme.AUTO} onEmojiClick={handleEmojiClick} />
+                                </Popover>
+                            </Box>
                         </Box>
                     </Box>
                 </Box>

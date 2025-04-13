@@ -17,12 +17,15 @@ import {
     DialogContent,
     DialogTitle,
     Button,
+    Popover,
 } from "@mui/material";
 import { FavoriteBorder, Favorite, MoreVert, MoreHoriz } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost, deleteComment } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
 import ImageDialog from "../ImageDialog";
+import { SentimentSatisfiedAlt as EmojiIcon } from "@mui/icons-material";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 
 interface PostProps {
     username: string;
@@ -81,6 +84,7 @@ const ModalPost: React.FC<PostProps> = ({
     const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
     const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
@@ -219,6 +223,10 @@ const ModalPost: React.FC<PostProps> = ({
         } catch (error) {
             console.error("Error updating post:", error);
         }
+    };
+
+    const handleEmojiClick = (emojiData: any) => {
+        setCommentText((prev) => prev + emojiData.emoji);
     };
 
     return (
@@ -384,9 +392,10 @@ const ModalPost: React.FC<PostProps> = ({
                                     sx={{
                                         mt: 2,
                                         display: "flex",
-                                        alignItems: "center",
+                                        alignItems: "flex-start", // top alignment
                                         borderTop: "1px solid #202327",
                                         padding: isMobile ? "0 10px 10px 10px" : "15px",
+                                        gap: 0,
                                     }}
                                 >
                                     {currentUser?.id && (
@@ -404,10 +413,13 @@ const ModalPost: React.FC<PostProps> = ({
                                                     "& .MuiInput-underline:hover:before": { borderBottom: "none !important" },
                                                 }}
                                             />
+                                            <IconButton size="small" onClick={(e) => setEmojiAnchorEl(e.currentTarget)}>
+                                                <EmojiIcon />
+                                            </IconButton>
                                             <Button
                                                 onClick={handleComment}
                                                 size="small"
-                                                sx={{ color: "#1976d2", borderRadius: "15px" }}
+                                                sx={{ color: "#1976d2", borderRadius: "15px", alignSelf: "flex-start", mt: "2px" }}
                                                 disabled={!commentText}
                                             >
                                                 Post
@@ -415,6 +427,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         </>
                                     )}
                                 </Box>
+
                                 <Box sx={{ padding: isMobile ? "0 10px 10px 10px" : "15px", borderTop: "1px solid #202327" }}>
                                     {visibleComments.length === 0 ? (
                                         <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -591,6 +604,26 @@ const ModalPost: React.FC<PostProps> = ({
                 </Button>
             </Dialog>
             <ImageDialog openDialog={openImageDialog} handleCloseDialog={handleCloseDialog} selectedImage={fileUrl || ""} />
+            <Popover
+                open={Boolean(emojiAnchorEl)}
+                anchorEl={emojiAnchorEl}
+                onClose={() => setEmojiAnchorEl(null)}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                }}
+                transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                }}
+                PaperProps={{
+                    sx: {
+                        borderRadius: "20px",
+                    },
+                }}
+            >
+                <EmojiPicker theme={Theme.AUTO} onEmojiClick={handleEmojiClick} />
+            </Popover>
         </Card>
     );
 };

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Box, Button, Modal, TextField, Typography, Backdrop, Fade, IconButton, CircularProgress } from "@mui/material";
-import { Close } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
-import { uploadStory } from "../../services/api"; // Import the API function
+import { uploadStory } from "../../services/api";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { SentimentSatisfiedAlt as EmojiIcon, Close } from "@mui/icons-material";
+import Popover from "@mui/material/Popover";
 
 interface UploadStoryDialogProps {
     open: boolean;
@@ -15,6 +17,7 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fe
     const [media, setMedia] = useState<File | null>(null);
     const [caption, setCaption] = useState("");
     const [loading, setLoading] = useState(false);
+    const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
 
     const onDrop = (acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
@@ -56,6 +59,10 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fe
     const isVideo = media ? media.type.startsWith("video") : false;
     const isImage = media ? media.type.startsWith("image") : false;
 
+    const handleEmojiClick = (emojiData: any) => {
+        setCaption((prev) => prev + emojiData.emoji);
+    };
+
     return (
         <Modal open={open} onClose={onClose} closeAfterTransition BackdropComponent={Backdrop} BackdropProps={{ timeout: 500 }}>
             <Fade in={open}>
@@ -85,7 +92,6 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fe
                     >
                         <Close />
                     </IconButton>
-
                     {/* Drag and Drop Media Upload */}
                     <Box
                         {...getRootProps()}
@@ -123,19 +129,30 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fe
                             <Typography>Drag & drop an image/video, or click to select</Typography>
                         )}
                     </Box>
-
-                    {/* Caption Input */}
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={2}
-                        variant="outlined"
-                        label="Write a caption"
-                        value={caption}
-                        onChange={(e) => setCaption(e.target.value)}
-                        sx={{ marginBottom: 2, "& .MuiOutlinedInput-root": { borderRadius: "20px" } }}
-                    />
-
+                    {/* Caption Input */}{" "}
+                    <Box sx={{ position: "relative", marginBottom: 2 }}>
+                        <TextField
+                            fullWidth
+                            multiline
+                            rows={2}
+                            variant="outlined"
+                            label="Write a caption"
+                            value={caption}
+                            onChange={(e) => setCaption(e.target.value)}
+                            sx={{ marginBottom: 2, "& .MuiOutlinedInput-root": { borderRadius: "20px", paddingRight: "45px" } }}
+                        />
+                        <IconButton
+                            onClick={(e) => setEmojiAnchorEl(e.currentTarget)}
+                            sx={{
+                                position: "absolute",
+                                top: 10,
+                                right: 8,
+                                zIndex: 1,
+                            }}
+                        >
+                            <EmojiIcon color="action" />
+                        </IconButton>
+                    </Box>
                     {/* Upload Button */}
                     <Button
                         variant="contained"
@@ -149,6 +166,26 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fe
                     >
                         {loading ? <CircularProgress size={24} color="inherit" /> : "Upload Story"}
                     </Button>
+                    <Popover
+                        open={Boolean(emojiAnchorEl)}
+                        anchorEl={emojiAnchorEl}
+                        onClose={() => setEmojiAnchorEl(null)}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                        }}
+                        transformOrigin={{
+                            vertical: "bottom",
+                            horizontal: "left",
+                        }}
+                        PaperProps={{
+                            sx: {
+                                borderRadius: "20px",
+                            },
+                        }}
+                    >
+                        <EmojiPicker theme={Theme.AUTO} onEmojiClick={handleEmojiClick} />
+                    </Popover>
                 </Box>
             </Fade>
         </Modal>
