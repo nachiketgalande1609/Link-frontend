@@ -343,7 +343,7 @@ const ForgotPasswordPage: React.FC = () => {
                                 fullWidth
                                 onClick={handlePasswordReset}
                                 sx={{
-                                    mt: 1,
+                                    mt: 2.5,
                                     borderRadius: "15px",
                                     fontSize: isLarge ? "1rem" : "0.85rem",
                                     backgroundColor: "#ffffff",
