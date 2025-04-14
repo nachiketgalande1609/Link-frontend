@@ -248,7 +248,7 @@ const RegisterPage: React.FC = () => {
                                     loading || !email || !username || !password || !confirmPassword ? "" : "buttonEnabledAnimation 0.6s ease-out",
                             }}
                         >
-                            Register
+                            {loading ? "Signing you up" : "Sign Up"}
                         </Button>
                     </form>
                     <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>

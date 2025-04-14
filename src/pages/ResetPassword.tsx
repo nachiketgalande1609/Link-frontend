@@ -110,6 +110,24 @@ const ForgotPasswordPage: React.FC = () => {
         }
     };
 
+    const handleOTPPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const paste = e.clipboardData.getData("text").trim();
+        if (/^\d{6}$/.test(paste)) {
+            const otpArray = paste.split("");
+            setOtp(otpArray);
+            otpArray.forEach((digit: string, i: number) => {
+                if (inputRefs.current[i]) {
+                    inputRefs.current[i].value = digit;
+                }
+            });
+            const lastIndex = Math.min(otpArray.length - 1, inputRefs.current.length - 1);
+            if (inputRefs.current[lastIndex]) {
+                inputRefs.current[lastIndex].focus();
+            }
+        }
+    };
+
     return (
         <Container
             sx={{
@@ -223,6 +241,7 @@ const ForgotPasswordPage: React.FC = () => {
 
                     {step === "otp" && (
                         <>
+                            {" "}
                             <Typography sx={{ mb: 2 }}>
                                 Enter the 6-digit OTP sent to <b>{email}</b>
                             </Typography>
@@ -233,7 +252,13 @@ const ForgotPasswordPage: React.FC = () => {
                                             inputRef={(ref) => (inputRefs.current[index] = ref)}
                                             value={digit}
                                             onChange={(e) => handleOTPChange(index, e.target.value)}
-                                            inputProps={{ maxLength: 1, style: { textAlign: "center", fontSize: "1.5rem" } }}
+                                            InputProps={{
+                                                inputProps: {
+                                                    maxLength: 1,
+                                                    style: { textAlign: "center", fontSize: "1.5rem" },
+                                                    onPaste: handleOTPPaste, // ✅ Correctly typed here
+                                                },
+                                            }}
                                             sx={{
                                                 width: "3rem",
                                                 "& .MuiOutlinedInput-root": {
@@ -268,7 +293,7 @@ const ForgotPasswordPage: React.FC = () => {
                     )}
 
                     {step === "reset" && (
-                        <form onSubmit={handlePasswordReset}>
+                        <>
                             <Typography sx={{ mb: 2 }}>Enter your new password</Typography>
                             <TextField
                                 fullWidth
@@ -316,7 +341,7 @@ const ForgotPasswordPage: React.FC = () => {
                                 variant="contained"
                                 disabled={loading}
                                 fullWidth
-                                type="submit"
+                                onClick={handlePasswordReset}
                                 sx={{
                                     mt: 1,
                                     borderRadius: "15px",
@@ -326,7 +351,7 @@ const ForgotPasswordPage: React.FC = () => {
                             >
                                 {loading ? "Resetting..." : "Reset Password"}
                             </Button>
-                        </form>
+                        </>
                     )}
 
                     <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>

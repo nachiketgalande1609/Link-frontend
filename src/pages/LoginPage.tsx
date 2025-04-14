@@ -212,7 +212,7 @@ const LoginPage: React.FC = () => {
                                     animation: loading || !email || !password ? "" : "buttonEnabledAnimation 0.6s ease-out",
                                 }}
                             >
-                                Login
+                                {loading ? "Logging In" : "Login"}
                             </Button>
                         </form>
 
@@ -232,12 +232,10 @@ const LoginPage: React.FC = () => {
 
                         <Button
                             variant="outlined"
-                            loading={loading}
                             fullWidth
-                            type="submit"
                             onClick={() => navigate("/reset-password")}
                             sx={{
-                                mt: 2,
+                                mt: 3.5,
                                 borderRadius: "15px",
                                 fontSize: isLarge ? "1rem" : "0.85rem",
                                 color: "#ffffff",
