@@ -137,6 +137,7 @@ export default function SearchPage() {
         <Container
             disableGutters
             sx={{
+                maxWidth: "100%",
                 minHeight: "100vh",
                 width: isLarge ? "600px" : "525px",
                 borderLeft: "1px solid #202327",

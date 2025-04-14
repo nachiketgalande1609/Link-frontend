@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Fade, useMediaQuery, Link, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { generatePasswordResetOTP, ResetPassword, verifyPasswordResetOTP } from "../services/api";
+import { useNotifications } from "@toolpad/core/useNotifications";
 
 const ForgotPasswordPage: React.FC = () => {
+    const notifications = useNotifications();
+
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [newPassword, setNewPassword] = useState("");
@@ -12,6 +15,7 @@ const ForgotPasswordPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [checked, setChecked] = useState(false);
     const [step, setStep] = useState<"email" | "otp" | "reset">("email");
+
     const isLarge = useMediaQuery("(min-width:1281px)");
     const navigate = useNavigate();
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -98,7 +102,14 @@ const ForgotPasswordPage: React.FC = () => {
             const response = await ResetPassword(email, fullOTP, newPassword);
 
             if (response.success) {
-                navigate("/login", { state: { resetSuccess: true } });
+                notifications.show("Password has been reset successfully! Redirecting to login...", {
+                    severity: "success",
+                    autoHideDuration: 3000,
+                });
+
+                setTimeout(() => {
+                    navigate("/login", { state: { resetSuccess: true } });
+                }, 3000);
             } else {
                 setError(response.error || "Password reset failed.");
             }

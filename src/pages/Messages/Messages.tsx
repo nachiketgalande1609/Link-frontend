@@ -490,7 +490,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     };
 
     return (
-        <Box sx={{ display: "flex", height: "100svh" }}>
+        <Box sx={{ display: "flex", height: "100vh" }}>
             <MessagesDrawer
                 drawerOpen={drawerOpen}
                 setDrawerOpen={setDrawerOpen}

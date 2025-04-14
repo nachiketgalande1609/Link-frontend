@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Box, Button, LinearProgress, Modal, Stack, Typography } from "@mui/material";
+import { Box, Button, LinearProgress, Modal, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 
 import { useGlobalStore } from "./store/store";
 
@@ -58,6 +58,9 @@ const AppContent = () => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const pendingCandidates = useRef<RTCIceCandidateInit[]>([]);
+
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [callParticipantId, setCallParticipantId] = useState<number | null>(null);
 
@@ -286,7 +289,7 @@ const AppContent = () => {
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-                console.log("🎥 Callee got media stream:", stream.getTracks());
+                console.log("Callee got media stream:", stream.getTracks());
 
                 setLocalStream(stream); // setState is async; localStream won't update immediately
 
@@ -294,7 +297,7 @@ const AppContent = () => {
                     newPc.addTrack(track, stream);
                 });
             } catch (err) {
-                console.error("❌ Error getting user media on callee:", err);
+                console.error("Error getting user media on callee:", err);
             }
 
             newPc.ontrack = handleTrackEvent;

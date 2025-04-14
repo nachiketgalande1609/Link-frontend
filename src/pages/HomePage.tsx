@@ -89,8 +89,8 @@ const HomePage = () => {
 
     return (
         <Container
-            maxWidth={false}
             sx={{
+                maxWidth: "100%",
                 width: isLarge ? "600px" : "525px",
                 padding: isMobile ? 0 : "10px",
                 minHeight: "100vh",
@@ -99,6 +99,7 @@ const HomePage = () => {
                 borderLeft: "1px solid #202327",
                 borderRight: "1px solid #202327",
                 margin: "0 auto",
+                paddingBottom: isMobile ? "56px" : "0",
             }}
         >
             {/* Stories Section */}

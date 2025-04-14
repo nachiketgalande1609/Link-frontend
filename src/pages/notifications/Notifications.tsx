@@ -84,7 +84,7 @@ const NotificationsPage = () => {
                     }}
                 />
             ) : (
-                <Container sx={{ width: isLarge ? "600px" : "525px", mt: 4 }}>
+                <Container sx={{ maxWidth: "100%", width: isLarge ? "600px" : "525px", mt: 4 }}>
                     {notifications.length === 0 ? (
                         <Typography sx={{ textAlign: "center", mt: 3, color: "gray" }}>No new notifications.</Typography>
                     ) : (
