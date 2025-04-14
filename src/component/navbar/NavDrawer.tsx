@@ -48,7 +48,11 @@ interface NavDrawerProps {
 export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCount, setUnreadMessagesCount }: NavDrawerProps) {
     const theme = useTheme();
     const navigate = useNavigate();
-    const hideDrawer = location.pathname === "/login" || location.pathname === "/register";
+    const hideDrawer =
+        location.pathname === "/login" ||
+        location.pathname === "/register" ||
+        location.pathname === "/reset-password" ||
+        location.pathname === "/verify-email";
 
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const isMdOrLarger = useMediaQuery((theme) => theme.breakpoints.up("md"));

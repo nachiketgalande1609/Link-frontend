@@ -34,6 +34,8 @@ import {
     DELETE_COMMENT_ENDPOINT,
     GET_ALL_MESSAGE_USERS_ENDPOINT,
     VERIFY_USER_ENDPOINT,
+    GENERATE_PASSWORD_RESET_OTP_ENDPOINT,
+    VERIFY_PASSWORD_RESET_OTP_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -194,6 +196,34 @@ export const verifyUser = async (token: string) => {
             console.error(error.message);
         } else {
             console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const generatePasswordResetOTP = async (email: string) => {
+    try {
+        const response = await api.post(GENERATE_PASSWORD_RESET_OTP_ENDPOINT, { email });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to reset password:", error.message);
+        } else {
+            console.error("Failed to reset password: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const verifyPasswordResetOTP = async (email: string, otp: string) => {
+    try {
+        const response = await api.post(VERIFY_PASSWORD_RESET_OTP_ENDPOINT, { email, otp });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to reset password:", error.message);
+        } else {
+            console.error("Failed to reset password: Unknown error");
         }
         throw error;
     }

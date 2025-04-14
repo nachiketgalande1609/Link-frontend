@@ -230,6 +230,24 @@ const LoginPage: React.FC = () => {
                             />
                         </Box>
 
+                        <Button
+                            variant="outlined"
+                            loading={loading}
+                            fullWidth
+                            type="submit"
+                            onClick={() => navigate("/reset-password")}
+                            sx={{
+                                mt: 2,
+                                borderRadius: "15px",
+                                fontSize: isLarge ? "1rem" : "0.85rem",
+                                color: "#ffffff",
+                                borderColor: "#ffffff",
+                                textTransform: "none",
+                            }}
+                        >
+                            Forgot Password
+                        </Button>
+
                         <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
                             Don't have an account?{" "}
                             <Link href="/register" sx={{ textDecoration: "none", fontWeight: "bold" }}>

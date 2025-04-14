@@ -25,6 +25,7 @@ import VideoCallModal from "./component/VideoCallModal";
 import Ringtone from "./static/ringtone.mp3";
 import HangUpTone from "./static/hangup.mp3";
 import VerifyAccount from "./pages/VerifyAccount";
+import ResetPassword from "./pages/ResetPassword";
 import { useNotifications } from "@toolpad/core/useNotifications";
 
 const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
@@ -524,6 +525,14 @@ const AppContent = () => {
                         element={
                             <PublicRoute>
                                 <VerifyAccount />
+                            </PublicRoute>
+                        }
+                    />
+                    <Route
+                        path="/reset-password"
+                        element={
+                            <PublicRoute>
+                                <ResetPassword />
                             </PublicRoute>
                         }
                     />
