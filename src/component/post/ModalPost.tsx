@@ -20,7 +20,7 @@ import {
     Popover,
 } from "@mui/material";
 import { FavoriteBorder, Favorite, MoreVert, MoreHoriz } from "@mui/icons-material";
-import { deletePost, likePost, addComment, updatePost, deleteComment } from "../../services/api";
+import { deletePost, likePost, addComment, updatePost, deleteComment, toggleLikeComment } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
 import ImageDialog from "../ImageDialog";
@@ -51,6 +51,8 @@ interface PostProps {
         commenter_username: string;
         commenter_profile_picture: string;
         timeAgo: string;
+        likes_count: number;
+        liked_by_user: boolean;
     }>;
     borderRadius: string;
     isMobile: boolean;
@@ -75,7 +77,13 @@ const ModalPost: React.FC<PostProps> = ({
 }) => {
     const [commentText, setCommentText] = useState("");
     const [commentCount, setCommentCount] = useState(comments);
-    const [postComments, setPostComments] = useState(initialComments);
+    const [postComments, setPostComments] = useState(
+        initialComments.map((comment) => ({
+            ...comment,
+            liked_by_user: comment.liked_by_user ?? false,
+            likes_count: comment.likes_count ?? 0,
+        }))
+    );
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [commentOptionsDialogOpen, setCommentOptionsDialog] = useState(false);
@@ -143,6 +151,8 @@ const ModalPost: React.FC<PostProps> = ({
                         commenter_username: username,
                         commenter_profile_picture: currentUser.profile_picture_url,
                         timeAgo: "Just now",
+                        likes_count: 0,
+                        liked_by_user: false,
                     };
                     setPostComments([newComment, ...postComments]);
                     setCommentText("");
@@ -167,6 +177,50 @@ const ModalPost: React.FC<PostProps> = ({
             } catch (error) {
                 console.error("Error deleting comment:", error);
             }
+        }
+    };
+
+    const handleLikeComment = async (commentId: number) => {
+        setPostComments((prevComments) =>
+            prevComments.map((comment) => {
+                if (comment.id === commentId) {
+                    const newLikedStatus = !comment.liked_by_user;
+                    const newLikeCount = newLikedStatus ? comment.likes_count + 1 : comment.likes_count - 1;
+
+                    return {
+                        ...comment,
+                        liked_by_user: newLikedStatus,
+                        likes_count: newLikeCount,
+                    };
+                }
+                return comment;
+            })
+        );
+
+        try {
+            await toggleLikeComment(commentId);
+        } catch (error) {
+            console.error("Failed to like/unlike comment:", error);
+            setPostComments((prevComments) =>
+                prevComments.map((comment) => {
+                    if (comment.id === commentId) {
+                        const previousLikedStatus = comment.liked_by_user;
+                        const previousLikeCount = comment.likes_count;
+
+                        return {
+                            ...comment,
+                            liked_by_user: previousLikedStatus,
+                            likes_count: previousLikeCount,
+                        };
+                    }
+                    return comment;
+                })
+            );
+
+            notifications.show(`Failed to ${!isLiked ? "like" : "unlike"} the comment. Please try again later.`, {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         }
     };
 
@@ -487,6 +541,31 @@ const ModalPost: React.FC<PostProps> = ({
                                                             </Box>
                                                             <Typography variant="caption" sx={{ ml: 2, color: "#666666" }}>
                                                                 {comment.timeAgo}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box
+                                                            sx={{
+                                                                display: "flex",
+                                                                flexDirection: "column",
+                                                                alignItems: "center",
+                                                                ml: 2,
+                                                                gap: 0.3,
+                                                                justifyContent: "center",
+                                                            }}
+                                                        >
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleLikeComment(comment.id)}
+                                                                sx={{ color: comment.likes_count ? "#ed4337" : "#787a7a", padding: 0 }}
+                                                            >
+                                                                {comment.liked_by_user ? (
+                                                                    <Favorite sx={{ fontSize: "16px" }} />
+                                                                ) : (
+                                                                    <FavoriteBorder sx={{ fontSize: "16px" }} />
+                                                                )}
+                                                            </IconButton>
+                                                            <Typography variant="caption" color="text.secondary">
+                                                                {comment.likes_count}
                                                             </Typography>
                                                         </Box>
                                                     </Box>

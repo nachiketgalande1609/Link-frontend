@@ -122,7 +122,7 @@ export default function ScrollableCommentsDrawer({
         }));
 
         try {
-            const res = await toggleLikeComment(commentId, isLiked ? false : true);
+            const res = await toggleLikeComment(commentId);
             if (res.error) throw new Error("Failed to toggle like");
         } catch (err) {
             setLikesState((prevState) => ({

@@ -382,16 +382,15 @@ export const deleteComment = async (commentId: number) => {
     }
 };
 
-export const toggleLikeComment = async (commentId: number, isLiked: boolean) => {
+export const toggleLikeComment = async (commentId: number) => {
     try {
         const response = await api.post(LIKE_COMMENT_ENDPOINT, {
             commentId,
-            isLiked,
         });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
-            console.error(`Error trying to ${isLiked ? "unlike" : "like"} the comment:`, error.message);
+            console.error(`Error trying to like/unlike the comment:`, error.message);
         } else {
             console.error("Unknown error while toggling like on comment");
         }
