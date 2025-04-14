@@ -25,6 +25,8 @@ export const CREATE_POST_ENDPOINT: string = "/api/posts/create-post";
 export const DELETE_POST_ENDPOINT: string = "/api/posts/delete-post";
 export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like-post";
+export const LIKE_COMMENT_ENDPOINT: string = "/api/posts/like-comment";
+
 export const COMMENT_ENDPOINT: string = "/api/posts/submit-post-comment";
 export const DELETE_COMMENT_ENDPOINT: string = "/api/posts/delete-comment";
 

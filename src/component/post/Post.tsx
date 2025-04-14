@@ -62,6 +62,8 @@ interface Post {
         commenter_username: string;
         commenter_profile_picture: string;
         timeAgo: string;
+        likes_count: number;
+        liked_by_user: boolean;
     }>;
 }
 
@@ -205,6 +207,8 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                         commenter_username: currentUser.username,
                         commenter_profile_picture: currentUser.profile_picture_url,
                         timeAgo: "Just now",
+                        likes_count: 0,
+                        liked_by_user: false,
                     };
                     setPostComments([newComment, ...postComments]);
                     setCommentText("");

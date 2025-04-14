@@ -7,6 +7,9 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { SentimentSatisfiedAlt as EmojiIcon } from "@mui/icons-material";
 import Popover from "@mui/material/Popover";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { toggleLikeComment } from "../../services/api";
 
 interface ScrollableCommentsDrawerProps {
     drawerOpen: boolean;
@@ -22,6 +25,8 @@ interface ScrollableCommentsDrawerProps {
         commenter_username: string;
         commenter_profile_picture: string;
         timeAgo: string;
+        likes_count: number;
+        liked_by_user: boolean;
     }>;
     handleComment: () => void;
     commentText: string;
@@ -56,6 +61,7 @@ export default function ScrollableCommentsDrawer({
     const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
     const [hoveredCommentId, setHoveredCommentId] = useState<number | null>(null);
     const [emojiAnchorEl, setEmojiAnchorEl] = useState<null | HTMLElement>(null);
+    const [likesState, setLikesState] = useState<Record<number, { liked: boolean; count: number }>>({});
 
     const handleOpenDialog = (commentId: number) => {
         setSelectedCommentId(commentId);
@@ -71,9 +77,20 @@ export default function ScrollableCommentsDrawer({
     // Focus input when drawer opens
     useEffect(() => {
         if (drawerOpen && commentInputRef.current) {
-            setTimeout(() => commentInputRef.current?.focus(), 300); // Delay to allow animation to complete
+            setTimeout(() => commentInputRef.current?.focus(), 300);
         }
     }, [drawerOpen, commentInputRef]);
+
+    useEffect(() => {
+        const initialLikesState: Record<number, { liked: boolean; count: number }> = {};
+        postComments.forEach((comment) => {
+            initialLikesState[comment.id] = {
+                liked: comment.liked_by_user,
+                count: comment.likes_count,
+            };
+        });
+        setLikesState(initialLikesState);
+    }, [postComments]);
 
     const Puller = styled("div")(({ theme }) => ({
         width: 100,
@@ -90,6 +107,32 @@ export default function ScrollableCommentsDrawer({
 
     const handleEmojiClick = (emojiData: any) => {
         setCommentText(commentText + emojiData.emoji);
+    };
+
+    const handleToggleLike = async (commentId: number) => {
+        const prev = likesState[commentId];
+        const isLiked = prev?.liked;
+
+        setLikesState((prevState) => ({
+            ...prevState,
+            [commentId]: {
+                liked: !isLiked,
+                count: prev?.count + (isLiked ? -1 : 1),
+            },
+        }));
+
+        try {
+            const res = await toggleLikeComment(commentId, isLiked ? false : true);
+            if (res.error) throw new Error("Failed to toggle like");
+        } catch (err) {
+            setLikesState((prevState) => ({
+                ...prevState,
+                [commentId]: {
+                    liked: isLiked,
+                    count: prev?.count,
+                },
+            }));
+        }
     };
 
     return (
@@ -193,6 +236,21 @@ export default function ScrollableCommentsDrawer({
                                 </Box>
                                 <Typography variant="body2" sx={{ color: "#ffffff", mt: 0.5 }}>
                                     {comment.content}
+                                </Typography>
+                            </Box>
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0.3 }}>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => handleToggleLike(comment.id)}
+                                    sx={{
+                                        color: likesState[comment.id]?.liked ? "#ed4337" : "gray",
+                                        paddingRight: "4px",
+                                    }}
+                                >
+                                    {likesState[comment.id]?.liked ? <FavoriteIcon sx={{ color: "#FF3040" }} /> : <FavoriteBorderIcon />}
+                                </IconButton>
+                                <Typography variant="caption" color="gray" sx={{ fontSize: "0.8rem" }}>
+                                    {likesState[comment.id]?.count || 0}
                                 </Typography>
                             </Box>
                         </Box>

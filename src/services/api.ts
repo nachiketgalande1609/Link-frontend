@@ -37,6 +37,7 @@ import {
     GENERATE_PASSWORD_RESET_OTP_ENDPOINT,
     VERIFY_PASSWORD_RESET_OTP_ENDPOINT,
     PASSWORD_RESET_OTP_ENDPOINT,
+    LIKE_COMMENT_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -376,6 +377,23 @@ export const deleteComment = async (commentId: number) => {
             console.error("Error deleting the comment:", error.message);
         } else {
             console.error("Unknown error while deleting the comment");
+        }
+        throw error;
+    }
+};
+
+export const toggleLikeComment = async (commentId: number, isLiked: boolean) => {
+    try {
+        const response = await api.post(LIKE_COMMENT_ENDPOINT, {
+            commentId,
+            isLiked,
+        });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(`Error trying to ${isLiked ? "unlike" : "like"} the comment:`, error.message);
+        } else {
+            console.error("Unknown error while toggling like on comment");
         }
         throw error;
     }
