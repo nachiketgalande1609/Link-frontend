@@ -36,6 +36,7 @@ import {
     VERIFY_USER_ENDPOINT,
     GENERATE_PASSWORD_RESET_OTP_ENDPOINT,
     VERIFY_PASSWORD_RESET_OTP_ENDPOINT,
+    PASSWORD_RESET_OTP_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -218,6 +219,20 @@ export const generatePasswordResetOTP = async (email: string) => {
 export const verifyPasswordResetOTP = async (email: string, otp: string) => {
     try {
         const response = await api.post(VERIFY_PASSWORD_RESET_OTP_ENDPOINT, { email, otp });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Failed to reset password:", error.message);
+        } else {
+            console.error("Failed to reset password: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const ResetPassword = async (email: string, otp: string, password: string) => {
+    try {
+        const response = await api.post(PASSWORD_RESET_OTP_ENDPOINT, { email, otp, password });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {

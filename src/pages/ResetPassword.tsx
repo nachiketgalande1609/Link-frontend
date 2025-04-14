@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Fade, useMediaQuery, Link, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { generatePasswordResetOTP, verifyPasswordResetOTP } from "../services/api";
+import { generatePasswordResetOTP, ResetPassword, verifyPasswordResetOTP } from "../services/api";
 
 const ForgotPasswordPage: React.FC = () => {
     const [email, setEmail] = useState("");
-    const [otpSent, setOtpSent] = useState(false);
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [checked, setChecked] = useState(false);
+    const [step, setStep] = useState<"email" | "otp" | "reset">("email");
     const isLarge = useMediaQuery("(min-width:1281px)");
     const navigate = useNavigate();
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -27,7 +29,7 @@ const ForgotPasswordPage: React.FC = () => {
             const response = await generatePasswordResetOTP(email);
             if (response.success) {
                 setError(null);
-                setOtpSent(true);
+                setStep("otp");
             } else {
                 setError(response.error || "Reset password failed!");
             }
@@ -40,7 +42,7 @@ const ForgotPasswordPage: React.FC = () => {
     };
 
     const handleOTPChange = (index: number, value: string) => {
-        if (!/^\d*$/.test(value)) return; // Allow only digits
+        if (!/^\d*$/.test(value)) return;
         const newOtp = [...otp];
         newOtp[index] = value;
         setOtp(newOtp);
@@ -61,13 +63,48 @@ const ForgotPasswordPage: React.FC = () => {
         try {
             const response = await verifyPasswordResetOTP(email, fullOTP);
             if (response.success) {
-                navigate("/reset-password", { state: { email } });
+                setError(null);
+                setStep("reset");
             } else {
                 setError(response.error || "Invalid OTP!");
             }
         } catch (err: any) {
             console.error("OTP verification error:", err);
             setError(err.response?.data?.error || "OTP verification failed!");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handlePasswordReset = async () => {
+        setError(null);
+        if (!newPassword || !confirmPassword) {
+            setError("Please fill in both fields.");
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            setError("Password must be at least 6 characters.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const fullOTP = otp.join("");
+            const response = await ResetPassword(email, fullOTP, newPassword);
+
+            if (response.success) {
+                navigate("/login", { state: { resetSuccess: true } });
+            } else {
+                setError(response.error || "Password reset failed.");
+            }
+        } catch (err: any) {
+            console.error("Reset error:", err);
+            setError(err.message || "Password reset failed.");
         } finally {
             setLoading(false);
         }
@@ -132,7 +169,7 @@ const ForgotPasswordPage: React.FC = () => {
                         </Alert>
                     )}
 
-                    {!otpSent ? (
+                    {step === "email" && (
                         <form onSubmit={handleEmailSend}>
                             <TextField
                                 fullWidth
@@ -179,10 +216,12 @@ const ForgotPasswordPage: React.FC = () => {
                                     },
                                 }}
                             >
-                                {loading ? "Sending..." : "Reset Password"}
+                                {loading ? "Sending Email..." : "Reset Password"}
                             </Button>
                         </form>
-                    ) : (
+                    )}
+
+                    {step === "otp" && (
                         <>
                             <Typography sx={{ mb: 2 }}>
                                 Enter the 6-digit OTP sent to <b>{email}</b>
@@ -195,7 +234,18 @@ const ForgotPasswordPage: React.FC = () => {
                                             value={digit}
                                             onChange={(e) => handleOTPChange(index, e.target.value)}
                                             inputProps={{ maxLength: 1, style: { textAlign: "center", fontSize: "1.5rem" } }}
-                                            sx={{ width: "3rem" }}
+                                            sx={{
+                                                width: "3rem",
+                                                "& .MuiOutlinedInput-root": {
+                                                    "&:hover fieldset": {
+                                                        borderColor: "#767676",
+                                                    },
+                                                    "&.Mui-focused fieldset": {
+                                                        borderColor: "#767676",
+                                                        boxShadow: "none",
+                                                    },
+                                                },
+                                            }}
                                         />
                                     </Grid>
                                 ))}
@@ -215,6 +265,68 @@ const ForgotPasswordPage: React.FC = () => {
                                 {loading ? "Verifying..." : "Verify OTP"}
                             </Button>
                         </>
+                    )}
+
+                    {step === "reset" && (
+                        <form onSubmit={handlePasswordReset}>
+                            <Typography sx={{ mb: 2 }}>Enter your new password</Typography>
+                            <TextField
+                                fullWidth
+                                type="password"
+                                placeholder="New Password"
+                                variant="outlined"
+                                margin="normal"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "20px",
+                                        "&:hover fieldset": {
+                                            borderColor: "#767676",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#767676",
+                                            boxShadow: "none",
+                                        },
+                                    },
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                type="password"
+                                placeholder="Confirm Password"
+                                variant="outlined"
+                                margin="normal"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "20px",
+                                        "&:hover fieldset": {
+                                            borderColor: "#767676",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "#767676",
+                                            boxShadow: "none",
+                                        },
+                                    },
+                                }}
+                            />
+                            <Button
+                                variant="contained"
+                                disabled={loading}
+                                fullWidth
+                                type="submit"
+                                sx={{
+                                    mt: 1,
+                                    borderRadius: "15px",
+                                    fontSize: isLarge ? "1rem" : "0.85rem",
+                                    backgroundColor: "#ffffff",
+                                }}
+                            >
+                                {loading ? "Resetting..." : "Reset Password"}
+                            </Button>
+                        </form>
                     )}
 
                     <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
