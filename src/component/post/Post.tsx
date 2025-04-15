@@ -564,7 +564,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                 )}
 
                 {/* TextField and Save Button Section */}
-                <Box sx={{ padding: "16px 8px 16px 16px" }}>
+                <Box sx={{ padding: "16px" }}>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <TextField
                             fullWidth
@@ -589,9 +589,22 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                         {/* Save Button */}
                         <Button
                             onClick={handleSaveEdit}
-                            size="medium"
-                            color="primary"
-                            sx={{ textTransform: "none", "&:hover": { backgroundColor: "transparent" }, padding: 0, width: "20px" }}
+                            sx={{
+                                textTransform: "none",
+                                "&:hover": { backgroundColor: "transparent" },
+                                padding: 0,
+                                borderRadius: "12px",
+                                width: "70px",
+                                height: "35px",
+                                backgroundColor: "#ffffff",
+                                color: "#000000",
+                                ":disabled": {
+                                    backgroundColor: "#000000",
+                                    color: "#505050",
+                                },
+                                animation: editedContent === post.content ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                            }}
+                            disabled={editedContent === post.content}
                         >
                             Save
                         </Button>
