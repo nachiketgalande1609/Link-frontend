@@ -73,7 +73,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         fetchProfile();
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         const isOwnProfile = currentUser?.id == userId;
