@@ -191,6 +191,7 @@ const ProfilePage = () => {
                                             mt: 1,
                                             fontStyle: "italic",
                                             textAlign: "center",
+                                            whiteSpace: "pre-line",
                                         }}
                                     >
                                         {profileData?.bio}
