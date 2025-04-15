@@ -38,6 +38,7 @@ import {
     VERIFY_PASSWORD_RESET_OTP_ENDPOINT,
     PASSWORD_RESET_OTP_ENDPOINT,
     LIKE_COMMENT_ENDPOINT,
+    GET_PROFILE_POST_DETAILS_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -431,6 +432,22 @@ export const savePost = async (postId: string) => {
 export const getUserPosts = async (userId: string) => {
     try {
         const response = await api.get(GET_PROFILE_POSTS_ENDPOINT, { params: { userId } });
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("Unknown Error");
+        }
+        throw error;
+    }
+};
+
+export const getUserPostDetails = async (userId: string, postId: string) => {
+    try {
+        console.log("xxx", userId, postId);
+
+        const response = await api.get(GET_PROFILE_POST_DETAILS_ENDPOINT, { params: { userId, postId } });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {

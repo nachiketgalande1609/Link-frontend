@@ -243,42 +243,41 @@ const ProfilePage = () => {
                                         </Button>
                                     </Box>
                                 )}
-
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        mt: 1,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    <Grid item xs={4}>
-                                        <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
-                                            {profileData?.posts_count}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
-                                            POSTS
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
-                                            {profileData?.followers_count}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
-                                            FOLLOWERS
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
-                                            {profileData?.following_count}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
-                                            FOLLOWING
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{
+                                mt: 1,
+                                display: "flex",
+                                justifyContent: "space-between",
+                                textAlign: "center",
+                            }}
+                        >
+                            <Grid item xs={4}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
+                                    {profileData?.posts_count}
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
+                                    POSTS
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
+                                    {profileData?.followers_count}
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
+                                    FOLLOWERS
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant="body2" sx={{ fontSize: isMobile ? "16px" : "20px", mb: 0.5 }}>
+                                    {profileData?.following_count}
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: "bold", color: "#888888" }}>
+                                    FOLLOWING
+                                </Typography>
                             </Grid>
                         </Grid>
                     </Paper>
@@ -364,18 +363,9 @@ const ProfilePage = () => {
                     >
                         {selectedPost && (
                             <ModalPost
-                                username={selectedPost.username}
-                                content={selectedPost.content}
-                                likes={selectedPost.like_count}
-                                comments={selectedPost.comment_count}
-                                fileUrl={selectedPost.file_url}
-                                avatarUrl={selectedPost.profile_picture}
-                                timeAgo={selectedPost.timeAgo}
+                                userId={userId}
                                 postId={selectedPost.id}
-                                userId={selectedPost.user_id}
                                 fetchPosts={fetchUserPosts}
-                                hasUserLikedPost={selectedPost.liked_by_current_user}
-                                initialComments={selectedPost.comments}
                                 borderRadius="20px"
                                 isMobile={isMobile}
                                 handleCloseModal={handleCloseModal}
