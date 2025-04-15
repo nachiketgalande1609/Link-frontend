@@ -142,7 +142,7 @@ const ProfilePage = () => {
                     <Paper
                         sx={{
                             padding: { xs: 2, sm: 3 },
-                            borderRadius: "20px",
+                            borderRadius: "10px",
                             boxShadow: 3,
                             background: "linear-gradient(0deg, hsl(214, 10%, 20%),rgb(0, 0, 0))",
                             mb: 1,
