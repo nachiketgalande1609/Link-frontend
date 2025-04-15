@@ -570,7 +570,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                                                 <Button
                                                     onClick={handleComment}
                                                     size="small"
-                                                    sx={{ color: "#1976d2", borderRadius: "15px", alignSelf: "flex-start", mt: "2px" }}
+                                                    sx={{ color: "#ffffff", borderRadius: "15px", alignSelf: "flex-start", mt: "2px" }}
                                                     disabled={!commentText}
                                                 >
                                                     Post
