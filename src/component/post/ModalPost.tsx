@@ -397,7 +397,7 @@ const ModalPost: React.FC<PostProps> = ({
                                         }}
                                     >
                                         <Box>
-                                            <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "#787a7a", padding: "0" }}>
+                                            <IconButton onClick={handleLike} sx={{ color: isLiked ? "#FF3040" : "#787a7a", padding: "0" }}>
                                                 {isLiked ? (
                                                     <Favorite sx={{ fontSize: "35px", mr: 1 }} />
                                                 ) : (

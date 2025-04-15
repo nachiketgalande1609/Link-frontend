@@ -388,7 +388,10 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
             >
                 <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-                        <IconButton onClick={handleLike} sx={{ color: isLiked ? "red" : "#787a7a", ":hover": { backgroundColor: "transparent" } }}>
+                        <IconButton
+                            onClick={handleLike}
+                            sx={{ color: isLiked ? "#FF3040" : "#787a7a", ":hover": { backgroundColor: "transparent" } }}
+                        >
                             {isLiked ? <Favorite sx={{ fontSize: isMobile ? "26px" : "30px" }} /> : <FavoriteBorder sx={{ fontSize: "30px" }} />}
                         </IconButton>
                         <Typography variant="body2" component="span" sx={{ mr: 1, color: "#787a7a" }}>
@@ -555,7 +558,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                                 },
                             }}
                         >
-                            <Close sx={{ fontSize: "18px" }} /> {/* Import Close icon from @mui/icons-material */}
+                            <Close sx={{ fontSize: "18px" }} />
                         </IconButton>
                     </Box>
                 )}
