@@ -60,7 +60,6 @@ const AppContent = () => {
     const pendingCandidates = useRef<RTCIceCandidateInit[]>([]);
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [callParticipantId, setCallParticipantId] = useState<number | null>(null);
 
