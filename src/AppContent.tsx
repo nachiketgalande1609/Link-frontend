@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Box, Button, LinearProgress, Modal, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, LinearProgress, Modal, Stack, Typography } from "@mui/material";
 
 import { useGlobalStore } from "./store/store";
 
@@ -58,8 +58,6 @@ const AppContent = () => {
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const pendingCandidates = useRef<RTCIceCandidateInit[]>([]);
-
-    const theme = useTheme();
 
     const [callParticipantId, setCallParticipantId] = useState<number | null>(null);
 
