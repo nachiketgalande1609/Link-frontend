@@ -272,7 +272,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({
                                             onClick={() => handleUserClick(user.id)}
                                             sx={{
                                                 backgroundColor:
-                                                    selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(213, 77%,10%)" : "transparent",
+                                                    selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(0, 0.00%, 0.00%)" : "transparent",
                                                 padding: "12px",
                                                 textAlign: "left",
                                                 width: "100%",
