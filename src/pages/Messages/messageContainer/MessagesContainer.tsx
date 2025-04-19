@@ -614,6 +614,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                         transition: "background-color 0.5s ease-in-out",
                                                         backgroundColor: highlightedMessageId === msg.message_id ? "#0b335b" : "transparent",
                                                         borderRadius: "12px",
+                                                        mb: "8px",
                                                         position: "relative",
                                                         ...(msg.message_text && {
                                                             "&::before": {
