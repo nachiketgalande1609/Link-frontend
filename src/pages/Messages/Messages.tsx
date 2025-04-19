@@ -448,20 +448,26 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                 message.message_id === messageId
                     ? {
                           ...message,
-                          reactions: [
-                              ...(message.reactions || []), // Ensure there is an array for reactions
-                              {
-                                  user_id: currentUser.id.toString(),
-                                  reaction,
-                                  username: currentUser.username,
-                                  profile_picture: currentUser.profile_picture,
-                              },
-                          ],
+                          reactions: message.reactions
+                              ? message.reactions.map((r) =>
+                                    r.user_id === currentUser.id.toString()
+                                        ? { ...r, reaction } // Replace the existing reaction
+                                        : r
+                                )
+                              : [
+                                    {
+                                        user_id: currentUser.id.toString(),
+                                        reaction,
+                                        username: currentUser.username,
+                                        profile_picture: currentUser.profile_picture,
+                                    },
+                                ], // If no reactions exist, create the new one
                       }
                     : message
             )
         );
 
+        // Emit the reaction to the server
         socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
     };
 
