@@ -818,7 +818,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                                     alt={reactionDetail.username}
                                                                                 />
                                                                             </ListItemAvatar>
-                                                                            <Typography variant="body1" sx={{ fontWeight: "medium", marginRight: 1 }}>
+                                                                            <Typography sx={{ marginRight: 1 }}>
                                                                                 {reactionDetail.username || "Unknown User"}{" "}
                                                                             </Typography>
                                                                         </Box>
