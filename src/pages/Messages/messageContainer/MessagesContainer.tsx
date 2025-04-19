@@ -614,7 +614,6 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                         transition: "background-color 0.5s ease-in-out",
                                                         backgroundColor: highlightedMessageId === msg.message_id ? "#0b335b" : "transparent",
                                                         borderRadius: "12px",
-                                                        mb: "8px",
                                                         position: "relative",
                                                         ...(msg.message_text && {
                                                             "&::before": {
@@ -755,7 +754,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             gap: "2px",
                                                             justifyContent: msg.sender_id === currentUser.id ? "flex-end" : "flex-start",
                                                             position: "relative",
-                                                            marginTop: "-8px",
+                                                            bottom: "8px",
                                                             paddingLeft: msg.sender_id === currentUser.id ? "0px" : "10px",
                                                             paddingRight: msg.sender_id === currentUser.id ? "10px" : "0px",
                                                             zIndex: 1,
@@ -767,7 +766,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             <Typography
                                                                 key={index}
                                                                 sx={{
-                                                                    fontSize: "1.2rem",
+                                                                    fontSize: "1.4rem",
                                                                     borderRadius: "12px",
                                                                 }}
                                                             >

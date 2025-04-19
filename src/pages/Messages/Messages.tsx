@@ -443,29 +443,38 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     const handleReaction = (messageId: number, reaction: string) => {
         if (!selectedUser) return;
 
-        setMessages((prevMessages) =>
-            prevMessages.map((message) =>
-                message.message_id === messageId
-                    ? {
-                          ...message,
-                          reactions: message.reactions
-                              ? message.reactions.map((r) =>
-                                    r.user_id === currentUser.id.toString()
-                                        ? { ...r, reaction } // Replace the existing reaction
-                                        : r
-                                )
-                              : [
-                                    {
-                                        user_id: currentUser.id.toString(),
-                                        reaction,
-                                        username: currentUser.username,
-                                        profile_picture: currentUser.profile_picture,
-                                    },
-                                ], // If no reactions exist, create the new one
-                      }
-                    : message
-            )
-        );
+        setMessages((prevMessages) => {
+            const updatedMessages = prevMessages.map((message) => {
+                if (message.message_id === messageId) {
+                    const updatedReactions =
+                        Array.isArray(message.reactions) && message.reactions.length > 0
+                            ? message.reactions.map((r) => {
+                                  if (r.user_id === currentUser.id.toString()) {
+                                      return { ...r, reaction };
+                                  }
+                                  return r;
+                              })
+                            : [
+                                  {
+                                      user_id: currentUser.id.toString(),
+                                      reaction,
+                                      username: currentUser.username,
+                                      profile_picture: currentUser.profile_picture_url,
+                                  },
+                              ];
+                    console.log("Updated Reactions:", currentUser);
+
+                    return {
+                        ...message,
+                        reactions: updatedReactions,
+                    };
+                }
+
+                return message;
+            });
+
+            return updatedMessages;
+        });
 
         // Emit the reaction to the server
         socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
