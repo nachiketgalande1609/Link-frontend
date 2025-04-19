@@ -18,6 +18,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useDebounce } from "../utils/utils";
 import { getSearchResults, getSearchHistory, addToSearchHistory, deleteSearchHistoryItem } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+
+import InputAdornment from "@mui/material/InputAdornment";
 
 export default function SearchPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -145,7 +148,7 @@ export default function SearchPage() {
                 p: 0,
             }}
         >
-            <Box sx={{ borderBottom: "1px solid #202327", padding: "20px 20px 10px 20px" }}>
+            <Box sx={{ borderBottom: "1px solid #202327", padding: "20px 15px 10px 15px" }}>
                 <TextField
                     sx={{
                         "& .MuiInput-underline:before": { borderBottom: "none !important" },
@@ -158,6 +161,13 @@ export default function SearchPage() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     inputRef={searchInputRef}
                     variant="standard"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon sx={{ color: "gray" }} />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
             </Box>
 

@@ -26,7 +26,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
-    reactions?: Record<number, string> | null;
+    reactions: ReactionDetail[];
     post?: {
         post_id: number;
         file_url: string;
@@ -40,6 +40,13 @@ type Message = {
         };
     } | null;
 };
+
+interface ReactionDetail {
+    user_id: string;
+    reaction: string;
+    username: string;
+    profile_picture: string;
+}
 
 interface messagesTopBarProps {
     selectedUser: User | null;

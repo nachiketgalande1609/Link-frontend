@@ -70,7 +70,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
-    reactions?: Record<number, string> | null;
+    reactions: ReactionDetail[];
     post?: {
         post_id: number;
         file_url: string;
@@ -95,8 +95,11 @@ type User = {
     unread_count: number;
 };
 
-interface Reactions {
-    [userId: string]: string;
+interface ReactionDetail {
+    user_id: string;
+    reaction: string;
+    username: string;
+    profile_picture: string;
 }
 
 const MessagesContainer: React.FC<MessagesContainerProps> = ({
@@ -130,7 +133,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
     const [selectedMessageForReaction, setSelectedMessageForReaction] = useState<Message | null>(null);
 
     const [reactionAnchor, setReactionAnchor] = useState<HTMLElement | null>(null);
-    const [selectedReactions, setSelectedReactions] = useState<Reactions | null>(null);
+    const [selectedReactions, setSelectedReactions] = useState<ReactionDetail[] | null>(null);
 
     const [isScrolledUp, setIsScrolledUp] = useState(false);
 
@@ -184,9 +187,9 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
         }
     };
 
-    const handleReactionPopoverOpen = (event: React.MouseEvent<HTMLElement>, reactions: Reactions) => {
+    const handleReactionPopoverOpen = (event: React.MouseEvent<HTMLElement>, reactions: ReactionDetail[]) => {
         setReactionAnchor(event.currentTarget);
-        setSelectedReactions(reactions);
+        setSelectedReactions(reactions); // Set the selected reactions array
     };
 
     const handleReactionPopoverClose = () => {
@@ -757,9 +760,9 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             zIndex: 1,
                                                             cursor: "pointer",
                                                         }}
-                                                        onClick={(e) => handleReactionPopoverOpen(e, msg.reactions || {})}
+                                                        onClick={(e) => handleReactionPopoverOpen(e, msg.reactions)}
                                                     >
-                                                        {Object.values(msg.reactions).map((reaction, index) => (
+                                                        {msg.reactions.map((reactionDetail, index) => (
                                                             <Typography
                                                                 key={index}
                                                                 sx={{
@@ -767,11 +770,12 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                     borderRadius: "12px",
                                                                 }}
                                                             >
-                                                                {reaction}
+                                                                {reactionDetail.reaction} {/* Display the reaction emoji */}
                                                             </Typography>
                                                         ))}
                                                     </Box>
                                                 )}
+
                                                 <Popover
                                                     open={Boolean(reactionAnchor)}
                                                     anchorEl={reactionAnchor}
@@ -796,26 +800,31 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                     <Box sx={{ p: 1 }}>
                                                         <List sx={{ maxHeight: 250, overflowY: "auto", padding: 0 }}>
                                                             {selectedReactions &&
-                                                                Object.entries(selectedReactions).map(([userId, reaction]) => (
+                                                                selectedReactions.map((reactionDetail) => (
                                                                     <ListItem
-                                                                        key={userId}
-                                                                        sx={{ borderRadius: 2, padding: "5px 5px", justifyContent: "space-between" }}
+                                                                        key={reactionDetail.user_id}
+                                                                        sx={{
+                                                                            borderRadius: 2,
+                                                                            padding: "8px 5px",
+                                                                            justifyContent: "space-between",
+                                                                            display: "flex",
+                                                                        }}
                                                                     >
                                                                         <Box sx={{ display: "flex", alignItems: "center" }}>
                                                                             <ListItemAvatar>
                                                                                 <Avatar
-                                                                                    sx={{ height: "40px", width: "40px" }}
-                                                                                    src={`/path/to/user/avatar/${userId}.jpg`}
-                                                                                    alt={userId}
+                                                                                    sx={{ height: "35px", width: "35px" }}
+                                                                                    src={reactionDetail.profile_picture}
+                                                                                    alt={reactionDetail.username}
                                                                                 />
                                                                             </ListItemAvatar>
                                                                             <Typography variant="body1" sx={{ fontWeight: "medium", marginRight: 1 }}>
-                                                                                {userId ? userId : "Unknown User"}
+                                                                                {reactionDetail.username || "Unknown User"}{" "}
                                                                             </Typography>
                                                                         </Box>
 
                                                                         <Typography color="text.secondary" sx={{ fontSize: "22px" }}>
-                                                                            {String(reaction)}
+                                                                            {reactionDetail.reaction}
                                                                         </Typography>
                                                                     </ListItem>
                                                                 ))}

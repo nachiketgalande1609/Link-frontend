@@ -29,7 +29,7 @@ type Message = {
     reply_to: number | null;
     media_height: number | null;
     media_width: number | null;
-    reactions?: Record<number, string> | null;
+    reactions: ReactionDetail[];
     post?: {
         post_id: number;
         file_url: string;
@@ -43,6 +43,13 @@ type Message = {
         };
     } | null;
 };
+
+interface ReactionDetail {
+    user_id: string;
+    reaction: string;
+    username: string;
+    profile_picture: string;
+}
 
 type User = {
     id: number;
@@ -187,7 +194,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                     media_height: data?.mediaHeight || null,
                     delivered: false, // Assuming the new message isn't delivered yet
                     read: false, // Assuming it's unread
-                    reactions: null,
+                    reactions: [],
                     post: null,
                 };
 
@@ -302,7 +309,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
             delivered_timestamp: null,
             read_timestamp: null,
             reply_to: selectedMessageForReply?.message_id || null,
-            reactions: null,
+            reactions: [],
             post: null,
         };
 
@@ -441,31 +448,51 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                 message.message_id === messageId
                     ? {
                           ...message,
-                          reactions: {
-                              ...(message.reactions || {}),
-                              [currentUser.id]: reaction,
-                          },
+                          reactions: [
+                              ...(message.reactions || []), // Ensure there is an array for reactions
+                              {
+                                  user_id: currentUser.id.toString(),
+                                  reaction,
+                                  username: currentUser.username,
+                                  profile_picture: currentUser.profile_picture,
+                              },
+                          ],
                       }
                     : message
             )
         );
 
+        console.log("Reaction Sent");
+
         socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
     };
 
-    socket.on("reaction-received", ({ messageId, senderUserId, reaction }) => {
+    socket.on("reaction-received", ({ messageId, reaction }) => {
+        console.log("Reaction Received", reaction);
+
         setMessages((prevMessages) =>
-            prevMessages.map((message) =>
-                message.message_id === messageId
-                    ? {
-                          ...message,
-                          reactions: {
-                              ...(message.reactions || {}), // Ensure reactions is not null
-                              [senderUserId]: reaction,
-                          },
-                      }
-                    : message
-            )
+            prevMessages.map((message) => {
+                if (message.message_id !== messageId) return message;
+
+                const prevReactions = Array.isArray(message.reactions) ? message.reactions : [];
+
+                // Remove any previous reaction by this user
+                const updatedReactions = prevReactions.filter((r) => r.user_id !== reaction.user_id);
+
+                // If reaction is null, just return filtered list
+                if (reaction.reaction === null) {
+                    return {
+                        ...message,
+                        reactions: updatedReactions,
+                    };
+                }
+
+                // Otherwise, add the new/updated reaction object
+                return {
+                    ...message,
+                    reactions: [...updatedReactions, reaction],
+                };
+            })
         );
     });
 

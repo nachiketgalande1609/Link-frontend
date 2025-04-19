@@ -193,45 +193,72 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
 
     const handleComment = async () => {
         if (commentText) {
+            const newComment = {
+                id: Date.now(), // Temporary ID for optimistic UI
+                post_id: post.id,
+                user_id: currentUser.id,
+                content: commentText,
+                parent_comment_id: null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                commenter_username: currentUser.username,
+                commenter_profile_picture: currentUser.profile_picture_url,
+                timeAgo: "Just now",
+                likes_count: 0,
+                liked_by_user: false,
+            };
+
+            // Optimistically add the comment to the UI
+            setPostComments([newComment, ...postComments]);
+            setCommentText(""); // Clear the input field
+            setCommentCount(comment_count + 1); // Update the comment count
+
             try {
-                const response = await addComment(post.id, commentText);
+                const response = await addComment(post.id, commentText); // Make the API call
                 if (response?.success) {
-                    const newComment = {
-                        id: Date.now(),
-                        post_id: post.id,
-                        user_id: currentUser.id,
-                        content: commentText,
-                        parent_comment_id: null,
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString(),
-                        commenter_username: currentUser.username,
-                        commenter_profile_picture: currentUser.profile_picture_url,
-                        timeAgo: "Just now",
-                        likes_count: 0,
-                        liked_by_user: false,
-                    };
-                    setPostComments([newComment, ...postComments]);
-                    setCommentText("");
-                    setCommentCount(comment_count + 1);
-                    fetchPosts();
+                    // If the API call is successful, we can proceed without changes
+                    fetchPosts(); // Fetch posts to ensure the comment is updated
+                } else {
+                    throw new Error("Failed to add comment");
                 }
             } catch (error) {
-                console.error("Error adding comment:", error);
+                // If the API call fails, revert the optimistic UI change
+                setPostComments((prevComments) => prevComments.filter((comment) => comment.id !== newComment.id));
+                setCommentCount(comment_count - 1); // Revert the comment count update
+
+                // Show an error notification
+                notifications.show("Error adding comment. Please try again.", {
+                    severity: "error",
+                    autoHideDuration: 3000,
+                });
+                console.error("Error adding comment:", error); // Log the error for debugging
             }
         }
     };
 
     const handleDeleteComment = async () => {
         if (selectedCommentId) {
+            // Optimistically remove the comment from the UI
+            const commentToDelete = postComments.find((comment) => comment.id === selectedCommentId);
+            const updatedComments = postComments.filter((comment) => comment.id !== selectedCommentId);
+            setPostComments(updatedComments); // Update the comments UI
+
             try {
-                const res = await deleteComment(selectedCommentId);
+                const res = await deleteComment(selectedCommentId); // Make the API call to delete the comment
                 if (res?.success) {
-                    const updatedComments = postComments.filter((comment) => comment.id !== selectedCommentId);
-                    setPostComments(updatedComments);
-                    fetchPosts();
+                    // If the deletion was successful, nothing more needs to be done
+                    fetchPosts(); // Fetch updated posts to reflect changes on the server
+                } else {
+                    throw new Error("Failed to delete comment");
                 }
             } catch (error) {
-                console.error("Error deleting comment:", error);
+                // If the deletion fails, revert the optimistic change by adding the comment back
+                setPostComments((prevComments) => [commentToDelete!, ...prevComments]); // Revert UI state
+                notifications.show("Error deleting comment. Please try again.", {
+                    severity: "error",
+                    autoHideDuration: 3000,
+                });
+                console.error("Error deleting comment:", error); // Log the error for debugging
             }
         }
     };
