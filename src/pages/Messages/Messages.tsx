@@ -441,8 +441,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
     }, []);
 
     const handleReaction = (messageId: number, reaction: string) => {
-        console.log("Message ID", messageId, "Reaction:", reaction);
-
         if (!selectedUser) return;
 
         setMessages((prevMessages) => {
@@ -464,7 +462,6 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
                                       profile_picture: currentUser.profile_picture_url,
                                   },
                               ];
-                    console.log("Updated Reactions:", currentUser);
 
                     return {
                         ...message,

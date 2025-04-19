@@ -1,7 +1,15 @@
 body {
-    min-height: "100vh";
+    min-height: 100vh;
     background-color: black;
+    color: white;
     margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: black;
+        color: white;
+    }
 }
 
 ::-webkit-scrollbar {

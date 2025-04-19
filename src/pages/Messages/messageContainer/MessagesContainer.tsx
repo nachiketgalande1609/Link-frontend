@@ -770,7 +770,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             <Typography
                                                                 key={index}
                                                                 sx={{
-                                                                    fontSize: "1.4rem",
+                                                                    fontSize: isMobile ? "1rem" : "1.4rem",
                                                                     borderRadius: "12px",
                                                                 }}
                                                             >
