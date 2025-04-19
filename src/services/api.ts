@@ -445,8 +445,6 @@ export const getUserPosts = async (userId: string) => {
 
 export const getUserPostDetails = async (userId: string, postId: string) => {
     try {
-        console.log("xxx", userId, postId);
-
         const response = await api.get(GET_PROFILE_POST_DETAILS_ENDPOINT, { params: { userId, postId } });
         return response.data;
     } catch (error: unknown) {

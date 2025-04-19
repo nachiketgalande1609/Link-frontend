@@ -462,14 +462,10 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
             )
         );
 
-        console.log("Reaction Sent");
-
         socket.emit("send-reaction", { messageId, senderUserId: currentUser.id, reaction });
     };
 
     socket.on("reaction-received", ({ messageId, reaction }) => {
-        console.log("Reaction Received", reaction);
-
         setMessages((prevMessages) =>
             prevMessages.map((message) => {
                 if (message.message_id !== messageId) return message;
