@@ -232,7 +232,6 @@ const RegisterPage: React.FC = () => {
                             color="primary"
                             fullWidth
                             type="submit"
-                            loading={loading}
                             onClick={handleRegister}
                             disabled={loading || !email || !username || !password || !confirmPassword}
                             sx={{

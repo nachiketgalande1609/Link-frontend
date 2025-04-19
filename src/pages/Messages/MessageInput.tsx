@@ -269,7 +269,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                 />
                 <label htmlFor="upload-file">
                     <IconButton component="span" disabled={!!(selectedFile || selectedFileURL)}>
-                        <FontAwesomeIcon icon={faPaperclip} style={{ fontSize: "22px" }} />{" "}
+                        <FontAwesomeIcon icon={faPaperclip} style={{ fontSize: "22px" }} />
                     </IconButton>
                 </label>
 

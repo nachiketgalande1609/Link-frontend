@@ -24,6 +24,7 @@ import {
     MoreHoriz,
     EmojiEmotions,
     ExpandMore,
+    Clear as DeleteIcon,
 } from "@mui/icons-material";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import BlurBackgroundImage from "../../../static/blur.jpg";
@@ -596,7 +597,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             <Typography sx={{ fontSize: "0.85rem", color: "#fff" }}>
                                                                 <Box component="span" sx={{ color: "#cccccc" }}>
                                                                     {msg.post.owner.username}
-                                                                </Box>{" "}
+                                                                </Box>
                                                                 {msg.post.content}
                                                             </Typography>
                                                         </Box>
@@ -760,7 +761,10 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                             zIndex: 1,
                                                             cursor: "pointer",
                                                         }}
-                                                        onClick={(e) => handleReactionPopoverOpen(e, msg.reactions)}
+                                                        onClick={(e) => {
+                                                            setSelectedMessageForReaction(msg);
+                                                            handleReactionPopoverOpen(e, msg.reactions);
+                                                        }}
                                                     >
                                                         {msg.reactions.map((reactionDetail, index) => (
                                                             <Typography
@@ -770,7 +774,7 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                     borderRadius: "12px",
                                                                 }}
                                                             >
-                                                                {reactionDetail.reaction} {/* Display the reaction emoji */}
+                                                                {reactionDetail.reaction}
                                                             </Typography>
                                                         ))}
                                                     </Box>
@@ -819,13 +823,43 @@ const MessagesContainer: React.FC<MessagesContainerProps> = ({
                                                                                 />
                                                                             </ListItemAvatar>
                                                                             <Typography sx={{ marginRight: 1 }}>
-                                                                                {reactionDetail.username || "Unknown User"}{" "}
+                                                                                {reactionDetail.username || "Unknown User"}
                                                                             </Typography>
                                                                         </Box>
 
-                                                                        <Typography color="text.secondary" sx={{ fontSize: "22px" }}>
-                                                                            {reactionDetail.reaction}
-                                                                        </Typography>
+                                                                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                                            <Typography color="text.secondary" sx={{ fontSize: "22px" }}>
+                                                                                {reactionDetail.reaction}
+                                                                            </Typography>
+
+                                                                            {/* Remove Reaction Button */}
+                                                                            <Box sx={{ width: "32px", height: "32px" }}>
+                                                                                {reactionDetail.user_id === currentUser.id.toString() && (
+                                                                                    <IconButton
+                                                                                        sx={{
+                                                                                            ":hover": {
+                                                                                                backgroundColor: "transparent",
+                                                                                            },
+                                                                                        }}
+                                                                                        onClick={() => {
+                                                                                            if (selectedMessageForReaction) {
+                                                                                                handleReaction(
+                                                                                                    selectedMessageForReaction.message_id,
+                                                                                                    ""
+                                                                                                );
+                                                                                            }
+                                                                                        }}
+                                                                                    >
+                                                                                        <DeleteIcon
+                                                                                            sx={{
+                                                                                                color: "#fff",
+                                                                                                fontSize: "16px",
+                                                                                            }}
+                                                                                        />
+                                                                                    </IconButton>
+                                                                                )}
+                                                                            </Box>
+                                                                        </Box>
                                                                     </ListItem>
                                                                 ))}
                                                         </List>

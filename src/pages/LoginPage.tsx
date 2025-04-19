@@ -196,7 +196,6 @@ const LoginPage: React.FC = () => {
                             {/* Login Button */}
                             <Button
                                 variant="contained"
-                                loading={loading}
                                 disabled={loading || !email || !password}
                                 fullWidth
                                 type="submit"

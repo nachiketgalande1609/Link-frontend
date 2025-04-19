@@ -252,7 +252,6 @@ const ForgotPasswordPage: React.FC = () => {
 
                     {step === "otp" && (
                         <>
-                            {" "}
                             <Typography sx={{ mb: 2 }}>
                                 Enter the 6-digit OTP sent to <b>{email}</b>
                             </Typography>

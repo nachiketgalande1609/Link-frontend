@@ -129,7 +129,7 @@ const UploadStoryDialog: React.FC<UploadStoryDialogProps> = ({ open, onClose, fe
                             <Typography>Drag & drop an image/video, or click to select</Typography>
                         )}
                     </Box>
-                    {/* Caption Input */}{" "}
+                    {/* Caption Input */}
                     <Box sx={{ position: "relative", marginBottom: 2 }}>
                         <TextField
                             fullWidth
