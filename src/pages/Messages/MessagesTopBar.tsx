@@ -149,6 +149,7 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                     }}
                     sx={{
                         padding: "10px",
+                        color: "white",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
@@ -164,6 +165,7 @@ const MessagesTopBar: React.FC<messagesTopBarProps> = ({ selectedUser, chatTheme
                     onClick={() => setOpenThemeDialog(false)}
                     sx={{
                         padding: "10px",
+                        color: "white",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",

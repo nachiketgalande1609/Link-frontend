@@ -333,6 +333,7 @@ export default function ScrollableCommentsDrawer({
                         borderRadius: 0,
                         "&:hover": { backgroundColor: "#2e3238" },
                         borderBottom: "1px solid #505050",
+                        color: "white",
                     }}
                 >
                     Delete Comment
@@ -352,6 +353,7 @@ export default function ScrollableCommentsDrawer({
                         "&:hover": { backgroundColor: "#ed4337" },
                         borderBottom: "1px solid #505050",
                         display: confirmDeleteButtonVisibile ? "block" : "none",
+                        color: "white",
                     }}
                 >
                     Confirm Delete Comment
@@ -366,6 +368,7 @@ export default function ScrollableCommentsDrawer({
                         textTransform: "none",
                         borderRadius: 0,
                         "&:hover": { backgroundColor: "#2e3238" },
+                        color: "white",
                     }}
                 >
                     Cancel

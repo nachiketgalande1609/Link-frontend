@@ -113,6 +113,7 @@ export default function MoreOptionsDialog({
                     onClick={handleUnfollow}
                     sx={{
                         padding: "10px",
+                        color: "white",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
@@ -130,6 +131,7 @@ export default function MoreOptionsDialog({
                     onClick={handleEditProfile}
                     sx={{
                         padding: "10px",
+                        color: "white",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
@@ -146,6 +148,7 @@ export default function MoreOptionsDialog({
                 onClick={handleCopyLink}
                 sx={{
                     padding: "10px",
+                    color: "white",
                     fontSize: isMobile ? "0.85rem" : "0.9rem",
                     backgroundColor: "#202327",
                     textTransform: "none",
@@ -166,6 +169,7 @@ export default function MoreOptionsDialog({
                         }}
                         sx={{
                             padding: "10px",
+                            color: "white",
                             fontSize: isMobile ? "0.85rem" : "0.9rem",
                             backgroundColor: "#202327",
                             textTransform: "none",
@@ -187,6 +191,7 @@ export default function MoreOptionsDialog({
                     }}
                     sx={{
                         padding: "10px",
+                        color: "white",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
@@ -203,6 +208,7 @@ export default function MoreOptionsDialog({
                 onClick={handleCloseDialog}
                 sx={{
                     padding: "10px",
+                    color: "white",
                     fontSize: isMobile ? "0.85rem" : "0.9rem",
                     backgroundColor: "#202327",
                     textTransform: "none",

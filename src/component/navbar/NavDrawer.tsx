@@ -494,6 +494,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                         borderRadius: 0,
                         "&:hover": { backgroundColor: "#2e3238" },
                         borderBottom: "1px solid #505050",
+                        color: "white",
                     }}
                 >
                     Settings
@@ -512,6 +513,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                         borderRadius: 0,
                         "&:hover": { backgroundColor: "#2e3238" },
                         borderBottom: "1px solid #505050",
+                        color: "white",
                     }}
                 >
                     Logout
@@ -526,6 +528,7 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                         textTransform: "none",
                         borderRadius: 0,
                         "&:hover": { backgroundColor: "#2e3238" },
+                        color: "white",
                     }}
                 >
                     Cancel
