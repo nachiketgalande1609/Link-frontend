@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Container, Typography, Avatar, Grid, Paper, Dialog, Button, IconButton, useMediaQuery, useTheme, Box, LinearProgress } from "@mui/material";
 import ProfilePagePost from "../../component/post/ProfilePagePost";
 import ModalPost from "../../component/post/ModalPost";
-import { getProfile, getUserPosts, followUser } from "../../services/api";
+import { getProfile, getUserPosts, followUser, cancelFollowRequest } from "../../services/api";
 import { MoreVert } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import LockIcon from "@mui/icons-material/Lock";
 import MoreOptionsDialog from "./MoreOptionsDialog";
 import { useGlobalStore } from "../../store/store";
+import FollowButton from "./FollowButton";
 
 interface Profile {
     username: string;
@@ -120,6 +121,32 @@ const ProfilePage = () => {
         }
     };
 
+    const handleCancelRequest = async () => {
+        if (currentUser?.id && userId) {
+            setFollowButtonLoading(true);
+
+            try {
+                const res = await cancelFollowRequest(currentUser.id, userId);
+                if (res?.success) {
+                    setProfileData((prev) =>
+                        prev
+                            ? {
+                                  ...prev,
+                                  is_following: false,
+                                  is_request_active: false,
+                              }
+                            : prev
+                    );
+                    setIsFollowing(false);
+                }
+            } catch (error) {
+                console.error("Failed to cancel follow request:", error);
+            } finally {
+                setFollowButtonLoading(false);
+            }
+        }
+    };
+
     const handleSendMessage = () => {
         navigate(`/messages/${userId}`, { state: profileData });
     };
@@ -215,34 +242,13 @@ const ProfilePage = () => {
 
                                 {currentUser?.id && userId != currentUser?.id && (
                                     <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end" }}>
-                                        <Button
-                                            loading={followButtonLoading}
-                                            onClick={
-                                                (isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active
-                                                    ? () => {}
-                                                    : handleFollow
-                                            }
-                                            disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
-                                            variant="contained"
-                                            sx={{
-                                                minWidth: "88.46px",
-                                                mt: 2,
-                                                borderRadius: "15px",
-                                                backgroundColor: "#ffffff",
-                                                ":disabled": {
-                                                    backgroundColor: "#000000",
-                                                    color: "#505050",
-                                                },
-                                            }}
-                                        >
-                                            {followButtonLoading
-                                                ? null
-                                                : profileData?.is_request_active
-                                                  ? "Request Pending"
-                                                  : isFollowing && profileData?.follow_status === "accepted"
-                                                    ? "Following"
-                                                    : "Follow"}
-                                        </Button>
+                                        <FollowButton
+                                            isFollowing={isFollowing}
+                                            profileData={profileData}
+                                            followButtonLoading={followButtonLoading}
+                                            handleFollow={handleFollow}
+                                            handleCancelRequest={handleCancelRequest}
+                                        />
                                         <Button
                                             onClick={handleSendMessage}
                                             variant="contained"
