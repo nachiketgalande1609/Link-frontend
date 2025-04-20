@@ -160,6 +160,12 @@ const LoginPage: React.FC = () => {
                                             boxShadow: "none",
                                         },
                                     },
+                                    "& input:-webkit-autofill": {
+                                        backgroundColor: "transparent !important",
+                                        boxShadow: "0 0 0px 1000px white inset !important",
+                                        borderColor: "#767676 !important",
+                                        color: "#000000 !important",
+                                    },
                                 }}
                             />
                             {/* Password Field */}
@@ -190,6 +196,12 @@ const LoginPage: React.FC = () => {
                                             borderColor: "#767676",
                                             boxShadow: "none",
                                         },
+                                    },
+                                    "& input:-webkit-autofill": {
+                                        backgroundColor: "transparent !important",
+                                        boxShadow: "0 0 0px 1000px white inset !important",
+                                        borderColor: "#767676 !important",
+                                        color: "#000000 !important",
                                     },
                                 }}
                             />
