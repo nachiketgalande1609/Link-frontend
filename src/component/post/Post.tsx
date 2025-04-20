@@ -666,6 +666,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                     }}
                     sx={{
                         padding: "10px",
+                        color: "#ffffff",
                         fontSize: "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
@@ -685,6 +686,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                     }}
                     sx={{
                         padding: "10px",
+                        color: "#ffffff",
                         fontSize: "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
@@ -701,6 +703,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                     onClick={handleOptionsDialogClose}
                     sx={{
                         padding: "10px",
+                        color: "#ffffff",
                         fontSize: "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
