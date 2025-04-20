@@ -3,7 +3,7 @@ import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, 
 import { getFollowingUsers } from "../../../services/api";
 import { timeAgo } from "../../../utils/utils";
 
-type UserListProps = {
+type MessagesUserListProps = {
     users: User[];
     onlineUsers: string[];
     handleUserClick: (userId: number) => void;
@@ -19,8 +19,10 @@ type User = {
     unread_count: number;
 };
 
-const UserList: React.FC<UserListProps> = ({ users, onlineUsers, handleUserClick }) => {
+const MessagesUserList: React.FC<MessagesUserListProps> = ({ users, onlineUsers, handleUserClick }) => {
     const [usersList, setUsersList] = useState<User[]>([]);
+    console.log("usersList", usersList);
+
     const [loading, setLoading] = useState(false);
 
     const fetchUsersList = async () => {
@@ -65,12 +67,12 @@ const UserList: React.FC<UserListProps> = ({ users, onlineUsers, handleUserClick
                             const lastMessageText = user.latest_message;
                             const isOnline = onlineUsers.includes(user.id.toString());
                             const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
-                            const unreadCount = 0;
+                            const unreadCount = user.unread_count || 0;
 
                             return (
                                 <ListItem
                                     sx={{
-                                        backgroundColor: unreadCount ? "hsl(213, 77%,10%)" : "transparent",
+                                        backgroundColor: unreadCount ? "transparent" : "transparent",
                                         padding: "12px",
                                         textAlign: "left",
                                         width: "100%",
@@ -153,4 +155,4 @@ const UserList: React.FC<UserListProps> = ({ users, onlineUsers, handleUserClick
     );
 };
 
-export default UserList;
+export default MessagesUserList;

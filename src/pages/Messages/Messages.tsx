@@ -10,7 +10,7 @@ import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";
 import { useNotifications } from "@toolpad/core/useNotifications";
-import UserList from "./mobileView/UserList";
+import MessagesUserList from "./mobileView/MessagesUserList";
 import { ChevronLeft } from "@mui/icons-material";
 
 type Message = {
@@ -531,7 +531,7 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
         <Box sx={{ display: "flex", height: "100vh" }}>
             {isMobile ? (
                 !selectedUser ? (
-                    <UserList users={users} onlineUsers={onlineUsers} handleUserClick={handleUserClick} />
+                    <MessagesUserList users={users} onlineUsers={onlineUsers} handleUserClick={handleUserClick} />
                 ) : (
                     <Box
                         sx={{
