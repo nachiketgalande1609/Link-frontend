@@ -1,4 +1,16 @@
-import { ListItem, ListItemText, ListItemAvatar, Avatar, Typography, Paper, Button, Box, useMediaQuery, useTheme } from "@mui/material";
+import {
+    ListItem,
+    ListItemText,
+    ListItemAvatar,
+    Avatar,
+    Typography,
+    Paper,
+    Button,
+    Box,
+    useMediaQuery,
+    useTheme,
+    CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../utils/utils";
 
@@ -23,9 +35,17 @@ interface NotificationCardProps {
     notification: Notification;
     onFollowBack: (userId: string) => void;
     onFollowRequestResponse: (request_id: number, response: "accepted" | "rejected") => void;
+    followRequestAcceptLoading: boolean;
+    followRequestRejectLoading: boolean;
 }
 
-const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFollowBack, onFollowRequestResponse }) => {
+const NotificationCard: React.FC<NotificationCardProps> = ({
+    notification,
+    onFollowBack,
+    onFollowRequestResponse,
+    followRequestAcceptLoading,
+    followRequestRejectLoading,
+}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const navigate = useNavigate();
@@ -101,6 +121,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                                 <Button
                                     variant="contained"
                                     size="small"
+                                    disabled={followRequestAcceptLoading}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onFollowRequestResponse(notification.request_id, "accepted");
@@ -108,13 +129,16 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                                     sx={{
                                         borderRadius: "10px",
                                         backgroundColor: "#ffffff",
+                                        height: "30.75px",
+                                        width: "72px",
                                     }}
                                 >
-                                    Accept
+                                    {followRequestAcceptLoading ? <CircularProgress size={16} sx={{ color: "#ffffff" }} /> : "Accept"}
                                 </Button>
                                 <Button
                                     variant="contained"
                                     size="small"
+                                    disabled={followRequestRejectLoading}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onFollowRequestResponse(notification.request_id, "rejected");
@@ -122,9 +146,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onFol
                                     sx={{
                                         borderRadius: "10px",
                                         backgroundColor: "#ffffff",
+                                        height: "30.75px",
+                                        width: "72px",
                                     }}
                                 >
-                                    Reject
+                                    {followRequestRejectLoading ? <CircularProgress size={16} sx={{ color: "#ffffff" }} /> : "Reject"}
                                 </Button>
                             </>
                         ) : (

@@ -26,6 +26,8 @@ const NotificationsPage = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const isLarge = useMediaQuery("(min-width:1281px)");
+    const [followRequestAcceptLoading, setFollowRequestAcceptLoading] = useState(false);
+    const [followRequestRejectLoading, setFollowRequestRejectLoading] = useState(false);
 
     async function fetchNotifications() {
         if (!currentUser?.id) return;
@@ -59,6 +61,9 @@ const NotificationsPage = () => {
     };
 
     const handleFollowRequestResponse = async (request_id: number, response: "accepted" | "rejected") => {
+        response === "accepted" && setFollowRequestAcceptLoading(true);
+        response === "rejected" && setFollowRequestRejectLoading(true);
+
         try {
             setLoading(true);
             const res = await respondToFollowRequest(request_id, response);
@@ -95,6 +100,8 @@ const NotificationsPage = () => {
                                     notification={notification}
                                     onFollowBack={handleFollowBack}
                                     onFollowRequestResponse={handleFollowRequestResponse}
+                                    followRequestAcceptLoading={followRequestAcceptLoading}
+                                    followRequestRejectLoading={followRequestRejectLoading}
                                 />
                             ))}
                         </List>
