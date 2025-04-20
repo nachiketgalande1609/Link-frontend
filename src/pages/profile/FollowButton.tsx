@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface Profile {
@@ -33,13 +33,19 @@ const FollowButton: React.FC<FollowButtonProps> = ({ isFollowing, profileData, f
         }
     };
 
+    const label = profileData?.is_request_active
+        ? "Request Pending"
+        : isFollowing && profileData?.follow_status === "accepted"
+          ? "Following"
+          : "Follow";
+
     return (
         <Button
-            loading={followButtonLoading}
             onClick={handleClick}
             disabled={isFollowing && profileData?.follow_status === "accepted"}
             variant="contained"
             sx={{
+                position: "relative",
                 padding: profileData?.is_request_active ? "6px 12px 6px 16px" : "6px 16px",
                 width: profileData?.is_request_active ? "160px" : "88.46px",
                 mt: 2,
@@ -59,32 +65,45 @@ const FollowButton: React.FC<FollowButtonProps> = ({ isFollowing, profileData, f
                 textAlign: "left",
                 transition: "width 0.3s ease-in-out, background-color 0.3s, color 0.3s",
                 "&:hover": {
-                    "& svg": {
-                        opacity: 1,
+                    "@media (hover: hover) and (pointer: fine)": {
+                        "& svg": {
+                            opacity: 1,
+                        },
+                        width: profileData?.is_request_active ? "186.76px" : "88.46px",
                     },
-                    width: profileData?.is_request_active ? "186.76px" : "88.46px",
                 },
             }}
         >
-            {followButtonLoading
-                ? null
-                : profileData?.is_request_active
-                  ? "Request Pending"
-                  : isFollowing && profileData?.follow_status === "accepted"
-                    ? "Following"
-                    : "Follow"}
-
-            {profileData?.is_request_active && (
-                <DeleteIcon
+            {/* Spinner overlay */}
+            {followButtonLoading && (
+                <CircularProgress
+                    size={18}
                     sx={{
-                        marginLeft: "8px",
-                        fontSize: "20px",
-                        opacity: 0,
-                        transition: "opacity 0.3s ease-in-out",
-                        flexShrink: 0,
+                        color: "#606060",
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        marginTop: "-9px",
+                        marginLeft: "-9px",
                     }}
                 />
             )}
+
+            {/* Always render label */}
+            <span style={{ opacity: followButtonLoading ? 0 : 1, display: "flex", alignItems: "center" }}>
+                {label}
+                {profileData?.is_request_active && (
+                    <DeleteIcon
+                        sx={{
+                            marginLeft: "8px",
+                            fontSize: "20px",
+                            opacity: 0,
+                            transition: "opacity 0.3s ease-in-out",
+                            flexShrink: 0,
+                        }}
+                    />
+                )}
+            </span>
         </Button>
     );
 };
