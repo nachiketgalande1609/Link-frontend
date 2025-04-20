@@ -226,7 +226,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                                 color="primary"
                                 fullWidth
                                 onClick={handleSubmit}
-                                disabled={!postContent.trim()}
+                                disabled={!postContent.trim() || !imageFile}
                                 sx={{
                                     borderRadius: loading ? "50px" : "15px",
                                     backgroundColor: loading ? "#202327" : "#ffffff",
@@ -237,7 +237,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                                     minWidth: loading ? "40px" : "auto",
                                     width: loading ? "40px" : "100%",
                                     transition: "all 0.4s cubic-bezier(0.65, 0, 0.35, 1)",
-                                    animation: !postContent.trim() ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                                    animation: !postContent.trim() || !imageFile ? "" : "buttonEnabledAnimation 0.6s ease-out",
                                 }}
                             >
                                 {loading ? (

@@ -41,6 +41,7 @@ const ProfilePage = () => {
     const [mobileGridWidth, setMobileGridWidth] = useState(4);
     const [fetchingProfile, setFetchingProfile] = useState(false);
     const [fetchingPosts, setFetchingPosts] = useState(false);
+    const [followButtonLoading, setFollowButtonLoading] = useState(false);
 
     async function fetchProfile() {
         try {
@@ -82,7 +83,7 @@ const ProfilePage = () => {
         if (!postUploading && canView) {
             fetchUserPosts();
         }
-    }, [postUploading, profileData, userId, currentUser?.id]);
+    }, [postUploading, userId, currentUser?.id]);
 
     const handleOpenModal = (post: any) => {
         setSelectedPost(post);
@@ -94,13 +95,27 @@ const ProfilePage = () => {
 
     const handleFollow = async () => {
         if (currentUser?.id && userId) {
+            setFollowButtonLoading(true);
+
             try {
                 const res = await followUser(currentUser.id.toString(), userId);
                 if (res?.success) {
-                    fetchProfile();
+                    // Instead of refetching the profile, just update the relevant states
+                    setIsFollowing(true);
+                    setProfileData((prev) =>
+                        prev
+                            ? {
+                                  ...prev,
+                                  is_following: true,
+                                  is_request_active: true, // simulate request sent
+                              }
+                            : prev
+                    );
                 }
             } catch (error) {
                 console.error("Failed to follow the user:", error);
+            } finally {
+                setFollowButtonLoading(false);
             }
         }
     };
@@ -201,6 +216,7 @@ const ProfilePage = () => {
                                 {currentUser?.id && userId != currentUser?.id && (
                                     <Box sx={{ display: "flex", justifyContent: isMobile ? "center" : "flex-end" }}>
                                         <Button
+                                            loading={followButtonLoading}
                                             onClick={
                                                 (isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active
                                                     ? () => {}
@@ -209,6 +225,7 @@ const ProfilePage = () => {
                                             disabled={(isFollowing && profileData?.follow_status === "accepted") || profileData?.is_request_active}
                                             variant="contained"
                                             sx={{
+                                                minWidth: "88.46px",
                                                 mt: 2,
                                                 borderRadius: "15px",
                                                 backgroundColor: "#ffffff",
@@ -218,11 +235,13 @@ const ProfilePage = () => {
                                                 },
                                             }}
                                         >
-                                            {profileData?.is_request_active
-                                                ? "Request Pending"
-                                                : isFollowing && profileData?.follow_status === "accepted"
-                                                  ? "Following"
-                                                  : "Follow"}
+                                            {followButtonLoading
+                                                ? null
+                                                : profileData?.is_request_active
+                                                  ? "Request Pending"
+                                                  : isFollowing && profileData?.follow_status === "accepted"
+                                                    ? "Following"
+                                                    : "Follow"}
                                         </Button>
                                         <Button
                                             onClick={handleSendMessage}
