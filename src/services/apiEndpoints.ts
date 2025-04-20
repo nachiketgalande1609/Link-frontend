@@ -25,7 +25,7 @@ export const GET_PROFILE_POSTS_ENDPOINT: string = "/api/posts/fetch-profile-post
 export const GET_PROFILE_POST_DETAILS_ENDPOINT: string = "/api/posts/fetch-post-details";
 export const CREATE_POST_ENDPOINT: string = "/api/posts/create-post";
 export const DELETE_POST_ENDPOINT: string = "/api/posts/delete-post";
-export const UPDATE_POST_ENDPOINT: string = "/api/posts/update";
+export const UPDATE_POST_ENDPOINT: string = "/api/posts/update-post";
 export const LIKE_POST_ENDPOINT: string = "/api/posts/like-post";
 export const LIKE_COMMENT_ENDPOINT: string = "/api/posts/like-comment";
 

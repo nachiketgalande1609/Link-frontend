@@ -84,6 +84,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
     const [deletingPostCommentLoading, setDeletingPostCommentLoading] = useState(false);
     const [postingCommentLoading, setPostingCommentLoading] = useState(false);
+    const [editingPostLoading, setEditingPostLoading] = useState(false);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -305,6 +306,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
 
     const handleSaveEdit = async () => {
         if (!post) return;
+        setEditingPostLoading(true);
 
         try {
             const response = await updatePost(post?.id, editedContent);
@@ -318,6 +320,12 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
             }
         } catch (error) {
             console.error("Error updating post:", error);
+            notifications.show(`Failed to update post. Please try again later.`, {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
+        } finally {
+            setEditingPostLoading(false);
         }
     };
 
@@ -891,7 +899,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                             onClick={handleSaveEdit}
                             sx={{
                                 textTransform: "none",
-                                "&:hover": { backgroundColor: "transparent" },
+                                "&:hover": { backgroundColor: "#a3a3a3" },
                                 padding: 0,
                                 borderRadius: "12px",
                                 width: "70px",
@@ -904,9 +912,9 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                                 },
                                 animation: editedContent === post?.content ? "" : "buttonEnabledAnimation 0.6s ease-out",
                             }}
-                            disabled={editedContent === post?.content}
+                            disabled={editedContent === post?.content || editingPostLoading}
                         >
-                            Save
+                            {editingPostLoading ? <CircularProgress size={20} sx={{ color: "#ffffff" }} /> : "Save"}
                         </Button>
                     </Box>
                 </Box>

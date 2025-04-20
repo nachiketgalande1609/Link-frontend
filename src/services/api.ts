@@ -346,7 +346,10 @@ export const getPosts = async () => {
 
 export const updatePost = async (postId: string, editContent: string) => {
     try {
-        const response = await api.post(`${UPDATE_POST_ENDPOINT}/${postId}`, { content: editContent });
+        const response = await api.post(UPDATE_POST_ENDPOINT, {
+            postId,
+            content: editContent,
+        });
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
