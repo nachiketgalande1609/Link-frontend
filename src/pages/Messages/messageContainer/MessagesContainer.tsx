@@ -45,8 +45,6 @@ interface MessagesContainerProps {
     handleImageClick: (fileUrl: string) => void;
     messagesEndRef: React.RefObject<HTMLDivElement>;
     handleReply: (msg: Message) => void;
-    chatTheme: string;
-    anchorEl: HTMLElement | null;
     setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
     handleDeleteMessage: (message: Message | null) => void;
     handleReaction: (messageId: number, reaction: string) => void;

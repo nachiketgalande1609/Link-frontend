@@ -436,7 +436,10 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                             }}
                         >
                             {NAVIGATION.map((item, index) => {
-                                const isActive = location.pathname === `/${item.segment}`;
+                                const isActive =
+                                    item.segment === "messages"
+                                        ? location.pathname.startsWith("/messages")
+                                        : location.pathname === `/${item.segment}`;
                                 if (item.kind != "header" && item.segment != "saved") {
                                     return (
                                         <BottomNavigationAction

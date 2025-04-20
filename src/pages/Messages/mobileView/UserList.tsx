@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, IconButton, LinearProgress, Badge } from "@mui/material";
-import { PersonAdd as PersonAddIcon } from "@mui/icons-material";
-import { getFollowingUsers } from "../../services/api";
-import NewChatUsersList from "./NewChatUsersList";
-import { timeAgo } from "../../utils/utils";
+import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, LinearProgress, Badge } from "@mui/material";
+import { getFollowingUsers } from "../../../services/api";
+import { timeAgo } from "../../../utils/utils";
 
-type MessagesDrawerProps = {
+type UserListProps = {
     users: User[];
     onlineUsers: string[];
-    selectedUser: User | null;
     handleUserClick: (userId: number) => void;
-    anchorEl: HTMLElement | null;
-    setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 };
 
 type User = {
@@ -24,11 +19,9 @@ type User = {
     unread_count: number;
 };
 
-const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, selectedUser, handleUserClick, anchorEl, setAnchorEl }) => {
+const UserList: React.FC<UserListProps> = ({ users, onlineUsers, handleUserClick }) => {
     const [usersList, setUsersList] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
-
-    const open = Boolean(anchorEl);
 
     const fetchUsersList = async () => {
         setLoading(true);
@@ -49,31 +42,10 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
     }, []);
 
     return (
-        <Box
-            sx={{
-                width: { sm: "250px", md: "300px", lg: "350px" },
-                backgroundColor: "#000000",
-                color: "white",
-                borderRight: "1px solid #202327",
-                height: "100vh",
-            }}
-        >
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    p: "19px 12px",
-                    borderBottom: "1px solid #202327",
-                }}
-            >
-                <Typography variant="h6">Messages</Typography>
-                <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ padding: 0 }}>
-                    <PersonAddIcon sx={{ color: "white" }} />
-                </IconButton>
-            </Box>
-
-            <NewChatUsersList anchorEl={anchorEl} open={open} setAnchorEl={setAnchorEl} usersList={usersList} handleUserClick={handleUserClick} />
+        <Box sx={{ width: "100%", backgroundColor: "#111111", color: "white", height: "100vh" }}>
+            <Typography variant="h6" sx={{ p: " 19px 20px", borderBottom: "1px solid #202327" }}>
+                Messages
+            </Typography>
             {loading ? (
                 <LinearProgress
                     sx={{
@@ -91,29 +63,26 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
                         .sort((a, b) => new Date(b.latest_message_timestamp).getTime() - new Date(a.latest_message_timestamp).getTime())
                         .map((user) => {
                             const lastMessageText = user.latest_message;
-                            const unreadCount = user.unread_count || 0; // Single message check
                             const isOnline = onlineUsers.includes(user.id.toString());
                             const lastMessageTimestamp = timeAgo(user.latest_message_timestamp);
+                            const unreadCount = 0;
 
                             return (
                                 <ListItem
-                                    component="button"
-                                    key={user.id}
-                                    onClick={() => handleUserClick(user.id)}
                                     sx={{
-                                        backgroundColor:
-                                            selectedUser?.id === user.id ? "#202327" : unreadCount ? "hsl(0, 0.00%, 0.00%)" : "transparent",
+                                        backgroundColor: unreadCount ? "hsl(213, 77%,10%)" : "transparent",
                                         padding: "12px",
                                         textAlign: "left",
                                         width: "100%",
                                         border: "none",
                                         position: "relative",
-                                        cursor: "pointer",
                                     }}
+                                    component="button"
+                                    key={user.id}
+                                    onClick={() => handleUserClick(user.id)}
                                 >
                                     <ListItemAvatar sx={{ position: "relative" }}>
                                         <Avatar
-                                            sx={{ width: "50px", height: "50px", mr: "12px" }}
                                             src={
                                                 user.profile_picture ||
                                                 "https://static-00.iconduck.com/assets.00/profile-major-icon-512x512-xosjbbdq.png"
@@ -122,13 +91,13 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
                                         {isOnline && (
                                             <Box
                                                 sx={{
-                                                    width: "12px",
-                                                    height: "12px",
+                                                    width: "10px",
+                                                    height: "10px",
                                                     borderRadius: "50%",
                                                     backgroundColor: "#54ff54",
                                                     position: "absolute",
                                                     bottom: 0,
-                                                    right: 10,
+                                                    right: 13,
                                                     border: "1px solid #000",
                                                 }}
                                             />
@@ -145,7 +114,7 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
                                                         whiteSpace: "nowrap",
                                                         overflow: "hidden",
                                                         textOverflow: "ellipsis",
-                                                        maxWidth: "calc(100% - 50px)", // Adjust based on layout
+                                                        maxWidth: "calc(100% - 50px)",
                                                     }}
                                                 >
                                                     {lastMessageText}
@@ -163,8 +132,6 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
                                             </Box>
                                         }
                                     />
-
-                                    {/* Unread Messages Badge */}
                                     {unreadCount > 0 && (
                                         <Badge
                                             badgeContent={unreadCount}
@@ -177,18 +144,6 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
                                             }}
                                         />
                                     )}
-
-                                    <div
-                                        style={{
-                                            position: "absolute",
-                                            right: 0,
-                                            top: "0",
-                                            bottom: "0",
-                                            width: "4px",
-                                            backgroundColor: "#1976D2",
-                                            visibility: selectedUser?.id === user.id ? "visible" : "hidden",
-                                        }}
-                                    />
                                 </ListItem>
                             );
                         })}
@@ -198,4 +153,4 @@ const MessagesDrawer: React.FC<MessagesDrawerProps> = ({ users, onlineUsers, sel
     );
 };
 
-export default MessagesDrawer;
+export default UserList;

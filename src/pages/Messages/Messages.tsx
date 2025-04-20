@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
-import { ChevronRight as ChevronRightIcon } from "@mui/icons-material";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import socket from "../../services/socket";
 import { useGlobalStore } from "../../store/store";
@@ -11,6 +10,8 @@ import MessageInput from "./MessageInput";
 import MessagesTopBar from "./MessagesTopBar";
 import MessagesDrawer from "./MessagesDrawer";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import UserList from "./mobileView/UserList";
+import { ChevronLeft } from "@mui/icons-material";
 
 type Message = {
     message_id: number;
@@ -528,94 +529,151 @@ const Messages: React.FC<MessageProps> = ({ onlineUsers, selectedUser, setSelect
 
     return (
         <Box sx={{ display: "flex", height: "100vh" }}>
-            <MessagesDrawer
-                drawerOpen={drawerOpen}
-                setDrawerOpen={setDrawerOpen}
-                users={users}
-                onlineUsers={onlineUsers}
-                selectedUser={selectedUser}
-                handleUserClick={handleUserClick}
-                anchorEl={anchorEl}
-                setAnchorEl={setAnchorEl}
-            />
-            {isMobile && (
-                <IconButton
-                    sx={{
-                        position: "absolute",
-                        left: 5,
-                        top: 15,
-                        zIndex: 2000,
-                        visibility: drawerOpen ? "hidden" : "visible",
-                    }}
-                    onClick={() => {
-                        setDrawerOpen(true);
-                    }}
-                >
-                    <ChevronRightIcon sx={{ color: "white" }} />
-                </IconButton>
+            {isMobile ? (
+                !selectedUser ? (
+                    <UserList users={users} onlineUsers={onlineUsers} handleUserClick={handleUserClick} />
+                ) : (
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            color: "white",
+                            width: "100%",
+                            backgroundImage: selectedUser ? chatTheme : "none",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                        }}
+                    >
+                        {isMobile && (
+                            <IconButton
+                                onClick={() => {
+                                    navigate("/messages");
+                                    setMessages([]);
+                                    setSelectedUser(null);
+                                }}
+                                sx={{
+                                    position: "absolute",
+                                    left: 5,
+                                    top: 15,
+                                    zIndex: 2000,
+                                    visibility: drawerOpen ? "hidden" : "visible",
+                                }}
+                            >
+                                <ChevronLeft />
+                            </IconButton>
+                        )}
+                        <MessagesTopBar
+                            selectedUser={selectedUser}
+                            chatTheme={chatTheme}
+                            setChatTheme={setChatTheme}
+                            openVideoCall={handleVideoCall}
+                            setMessages={setMessages}
+                        />
+
+                        <MessagesContainer
+                            selectedUser={selectedUser}
+                            messages={messages}
+                            currentUser={currentUser}
+                            handleImageClick={handleImageClick}
+                            messagesEndRef={messagesEndRef}
+                            handleReply={handleReply}
+                            setAnchorEl={setAnchorEl}
+                            handleDeleteMessage={handleDeleteMessage}
+                            handleReaction={handleReaction}
+                            typingUser={typingUser}
+                            initialMessageLoading={initialMessageLoading}
+                        />
+
+                        <MessageInput
+                            selectedFile={selectedFile}
+                            setSelectedFile={setSelectedFile}
+                            selectedFileURL={selectedFileURL}
+                            setSelectedFileURL={setSelectedFileURL}
+                            inputMessage={inputMessage}
+                            handleTyping={handleTyping}
+                            setInputMessage={setInputMessage}
+                            handleSendMessage={handleSendMessage}
+                            handleFileChange={handleFileChange}
+                            isSendingMessage={isSendingMessage}
+                            selectedMessageForReply={selectedMessageForReply}
+                            cancelReply={cancelReply}
+                            selectedUser={selectedUser}
+                        />
+                    </Box>
+                )
+            ) : (
+                <>
+                    <MessagesDrawer
+                        users={users}
+                        onlineUsers={onlineUsers}
+                        selectedUser={selectedUser}
+                        handleUserClick={handleUserClick}
+                        anchorEl={anchorEl}
+                        setAnchorEl={setAnchorEl}
+                    />
+
+                    {/* Messages Panel */}
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            color: "white",
+                            width: "100px",
+                            backgroundImage: selectedUser ? chatTheme : "none",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                        }}
+                    >
+                        {/* Top bar */}
+                        {selectedUser && (
+                            <MessagesTopBar
+                                selectedUser={selectedUser}
+                                chatTheme={chatTheme}
+                                setChatTheme={setChatTheme}
+                                openVideoCall={handleVideoCall}
+                                setMessages={setMessages}
+                            />
+                        )}
+
+                        {/* Messages Container */}
+                        <MessagesContainer
+                            selectedUser={selectedUser}
+                            messages={messages}
+                            currentUser={currentUser}
+                            handleImageClick={handleImageClick}
+                            messagesEndRef={messagesEndRef}
+                            handleReply={handleReply}
+                            setAnchorEl={setAnchorEl}
+                            handleDeleteMessage={handleDeleteMessage}
+                            handleReaction={handleReaction}
+                            typingUser={typingUser}
+                            initialMessageLoading={initialMessageLoading}
+                        />
+
+                        {/* Message Input Box*/}
+                        {selectedUser && (
+                            <MessageInput
+                                selectedFile={selectedFile}
+                                setSelectedFile={setSelectedFile}
+                                selectedFileURL={selectedFileURL}
+                                setSelectedFileURL={setSelectedFileURL}
+                                inputMessage={inputMessage}
+                                handleTyping={handleTyping}
+                                setInputMessage={setInputMessage}
+                                handleSendMessage={handleSendMessage}
+                                handleFileChange={handleFileChange}
+                                isSendingMessage={isSendingMessage}
+                                selectedMessageForReply={selectedMessageForReply}
+                                selectedUser={selectedUser}
+                                cancelReply={cancelReply}
+                            />
+                        )}
+                    </Box>
+                    <ImageDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} selectedImage={selectedImage} />
+                </>
             )}
-
-            {/* Messages Panel */}
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    color: "white",
-                    width: "100px",
-                    backgroundImage: selectedUser ? chatTheme : "none",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                }}
-            >
-                {/* Top bar */}
-                {selectedUser && (
-                    <MessagesTopBar
-                        selectedUser={selectedUser}
-                        chatTheme={chatTheme}
-                        setChatTheme={setChatTheme}
-                        openVideoCall={handleVideoCall}
-                        setMessages={setMessages}
-                    />
-                )}
-
-                {/* Messages Container */}
-                <MessagesContainer
-                    selectedUser={selectedUser}
-                    messages={messages}
-                    currentUser={currentUser}
-                    handleImageClick={handleImageClick}
-                    messagesEndRef={messagesEndRef}
-                    handleReply={handleReply}
-                    chatTheme={chatTheme}
-                    anchorEl={anchorEl}
-                    setAnchorEl={setAnchorEl}
-                    handleDeleteMessage={handleDeleteMessage}
-                    handleReaction={handleReaction}
-                    typingUser={typingUser}
-                    initialMessageLoading={initialMessageLoading}
-                />
-
-                {/* Message Input Box*/}
-                {selectedUser && (
-                    <MessageInput
-                        selectedFile={selectedFile}
-                        setSelectedFile={setSelectedFile}
-                        selectedFileURL={selectedFileURL}
-                        setSelectedFileURL={setSelectedFileURL}
-                        inputMessage={inputMessage}
-                        handleTyping={handleTyping}
-                        setInputMessage={setInputMessage}
-                        handleSendMessage={handleSendMessage}
-                        handleFileChange={handleFileChange}
-                        isSendingMessage={isSendingMessage}
-                        selectedMessageForReply={selectedMessageForReply}
-                        selectedUser={selectedUser}
-                        cancelReply={cancelReply}
-                    />
-                )}
-            </Box>
-            <ImageDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} selectedImage={selectedImage} />
         </Box>
     );
 };
