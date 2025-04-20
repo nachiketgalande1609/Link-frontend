@@ -116,8 +116,6 @@ const ForgotPasswordPage: React.FC = () => {
         } catch (err: any) {
             console.error("Reset error:", err);
             setError(err.message || "Password reset failed.");
-        } finally {
-            setLoading(false);
         }
     };
 
