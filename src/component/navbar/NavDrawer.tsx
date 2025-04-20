@@ -242,6 +242,12 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                     backgroundColor: "black",
                                     overflowX: "hidden",
                                 },
+                                "&:hover": {
+                                    "& .closeDrawerButton": {
+                                        opacity: 1,
+                                        transition: "opacity 0.5s ease-in-out",
+                                    },
+                                },
                             }}
                             variant="permanent"
                             anchor="left"
@@ -304,7 +310,14 @@ export default function NavDrawer({ unreadMessagesCount, unreadNotificationsCoun
                                                             "&:hover": { backgroundColor: "#000000" },
                                                         }}
                                                     >
-                                                        <ChevronLeft sx={{ fontSize: isLarge ? "1.5rem" : "1.25rem" }} />
+                                                        <ChevronLeft
+                                                            className="closeDrawerButton"
+                                                            sx={{
+                                                                fontSize: isLarge ? "1.5rem" : "1.25rem",
+                                                                opacity: 0,
+                                                                transition: "opacity 0.5s ease-in-out",
+                                                            }}
+                                                        />
                                                     </IconButton>
                                                 ) : null}
                                             </ListItem>
