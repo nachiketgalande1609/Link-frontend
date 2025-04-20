@@ -83,6 +83,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
     const [post, setPost] = useState<Post | null>(null);
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
     const [deletingPostCommentLoading, setDeletingPostCommentLoading] = useState(false);
+    const [postingCommentLoading, setPostingCommentLoading] = useState(false);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -147,6 +148,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
 
     const handleComment = async () => {
         if (!post || !commentText) return;
+        setPostingCommentLoading(true);
 
         try {
             const response = await addComment(post?.id, commentText);
@@ -176,6 +178,12 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
             }
         } catch (error) {
             console.error("Error adding comment:", error);
+            notifications.show(`Failed to post comment. Please try again later.`, {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
+        } finally {
+            setPostingCommentLoading(false);
         }
     };
 
@@ -522,10 +530,16 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                                                 <Button
                                                     onClick={handleComment}
                                                     size="small"
-                                                    sx={{ color: "#ffffff", borderRadius: "15px", alignSelf: "flex-start", mt: "2px" }}
-                                                    disabled={!commentText}
+                                                    sx={{
+                                                        color: "#ffffff",
+                                                        borderRadius: "15px",
+                                                        alignSelf: "flex-start",
+                                                        mt: "2px",
+                                                        ":hover": { backgroundColor: "transparent" },
+                                                    }}
+                                                    disabled={!commentText || postingCommentLoading}
                                                 >
-                                                    Post
+                                                    {postingCommentLoading ? <CircularProgress size={20} sx={{ color: "#ffffff" }} /> : "Post"}
                                                 </Button>
                                             </>
                                         )}
