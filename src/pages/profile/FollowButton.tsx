@@ -47,7 +47,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ isFollowing, profileData, f
             sx={{
                 position: "relative",
                 padding: profileData?.is_request_active ? "6px 12px 6px 16px" : "6px 16px",
-                width: profileData?.is_request_active ? "160px" : "88.46px",
+                width: profileData?.is_request_active ? "160px" : isFollowing && profileData?.follow_status === "accepted" ? "115px" : "88.46px",
                 mt: 2,
                 borderRadius: "15px",
                 color: profileData?.is_request_active ? "#606060" : "#000000",
