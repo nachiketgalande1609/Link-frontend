@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery } from "@mui/material";
+import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery, CircularProgress } from "@mui/material";
 import { registerUser } from "../services/api";
 
 const RegisterPage: React.FC = () => {
@@ -50,6 +50,10 @@ const RegisterPage: React.FC = () => {
 
             if (response.success) {
                 setSuccess("Registration successful! A verification link has been sent to your email.");
+                setUsername("");
+                setEmail("");
+                setPassword("");
+                setConfirmPassword("");
             } else {
                 setError(response.error || "Registration failed!");
             }
@@ -226,28 +230,44 @@ const RegisterPage: React.FC = () => {
                                 },
                             }}
                         />
-
                         <Button
                             variant="contained"
                             color="primary"
-                            fullWidth
                             type="submit"
                             onClick={handleRegister}
                             disabled={loading || !email || !username || !password || !confirmPassword}
                             sx={{
                                 mt: 2,
-                                borderRadius: "15px",
+                                borderRadius: loading ? "50px" : "15px",
                                 fontSize: isLarge ? "1rem" : "0.85rem",
-                                backgroundColor: "#ffffff",
-                                ":disabled": {
-                                    backgroundColor: "#202327",
-                                    color: "#000000",
-                                },
+                                backgroundColor: loading ? "#202327" : "#ffffff",
+                                color: loading ? "transparent" : "#000000",
+                                position: "relative",
+                                overflow: "hidden",
+                                height: "40px",
+                                minWidth: loading ? "40px" : "auto",
+                                width: loading ? "40px" : "100%",
+                                transition: "all 0.4s cubic-bezier(0.65, 0, 0.35, 1)",
                                 animation:
                                     loading || !email || !username || !password || !confirmPassword ? "" : "buttonEnabledAnimation 0.6s ease-out",
                             }}
                         >
-                            {loading ? "Signing you up" : "Sign Up"}
+                            {loading ? (
+                                <CircularProgress
+                                    size={20}
+                                    thickness={5}
+                                    sx={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        marginTop: "-10px",
+                                        marginLeft: "-10px",
+                                        color: "#fff",
+                                    }}
+                                />
+                            ) : (
+                                "Sign Up"
+                            )}
                         </Button>
                     </form>
                     <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>

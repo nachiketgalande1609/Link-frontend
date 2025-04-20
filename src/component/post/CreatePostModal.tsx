@@ -156,8 +156,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                         </Box>
 
                         {/* Right: Inputs */}
-                        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                            <Box sx={{ position: "relative", marginBottom: 2 }}>
+                        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "start", alignItems: "center" }}>
+                            <Box sx={{ position: "relative", marginBottom: 2, width: "100%" }}>
                                 <TextField
                                     fullWidth
                                     multiline
@@ -228,18 +228,34 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ open, handleClose }) 
                                 onClick={handleSubmit}
                                 disabled={!postContent.trim()}
                                 sx={{
-                                    borderRadius: "15px",
-                                    height: "45px",
-                                    mt: "auto",
-                                    backgroundColor: "#ffffff",
-                                    ":disabled": {
-                                        backgroundColor: "#202327",
-                                        color: "#000000",
-                                    },
+                                    borderRadius: loading ? "50px" : "15px",
+                                    backgroundColor: loading ? "#202327" : "#ffffff",
+                                    color: loading ? "transparent" : "#000000",
+                                    position: "relative",
+                                    overflow: "hidden",
+                                    height: "40px",
+                                    minWidth: loading ? "40px" : "auto",
+                                    width: loading ? "40px" : "100%",
+                                    transition: "all 0.4s cubic-bezier(0.65, 0, 0.35, 1)",
                                     animation: !postContent.trim() ? "" : "buttonEnabledAnimation 0.6s ease-out",
                                 }}
                             >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : "Post"}
+                                {loading ? (
+                                    <CircularProgress
+                                        size={20}
+                                        thickness={5}
+                                        sx={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            left: "50%",
+                                            marginTop: "-10px",
+                                            marginLeft: "-10px",
+                                            color: "#fff",
+                                        }}
+                                    />
+                                ) : (
+                                    "Post"
+                                )}
                             </Button>
                             <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
                                 <Popover
