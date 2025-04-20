@@ -10,17 +10,12 @@ import {
     Box,
     CardMedia,
     TextField,
-    Menu,
-    MenuItem,
     Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     Button,
     Popover,
     Skeleton,
 } from "@mui/material";
-import { FavoriteBorder, Favorite, MoreVert, MoreHoriz } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, MoreVert, MoreHoriz, Close } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost, deleteComment, toggleLikeComment, getUserPostDetails } from "../../services/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
@@ -73,8 +68,6 @@ interface PostProps {
 
 const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMobile, handleCloseModal, userId }) => {
     const [commentText, setCommentText] = useState("");
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [dialogOpen, setDialogOpen] = useState(false);
     const [commentOptionsDialogOpen, setCommentOptionsDialog] = useState(false);
     const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
@@ -87,6 +80,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
     const [showAllComments, setShowAllComments] = useState(false);
     const [fetchingPostDetails, setFetchingPostDetails] = useState(false);
     const [post, setPost] = useState<Post | null>(null);
+    const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -258,28 +252,21 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
         }
     };
 
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+    const handleOptionsDialogClose = () => {
+        setOptionsDialogOpen(false);
+        setConfirmDeleteButtonVisibile(false);
     };
 
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleDeleteClick = () => {
-        setDialogOpen(true);
-        handleMenuClose();
+    const handleOptionsDialogOpen = () => {
+        setOptionsDialogOpen(true);
     };
 
     const handleEditClick = () => {
+        if (post?.content) {
+            setEditedContent(post.content);
+        }
         setIsEditing(true);
-        handleMenuClose();
     };
-
-    const handleCancel = () => {
-        setDialogOpen(false);
-    };
-
     const handleCloseDialog = () => {
         setOpenImageDialog(false);
     };
@@ -315,6 +302,11 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
 
     const handleEmojiClick = (emojiData: any) => {
         setCommentText((prev) => prev + emojiData.emoji);
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        setEditedContent("");
     };
 
     return (
@@ -426,51 +418,25 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                                         </Box>
                                         {currentUser?.id && (
                                             <>
-                                                <IconButton onClick={handleMenuOpen} sx={{ ml: "auto" }}>
-                                                    <MoreVert sx={{ fontSize: isMobile ? "1rem" : "1.2rem" }} />
-                                                </IconButton>
-                                                <Menu
-                                                    anchorEl={anchorEl}
-                                                    open={Boolean(anchorEl)}
-                                                    onClose={handleMenuClose}
+                                                <IconButton
+                                                    onClick={handleOptionsDialogOpen}
                                                     sx={{
-                                                        "& .MuiPaper-root": {
-                                                            width: "150px",
-                                                            padding: "3px 10px",
-                                                            borderRadius: "20px",
+                                                        ml: "auto",
+                                                        ":hover": {
+                                                            backgroundColor: "transparent",
                                                         },
                                                     }}
                                                 >
-                                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleEditClick}>
-                                                        Edit
-                                                    </MenuItem>
-                                                    <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
-                                                        Delete
-                                                    </MenuItem>
-                                                </Menu>
+                                                    <MoreVert
+                                                        sx={{
+                                                            fontSize: isMobile ? "1rem" : "1.2rem",
+                                                        }}
+                                                    />
+                                                </IconButton>
                                             </>
                                         )}
                                     </Box>
 
-                                    <Menu
-                                        anchorEl={anchorEl}
-                                        open={Boolean(anchorEl)}
-                                        onClose={handleMenuClose}
-                                        sx={{
-                                            "& .MuiPaper-root": {
-                                                width: "150px",
-                                                padding: "3px 10px",
-                                                borderRadius: "20px",
-                                            },
-                                        }}
-                                    >
-                                        <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleEditClick}>
-                                            Edit
-                                        </MenuItem>
-                                        <MenuItem sx={{ height: "40px", borderRadius: "15px" }} onClick={handleDeleteClick}>
-                                            Delete
-                                        </MenuItem>
-                                    </Menu>
                                     {currentUser?.id && (
                                         <CardActions
                                             sx={{
@@ -502,41 +468,15 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                                             </Box>
                                         </CardActions>
                                     )}
-
-                                    {currentUser?.id && isEditing ? (
-                                        <Box sx={{ mt: 2, padding: isMobile ? "0 10px 10px 10px" : "0 15px" }}>
-                                            <TextField
-                                                fullWidth
-                                                multiline
-                                                value={editedContent}
-                                                onChange={(e) => setEditedContent(e.target.value)}
-                                                sx={{
-                                                    mb: 2,
-                                                    "& .MuiOutlinedInput-root": {
-                                                        borderRadius: "20px",
-                                                    },
-                                                }}
-                                            />
-                                            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                                                <Button onClick={() => setIsEditing(false)} variant="outlined" sx={{ borderRadius: "15px" }}>
-                                                    Cancel
-                                                </Button>
-                                                <Button onClick={handleSaveEdit} variant="outlined" color="primary" sx={{ borderRadius: "15px" }}>
-                                                    Save
-                                                </Button>
-                                            </Box>
-                                        </Box>
-                                    ) : (
-                                        <Typography
-                                            sx={{
-                                                mt: 2,
-                                                fontSize: isMobile ? "0.85rem" : "1rem",
-                                                padding: isMobile ? "0 10px 10px 10px" : "0 15px",
-                                            }}
-                                        >
-                                            {post?.content}
-                                        </Typography>
-                                    )}
+                                    <Typography
+                                        sx={{
+                                            mt: 2,
+                                            fontSize: isMobile ? "0.85rem" : "1rem",
+                                            padding: isMobile ? "0 10px 10px 10px" : "0 15px",
+                                        }}
+                                    >
+                                        {post?.content}
+                                    </Typography>
 
                                     <Box
                                         sx={{
@@ -687,35 +627,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                     </Box>
                 )}
             </CardContent>
-            {/* Confirmation Dialog */}
-            <Dialog
-                open={dialogOpen}
-                onClose={handleCancel}
-                sx={{
-                    "& .MuiDialog-paper": {
-                        borderRadius: "20px",
-                    },
-                }}
-                BackdropProps={{
-                    sx: {
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        backdropFilter: "blur(5px)",
-                    },
-                }}
-            >
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body2">Are you sure you want to delete this post? This action cannot be undone.</Typography>
-                </DialogContent>
-                <DialogActions sx={{ padding: "16px" }}>
-                    <Button onClick={handleCancel} size="medium" sx={{ color: "#ffffff", borderRadius: "15px" }}>
-                        Cancel
-                    </Button>
-                    <Button onClick={handleDelete} size="medium" variant="outlined" color="error" sx={{ borderRadius: "15px" }}>
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+
             <Dialog
                 open={commentOptionsDialogOpen}
                 onClose={handleCloseDialog}
@@ -738,10 +650,66 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
             >
                 <Button
                     fullWidth
-                    onClick={() => setConfirmDeleteButtonVisibile(true)}
+                    onClick={() => (confirmDeleteButtonVisibile ? handleDeleteComment() : setConfirmDeleteButtonVisibile(true))}
                     sx={{
                         padding: "10px",
+                        color: "#ffffff",
                         fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#2e3238" },
+                        borderBottom: "1px solid #505050",
+                    }}
+                >
+                    {confirmDeleteButtonVisibile ? "Confirm Delete Comment" : "Delete Comment"}
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={handleCloseCommentOptionsDialog}
+                    sx={{
+                        padding: "10px",
+                        color: "#ffffff",
+                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        backgroundColor: "#202327",
+                        textTransform: "none",
+                        borderRadius: 0,
+                        "&:hover": { backgroundColor: "#2e3238" },
+                    }}
+                >
+                    Cancel
+                </Button>
+            </Dialog>
+            <Dialog
+                open={optionsDialogOpen}
+                onClose={handleOptionsDialogClose}
+                fullWidth
+                maxWidth="xs"
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        backgroundColor: "rgba(32, 35, 39, 0.9)",
+                        color: "white",
+                        textAlign: "center",
+                    },
+                }}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
+            >
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        handleEditClick();
+                        handleOptionsDialogClose();
+                    }}
+                    sx={{
+                        padding: "10px",
+                        color: "#ffffff",
+                        fontSize: "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
                         borderRadius: 0,
@@ -749,33 +717,35 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                         borderBottom: "1px solid #505050",
                     }}
                 >
-                    Delete Comment
+                    Edit Post
                 </Button>
+
                 <Button
                     fullWidth
                     onClick={() => {
-                        handleDeleteComment();
-                        setCommentOptionsDialog(false);
+                        confirmDeleteButtonVisibile ? handleDelete() : setConfirmDeleteButtonVisibile(true);
                     }}
                     sx={{
                         padding: "10px",
-                        fontSize: isMobile ? "0.85rem" : "0.9rem",
-                        backgroundColor: "#ed4337",
+                        color: "#ffffff",
+                        fontSize: "0.9rem",
+                        backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#202327",
                         textTransform: "none",
                         borderRadius: 0,
-                        "&:hover": { backgroundColor: "#ed4337" },
+                        "&:hover": { backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#2e3238" },
                         borderBottom: "1px solid #505050",
-                        display: confirmDeleteButtonVisibile ? "block" : "none",
                     }}
                 >
-                    Confirm Delete Comment
+                    {confirmDeleteButtonVisibile ? "Confirm Post Delete" : "Delete Post"}
                 </Button>
+
                 <Button
                     fullWidth
-                    onClick={handleCloseCommentOptionsDialog}
+                    onClick={handleOptionsDialogClose}
                     sx={{
                         padding: "10px",
-                        fontSize: isMobile ? "0.85rem" : "0.9rem",
+                        color: "#ffffff",
+                        fontSize: "0.9rem",
                         backgroundColor: "#202327",
                         textTransform: "none",
                         borderRadius: 0,
@@ -806,6 +776,106 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
             >
                 <EmojiPicker theme={Theme.AUTO} onEmojiClick={handleEmojiClick} />
             </Popover>
+            <Dialog
+                open={isEditing}
+                onClose={handleCancelEdit}
+                BackdropProps={{
+                    sx: {
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(5px)",
+                    },
+                }}
+                sx={{
+                    "& .MuiDialog-paper": {
+                        borderRadius: "20px",
+                        width: "90%",
+                        maxWidth: "600px",
+                        backgroundColor: "rgba(0, 0, 0)", // Slight transparency
+                        overflow: "hidden",
+                    },
+                }}
+            >
+                {/* Image Section */}
+                {post?.file_url && (
+                    <Box sx={{ position: "relative" }}>
+                        <CardMedia
+                            component="img"
+                            image={post.file_url}
+                            alt="Post Image"
+                            sx={{
+                                width: "100%",
+                                height: "auto",
+                                borderRadius: "10px 10px 0 0",
+                            }}
+                        />
+                        {/* Cancel Button (Cross Icon) */}
+                        <IconButton
+                            onClick={handleCancelEdit}
+                            sx={{
+                                position: "absolute",
+                                top: 8,
+                                right: 8,
+                                color: "#ffffff",
+                                padding: "6px",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                "&:hover": {
+                                    backgroundColor: "rgba(0, 0, 0, 0.7)",
+                                },
+                            }}
+                        >
+                            <Close sx={{ fontSize: "18px" }} />
+                        </IconButton>
+                    </Box>
+                )}
+
+                {/* TextField and Save Button Section */}
+                <Box sx={{ padding: "16px" }}>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        <TextField
+                            fullWidth
+                            multiline
+                            size="small"
+                            variant="standard"
+                            value={editedContent}
+                            onChange={(e) => setEditedContent(e.target.value)}
+                            sx={{
+                                flex: 1,
+                                "& .MuiInput-underline:before": {
+                                    borderBottom: "none !important",
+                                },
+                                "& .MuiInput-underline:after": {
+                                    borderBottom: "none !important",
+                                },
+                                "& .MuiInput-underline:hover:before": {
+                                    borderBottom: "none !important",
+                                },
+                            }}
+                        />
+                        {/* Save Button */}
+                        <Button
+                            onClick={handleSaveEdit}
+                            sx={{
+                                textTransform: "none",
+                                "&:hover": { backgroundColor: "transparent" },
+                                padding: 0,
+                                borderRadius: "12px",
+                                width: "70px",
+                                height: "35px",
+                                backgroundColor: "#ffffff",
+                                color: "#000000",
+                                ":disabled": {
+                                    backgroundColor: "#000000",
+                                    color: "#505050",
+                                },
+                                animation: editedContent === post?.content ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                            }}
+                            disabled={editedContent === post?.content}
+                        >
+                            Save
+                        </Button>
+                    </Box>
+                </Box>
+            </Dialog>
         </Card>
     );
 };

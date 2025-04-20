@@ -11,9 +11,7 @@ import {
     CardMedia,
     TextField,
     Dialog,
-    DialogActions,
     DialogContent,
-    DialogTitle,
     Button,
     useMediaQuery,
     useTheme,
@@ -93,7 +91,6 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
     const [comment_count, setCommentCount] = useState(post.comment_count);
     const [likeCount, setLikeCount] = useState(post.like_count);
     const [postComments, setPostComments] = useState(post.comments);
-    const [dialogOpen, setDialogOpen] = useState(false);
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
     const [openImageDialog, setOpenImageDialog] = useState(false);
 
@@ -106,6 +103,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
     const [isSaved, setIsSaved] = useState(post.saved_by_current_user);
+    const [confirmDeleteButtonVisibile, setConfirmDeleteButtonVisibile] = useState<boolean>(false);
 
     const [usersModalOpen, setUsersModalOpen] = useState(false);
     const [usersList, setUsersList] = useState([]);
@@ -148,14 +146,11 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
 
     const handleOptionsDialogClose = () => {
         setOptionsDialogOpen(false);
+        setConfirmDeleteButtonVisibile(false);
     };
 
     const handleOptionsDialogOpen = () => {
         setOptionsDialogOpen(true);
-    };
-
-    const handleDialogOpen = () => {
-        setDialogOpen(true);
     };
 
     const handleLike = async () => {
@@ -267,14 +262,10 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
         try {
             const res = await deletePost(post.id);
             if (res?.success) {
+                handleCloseDialog();
                 fetchPosts();
             }
-            setDialogOpen(false);
         } catch (error) {}
-    };
-
-    const handleCancel = () => {
-        setDialogOpen(false);
     };
 
     const handleCancelEdit = () => {
@@ -508,35 +499,7 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                     </Box>
                 )}
             </Box>
-            {/* Confirmation Dialog */}
-            <Dialog
-                open={dialogOpen}
-                onClose={handleCancel}
-                sx={{
-                    "& .MuiDialog-paper": {
-                        borderRadius: "20px",
-                    },
-                }}
-                BackdropProps={{
-                    sx: {
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        backdropFilter: "blur(5px)",
-                    },
-                }}
-            >
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body2">Are you sure you want to delete this post? This action cannot be undone.</Typography>
-                </DialogContent>
-                <DialogActions sx={{ padding: "16px" }}>
-                    <Button onClick={handleCancel} size="medium" sx={{ color: "#ffffff", borderRadius: "15px" }}>
-                        Cancel
-                    </Button>
-                    <Button onClick={handleDelete} size="medium" variant="outlined" color="error" sx={{ borderRadius: "15px" }}>
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+
             {/* Modal for Editing Post */}
             <Dialog
                 open={isEditing}
@@ -681,21 +644,20 @@ const Post: React.FC<PostProps> = ({ post, fetchPosts, borderRadius }) => {
                 <Button
                     fullWidth
                     onClick={() => {
-                        handleDialogOpen();
-                        handleOptionsDialogClose();
+                        confirmDeleteButtonVisibile ? handleDelete() : setConfirmDeleteButtonVisibile(true);
                     }}
                     sx={{
                         padding: "10px",
                         color: "#ffffff",
                         fontSize: "0.9rem",
-                        backgroundColor: "#202327",
+                        backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#202327",
                         textTransform: "none",
                         borderRadius: 0,
-                        "&:hover": { backgroundColor: "#2e3238" },
+                        "&:hover": { backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#2e3238" },
                         borderBottom: "1px solid #505050",
                     }}
                 >
-                    Delete Post
+                    {confirmDeleteButtonVisibile ? "Confirm Delete Post" : "Delete Post"}
                 </Button>
 
                 <Button
