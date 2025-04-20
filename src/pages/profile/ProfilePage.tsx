@@ -75,6 +75,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         fetchProfile();
+        fetchUserPosts();
     }, [userId]);
 
     useEffect(() => {
