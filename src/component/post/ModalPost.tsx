@@ -14,6 +14,7 @@ import {
     Button,
     Popover,
     Skeleton,
+    CircularProgress,
 } from "@mui/material";
 import { FavoriteBorder, Favorite, MoreVert, MoreHoriz, Close } from "@mui/icons-material";
 import { deletePost, likePost, addComment, updatePost, deleteComment, toggleLikeComment, getUserPostDetails } from "../../services/api";
@@ -81,6 +82,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
     const [fetchingPostDetails, setFetchingPostDetails] = useState(false);
     const [post, setPost] = useState<Post | null>(null);
     const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
+    const [deletingPostCommentLoading, setDeletingPostCommentLoading] = useState(false);
 
     const currentUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") || "") : {};
     const commentInputRef = useRef<HTMLInputElement>(null);
@@ -179,6 +181,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
 
     const handleDeleteComment = async () => {
         if (!post || !selectedCommentId) return;
+        setDeletingPostCommentLoading(true);
 
         try {
             const res = await deleteComment(selectedCommentId);
@@ -192,7 +195,12 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
             }
         } catch (error) {
             console.error("Error deleting comment:", error);
+            notifications.show(`Failed to delete comment. Please try again later.`, {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         } finally {
+            setDeletingPostCommentLoading(false);
             setCommentOptionsDialog(false);
             setSelectedCommentId(null);
             setConfirmDeleteButtonVisibile(false);
@@ -238,7 +246,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
         }
     };
 
-    const handleDelete = async () => {
+    const handleDeletePost = async () => {
         if (!post) return;
 
         try {
@@ -249,6 +257,10 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
             }
         } catch (error) {
             console.error("Error deleting post:", error);
+            notifications.show(`Failed to delete post. Please try again later.`, {
+                severity: "error",
+                autoHideDuration: 3000,
+            });
         }
     };
 
@@ -267,6 +279,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
         }
         setIsEditing(true);
     };
+
     const handleCloseDialog = () => {
         setOpenImageDialog(false);
     };
@@ -651,6 +664,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                 <Button
                     fullWidth
                     onClick={() => (confirmDeleteButtonVisibile ? handleDeleteComment() : setConfirmDeleteButtonVisibile(true))}
+                    disabled={deletingPostCommentLoading}
                     sx={{
                         padding: "10px",
                         color: "#ffffff",
@@ -658,11 +672,18 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                         backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#202327",
                         textTransform: "none",
                         borderRadius: 0,
+                        height: "45.85px",
                         "&:hover": { backgroundColor: confirmDeleteButtonVisibile ? "#ed4337" : "#2e3238" },
                         borderBottom: "1px solid #505050",
                     }}
                 >
-                    {confirmDeleteButtonVisibile ? "Confirm Delete Comment" : "Delete Comment"}
+                    {deletingPostCommentLoading ? (
+                        <CircularProgress size={24} sx={{ color: "#ffffff" }} />
+                    ) : confirmDeleteButtonVisibile ? (
+                        "Confirm Delete Comment"
+                    ) : (
+                        "Delete Comment"
+                    )}
                 </Button>
                 <Button
                     fullWidth
@@ -723,7 +744,7 @@ const ModalPost: React.FC<PostProps> = ({ postId, fetchPosts, borderRadius, isMo
                 <Button
                     fullWidth
                     onClick={() => {
-                        confirmDeleteButtonVisibile ? handleDelete() : setConfirmDeleteButtonVisibile(true);
+                        confirmDeleteButtonVisibile ? handleDeletePost() : setConfirmDeleteButtonVisibile(true);
                     }}
                     sx={{
                         padding: "10px",
