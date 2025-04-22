@@ -135,7 +135,12 @@ export const googleLogin = async (data: { token: string }) => {
 
 export const trackTraffic = async (userData: { ip: string; userAgent: string; location: string; referrer: string }) => {
     try {
-        const response = await api.post(TRACK_TRAFFIC_ENDPOINT, userData);
+        const data = {
+            ...userData,
+            platform: "ripple",
+        };
+
+        const response = await api.post(TRACK_TRAFFIC_ENDPOINT, data);
         return response.data;
     } catch (error: unknown) {
         if (error instanceof Error) {
