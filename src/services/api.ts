@@ -40,6 +40,7 @@ import {
     LIKE_COMMENT_ENDPOINT,
     GET_PROFILE_POST_DETAILS_ENDPOINT,
     CANCEL_FOLLOW_REQUEST_ENDPOINT,
+    TRACK_TRAFFIC_ENDPOINT,
 } from "./apiEndpoints";
 
 interface UserRegisterData {
@@ -127,6 +128,20 @@ export const googleLogin = async (data: { token: string }) => {
             console.error("Google login failed:", error.message);
         } else {
             console.error("Google login failed: Unknown error");
+        }
+        throw error;
+    }
+};
+
+export const trackTraffic = async (userData: { ip: string; userAgent: string; location: string; referrer: string }) => {
+    try {
+        const response = await api.post(TRACK_TRAFFIC_ENDPOINT, userData);
+        return response.data;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Tracking traffic failed:", error.message);
+        } else {
+            console.error("Tracking traffic failed: Unknown error");
         }
         throw error;
     }

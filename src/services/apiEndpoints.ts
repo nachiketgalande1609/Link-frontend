@@ -6,6 +6,7 @@ export const VERIFY_USER_ENDPOINT: string = "/api/auth/verify";
 export const GENERATE_PASSWORD_RESET_OTP_ENDPOINT: string = "/api/auth/generate-otp";
 export const VERIFY_PASSWORD_RESET_OTP_ENDPOINT: string = "/api/auth/verify-otp";
 export const PASSWORD_RESET_OTP_ENDPOINT: string = "/api/auth/reset-password";
+export const TRACK_TRAFFIC_ENDPOINT: string = "/api/auth/log";
 
 // User Endpoints
 export const GET_PROFILE_ENDPOINT: string = "/api/users/fetch-profile-details";

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery, CircularProgress } from "@mui/material";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
-import { loginUser, googleLogin } from "../services/api";
+import { loginUser, googleLogin, trackTraffic } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../store/store";
 import socket from "../services/socket";
+import axios from "axios";
 
 const LoginPage: React.FC = () => {
     const { setUser } = useGlobalStore();
@@ -14,6 +15,28 @@ const LoginPage: React.FC = () => {
     const [checked, setChecked] = useState(false);
     const [loading, setLoading] = useState(false);
     const isLarge = useMediaQuery("(min-width:1281px)");
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const ipResponse = await axios.get("https://api.ipify.org?format=json");
+                const locationResponse = await axios.get(`https://ipinfo.io/${ipResponse.data.ip}/json`);
+
+                const data = {
+                    ip: ipResponse.data.ip,
+                    userAgent: navigator.userAgent,
+                    location: locationResponse.data.city || locationResponse.data.country,
+                    referrer: document.referrer,
+                };
+
+                await trackTraffic(data);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     useEffect(() => {
         setChecked(true);
