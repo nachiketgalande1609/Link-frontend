@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery, CircularProgress } from "@mui/material";
 import { registerUser } from "../services/api";
+import ParticleCanvas from "../component/ParticleCanvas";
 
 const RegisterPage: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -65,214 +66,194 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <Container sx={{ width: isLarge ? "440px" : "400px", display: "flex", justifyContent: "center", alignItems: "center", height: "100svh" }}>
+        <Container
+            sx={{
+                width: isLarge ? "440px" : "400px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100svh",
+            }}
+        >
+            {/* Particle Background Canvas (same as login) */}
+            <ParticleCanvas />
+
             <Fade in={checked} timeout={2000}>
                 <Box
                     sx={{
                         textAlign: "center",
-                        padding: isLarge ? "80px 30px" : "30px 30px",
-                        borderRadius: "20px",
+                        padding: isLarge ? "60px 40px" : "40px 30px",
+                        borderRadius: "16px",
                         position: "relative",
                         overflow: "hidden",
-                        border: { xs: "none", sm: "2px solid transparent" },
+                        backgroundColor: "rgba(15, 15, 25, 0.85)",
+                        backdropFilter: "blur(8px)",
+                        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+                        border: "1px solid rgba(122, 96, 255, 0.2)",
+                        width: "100%",
+                        maxWidth: "440px",
                         "&::before": {
                             content: '""',
                             position: "absolute",
                             top: 0,
                             left: 0,
-                            width: "calc(100% - 4px)",
-                            height: "calc(100% - 4px)",
-                            borderRadius: "20px",
-                            padding: "2px",
+                            width: "100%",
+                            height: "4px",
                             background: "linear-gradient(to right, rgb(122, 96, 255), rgb(255, 136, 0))",
-                            WebkitMask: "linear-gradient(white, white) content-box, linear-gradient(white, white)",
-                            WebkitMaskComposite: "destination-out",
-                            maskComposite: "exclude",
-                            zIndex: "-100",
-                            display: { xs: "none", sm: "block" },
                         },
                     }}
                 >
                     <Typography
-                        style={{
-                            backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
+                        sx={{
+                            backgroundImage: "linear-gradient(to right, rgb(122, 96, 255), rgb(255, 136, 0))",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
-                            marginBottom: "20px",
-                            fontSize: isLarge ? "50px" : "40px",
+                            mb: 3,
+                            fontSize: isLarge ? "52px" : "42px",
+                            fontWeight: 700,
+                            letterSpacing: "1px",
+                            lineHeight: 1.2,
                         }}
                         variant="h3"
                         className="lily-script-one-regular"
                     >
                         Ripple
                     </Typography>
-                    <Typography gutterBottom sx={{ fontSize: isLarge ? "1rem" : "0.85rem" }}>
+
+                    <Typography
+                        gutterBottom
+                        sx={{
+                            fontSize: isLarge ? "1rem" : "0.9rem",
+                            color: "rgba(255, 255, 255, 0.7)",
+                            mb: 3,
+                        }}
+                    >
                         Sign up to see photos and videos from your friends.
                     </Typography>
-                    {error && <Alert severity="error">{error}</Alert>}
-                    {success && <Alert severity="success">{success}</Alert>}
+
+                    {error && (
+                        <Alert
+                            severity="error"
+                            sx={{
+                                mb: 3,
+                                backgroundColor: "rgba(255, 50, 50, 0.15)",
+                                border: "1px solid rgba(255, 50, 50, 0.3)",
+                                color: "#ff6b6b",
+                            }}
+                        >
+                            {error}
+                        </Alert>
+                    )}
+
+                    {success && (
+                        <Alert
+                            severity="success"
+                            sx={{
+                                mb: 3,
+                                backgroundColor: "rgba(50, 255, 50, 0.15)",
+                                border: "1px solid rgba(50, 255, 50, 0.3)",
+                                color: "#6bff6b",
+                            }}
+                        >
+                            {success}
+                        </Alert>
+                    )}
+
                     <form onSubmit={handleRegister}>
-                        <TextField
-                            fullWidth
-                            placeholder="Email"
-                            variant="outlined"
-                            margin="normal"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            size={isLarge ? "medium" : "small"}
-                            slotProps={{
-                                input: {
-                                    style: {
-                                        fontSize: isLarge ? "1rem" : "0.85rem",
-                                        padding: isLarge ? "0px" : "5px",
-                                    },
-                                },
-                            }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "20px",
-                                    "&:hover fieldset": {
-                                        borderColor: "#767676",
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#767676",
-                                        boxShadow: "none",
-                                    },
-                                },
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            placeholder="Username"
-                            variant="outlined"
-                            margin="normal"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            size={isLarge ? "medium" : "small"}
-                            slotProps={{
-                                input: {
-                                    style: {
-                                        fontSize: isLarge ? "1rem" : "0.85rem",
-                                        padding: isLarge ? "0px" : "5px",
-                                    },
-                                },
-                            }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "20px",
-                                    "&:hover fieldset": {
-                                        borderColor: "#767676",
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#767676",
-                                        boxShadow: "none",
-                                    },
-                                },
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            placeholder="Password"
-                            type="password"
-                            variant="outlined"
-                            margin="normal"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            size={isLarge ? "medium" : "small"}
-                            slotProps={{
-                                input: {
-                                    style: {
-                                        fontSize: isLarge ? "1rem" : "0.85rem",
-                                        padding: isLarge ? "0px" : "5px",
-                                    },
-                                },
-                            }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "20px",
-                                    "&:hover fieldset": {
-                                        borderColor: "#767676",
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#767676",
-                                        boxShadow: "none",
-                                    },
-                                },
-                            }}
-                        />
-                        <TextField
-                            fullWidth
-                            placeholder="Confirm Password"
-                            type="password"
-                            variant="outlined"
-                            margin="normal"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            size={isLarge ? "medium" : "small"}
-                            slotProps={{
-                                input: {
-                                    style: {
-                                        fontSize: isLarge ? "1rem" : "0.85rem",
-                                        padding: isLarge ? "0px" : "5px",
-                                    },
-                                },
-                            }}
-                            sx={{
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "20px",
-                                    "&:hover fieldset": {
-                                        borderColor: "#767676",
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#767676",
-                                        boxShadow: "none",
-                                    },
-                                },
-                            }}
-                        />
+                        {["Email", "Username", "Password", "Confirm Password"].map((field, index) => {
+                            const value = [email, username, password, confirmPassword][index];
+                            const setValue = [setEmail, setUsername, setPassword, setConfirmPassword][index];
+
+                            return (
+                                <TextField
+                                    key={field}
+                                    fullWidth
+                                    placeholder={field}
+                                    type={field.toLowerCase().includes("password") ? "password" : "text"}
+                                    variant="outlined"
+                                    margin="normal"
+                                    value={value}
+                                    onChange={(e) => setValue(e.target.value)}
+                                    sx={{
+                                        mb: 2,
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: "12px",
+                                            backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                            "& fieldset": {
+                                                borderColor: "rgba(255, 255, 255, 0.1)",
+                                            },
+                                            "&:hover fieldset": {
+                                                borderColor: "rgba(122, 96, 255, 0.5)",
+                                            },
+                                            "&.Mui-focused fieldset": {
+                                                borderColor: "rgba(122, 96, 255, 0.8)",
+                                                boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
+                                            },
+                                        },
+                                        "& .MuiInputBase-input": {
+                                            color: "#fff",
+                                            fontSize: isLarge ? "1rem" : "0.9rem",
+                                            padding: isLarge ? "14px 16px" : "12px 14px",
+                                        },
+                                    }}
+                                />
+                            );
+                        })}
+
                         <Button
                             variant="contained"
-                            color="primary"
                             type="submit"
-                            onClick={handleRegister}
                             disabled={loading || !email || !username || !password || !confirmPassword}
                             sx={{
                                 mt: 2,
-                                borderRadius: loading ? "50px" : "15px",
-                                fontSize: isLarge ? "1rem" : "0.85rem",
-                                backgroundColor: loading ? "#202327" : "#ffffff",
-                                color: loading ? "transparent" : "#000000",
-                                position: "relative",
-                                overflow: "hidden",
-                                height: "40px",
-                                minWidth: loading ? "40px" : "auto",
-                                width: loading ? "40px" : "100%",
-                                transition: "all 0.4s cubic-bezier(0.65, 0, 0.35, 1)",
-                                animation:
-                                    loading || !email || !username || !password || !confirmPassword ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                                mb: 2,
+                                borderRadius: "12px",
+                                height: "48px",
+                                fontSize: isLarge ? "1rem" : "0.9rem",
+                                fontWeight: 600,
+                                background: loading
+                                    ? "rgba(122, 96, 255, 0.3)"
+                                    : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                color: "#fff",
+                                textTransform: "none",
+                                letterSpacing: "0.5px",
+                                transition: "all 0.3s ease",
+                                width: "100%",
+                                "&:hover": {
+                                    transform: "translateY(-2px)",
+                                    boxShadow: "0 4px 12px rgba(122, 96, 255, 0.3)",
+                                    background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                },
+                                "&:disabled": {
+                                    background: "rgba(122, 96, 255, 0.1)",
+                                    color: "rgba(255, 255, 255, 0.3)",
+                                },
                             }}
                         >
-                            {loading ? (
-                                <CircularProgress
-                                    size={20}
-                                    thickness={5}
-                                    sx={{
-                                        position: "absolute",
-                                        top: "50%",
-                                        left: "50%",
-                                        marginTop: "-10px",
-                                        marginLeft: "-10px",
-                                        color: "#fff",
-                                    }}
-                                />
-                            ) : (
-                                "Sign Up"
-                            )}
+                            {loading ? <CircularProgress size={24} thickness={4} sx={{ color: "#fff" }} /> : "Sign Up"}
                         </Button>
                     </form>
-                    <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
+
+                    <Typography
+                        sx={{
+                            mt: 4,
+                            color: "rgba(255, 255, 255, 0.6)",
+                            fontSize: isLarge ? "0.95rem" : "0.85rem",
+                        }}
+                    >
                         Already have an account?{" "}
-                        <Link href="/login" sx={{ textDecoration: "none", fontWeight: "bold" }}>
+                        <Link
+                            href="/login"
+                            sx={{
+                                color: "rgba(122, 96, 255, 0.9)",
+                                fontWeight: 600,
+                                textDecoration: "none",
+                                "&:hover": {
+                                    color: "rgba(160, 96, 255, 0.9)",
+                                    textDecoration: "underline",
+                                },
+                            }}
+                        >
                             Log in
                         </Link>
                     </Typography>

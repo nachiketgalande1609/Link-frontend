@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { TextField, Button, Container, Typography, Box, Alert, Fade, useMediaQuery, Link, Grid } from "@mui/material";
+import { TextField, Button, Container, Typography, Box, Alert, Fade, useMediaQuery, Link, Grid, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { generatePasswordResetOTP, ResetPassword, verifyPasswordResetOTP } from "../services/api";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import ParticleCanvas from "../component/ParticleCanvas";
 
 const ForgotPasswordPage: React.FC = () => {
     const notifications = useNotifications();
@@ -147,43 +148,44 @@ const ForgotPasswordPage: React.FC = () => {
                 height: "100svh",
             }}
         >
+            {/* Particle Background Canvas */}
+            <ParticleCanvas />
+
             <Fade in={checked} timeout={1500}>
                 <Box
                     sx={{
                         textAlign: "center",
-                        padding: isLarge ? "80px 30px" : "40px 30px",
-                        borderRadius: "20px",
+                        padding: isLarge ? "60px 40px" : "40px 30px",
+                        borderRadius: "16px",
                         position: "relative",
                         overflow: "hidden",
-                        border: { xs: "none", sm: "2px solid transparent" },
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
+                        backgroundColor: "rgba(15, 15, 25, 0.85)",
+                        backdropFilter: "blur(8px)",
+                        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+                        border: "1px solid rgba(122, 96, 255, 0.2)",
+                        width: "100%",
+                        maxWidth: "440px",
                         "&::before": {
                             content: '""',
                             position: "absolute",
                             top: 0,
                             left: 0,
-                            width: "calc(100% - 4px)",
-                            height: "calc(100% - 4px)",
-                            borderRadius: "20px",
-                            padding: "2px",
+                            width: "100%",
+                            height: "4px",
                             background: "linear-gradient(to right, rgb(122, 96, 255), rgb(255, 136, 0))",
-                            WebkitMask: "linear-gradient(white, white) content-box, linear-gradient(white, white)",
-                            WebkitMaskComposite: "destination-out",
-                            maskComposite: "exclude",
-                            zIndex: "-100",
-                            display: { xs: "none", sm: "block" },
                         },
                     }}
                 >
                     <Typography
-                        style={{
-                            backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
+                        sx={{
+                            backgroundImage: "linear-gradient(to right, rgb(122, 96, 255), rgb(255, 136, 0))",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
-                            marginBottom: isLarge ? "20px" : "5px",
-                            fontSize: isLarge ? "50px" : "40px",
+                            mb: 3,
+                            fontSize: isLarge ? "52px" : "42px",
+                            fontWeight: 700,
+                            letterSpacing: "1px",
+                            lineHeight: 1.2,
                         }}
                         className="lily-script-one-regular"
                     >
@@ -191,7 +193,15 @@ const ForgotPasswordPage: React.FC = () => {
                     </Typography>
 
                     {error && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
+                        <Alert
+                            severity="error"
+                            sx={{
+                                mb: 3,
+                                backgroundColor: "rgba(255, 50, 50, 0.15)",
+                                border: "1px solid rgba(255, 50, 50, 0.3)",
+                                color: "#ff6b6b",
+                            }}
+                        >
                             {error}
                         </Alert>
                     )}
@@ -205,25 +215,26 @@ const ForgotPasswordPage: React.FC = () => {
                                 margin="normal"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                size={isLarge ? "medium" : "small"}
-                                slotProps={{
-                                    input: {
-                                        style: {
-                                            fontSize: isLarge ? "1rem" : "0.85rem",
-                                            padding: isLarge ? "0px" : "5px",
-                                        },
-                                    },
-                                }}
                                 sx={{
+                                    mb: 2,
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: "20px",
+                                        borderRadius: "12px",
+                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                        "& fieldset": {
+                                            borderColor: "rgba(255, 255, 255, 0.1)",
+                                        },
                                         "&:hover fieldset": {
-                                            borderColor: "#767676",
+                                            borderColor: "rgba(122, 96, 255, 0.5)",
                                         },
                                         "&.Mui-focused fieldset": {
-                                            borderColor: "#767676",
-                                            boxShadow: "none",
+                                            borderColor: "rgba(122, 96, 255, 0.8)",
+                                            boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
                                         },
+                                    },
+                                    "& .MuiInputBase-input": {
+                                        color: "#fff",
+                                        fontSize: isLarge ? "1rem" : "0.9rem",
+                                        padding: isLarge ? "14px 16px" : "12px 14px",
                                     },
                                 }}
                             />
@@ -234,26 +245,47 @@ const ForgotPasswordPage: React.FC = () => {
                                 type="submit"
                                 sx={{
                                     mt: 2,
-                                    borderRadius: "15px",
-                                    fontSize: isLarge ? "1rem" : "0.85rem",
-                                    backgroundColor: "#ffffff",
-                                    ":disabled": {
-                                        backgroundColor: "#202327",
-                                        color: "#000000",
-                                    },
+                                    mb: 2,
+                                    borderRadius: "12px",
+                                    height: "48px",
+                                    fontSize: isLarge ? "1rem" : "0.9rem",
+                                    fontWeight: 600,
+                                    background:
+                                        loading || !email
+                                            ? "rgba(122, 96, 255, 0.3)"
+                                            : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                    color: "#fff",
+                                    textTransform: "none",
+                                    letterSpacing: "0.5px",
+                                    transition: "all 0.3s ease",
+                                    "&:hover":
+                                        !loading && email
+                                            ? {
+                                                  transform: "translateY(-2px)",
+                                                  boxShadow: "0 4px 12px rgba(122, 96, 255, 0.3)",
+                                                  background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                              }
+                                            : {},
                                 }}
                             >
-                                {loading ? "Sending Email..." : "Reset Password"}
+                                {loading ? (
+                                    <>
+                                        <CircularProgress size={20} thickness={4} sx={{ color: "#fff", mr: 1 }} />
+                                        Sending Email...
+                                    </>
+                                ) : (
+                                    "Reset Password"
+                                )}
                             </Button>
                         </form>
                     )}
 
                     {step === "otp" && (
                         <>
-                            <Typography sx={{ mb: 2 }}>
+                            <Typography sx={{ mb: 3, color: "rgba(255, 255, 255, 0.7)" }}>
                                 Enter the 6-digit OTP sent to <b>{email}</b>
                             </Typography>
-                            <Grid container spacing={1} justifyContent="center" mb={2}>
+                            <Grid container spacing={1} justifyContent="center" mb={3}>
                                 {otp.map((digit, index) => (
                                     <Grid item key={index}>
                                         <TextField
@@ -263,19 +295,27 @@ const ForgotPasswordPage: React.FC = () => {
                                             InputProps={{
                                                 inputProps: {
                                                     maxLength: 1,
-                                                    style: { textAlign: "center", fontSize: "1.5rem" },
-                                                    onPaste: handleOTPPaste, // ✅ Correctly typed here
+                                                    style: {
+                                                        textAlign: "center",
+                                                        fontSize: "1.5rem",
+                                                        color: "#fff",
+                                                    },
+                                                    onPaste: handleOTPPaste,
                                                 },
                                             }}
                                             sx={{
-                                                width: "3rem",
+                                                width: "2.65rem",
                                                 "& .MuiOutlinedInput-root": {
+                                                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                                    "& fieldset": {
+                                                        borderColor: "rgba(255, 255, 255, 0.1)",
+                                                    },
                                                     "&:hover fieldset": {
-                                                        borderColor: "#767676",
+                                                        borderColor: "rgba(122, 96, 255, 0.5)",
                                                     },
                                                     "&.Mui-focused fieldset": {
-                                                        borderColor: "#767676",
-                                                        boxShadow: "none",
+                                                        borderColor: "rgba(122, 96, 255, 0.8)",
+                                                        boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
                                                     },
                                                 },
                                             }}
@@ -289,20 +329,39 @@ const ForgotPasswordPage: React.FC = () => {
                                 fullWidth
                                 onClick={handleOTPVerify}
                                 sx={{
-                                    mt: 1,
-                                    borderRadius: "15px",
-                                    fontSize: isLarge ? "1rem" : "0.85rem",
-                                    backgroundColor: "#ffffff",
+                                    height: "48px",
+                                    borderRadius: "12px",
+                                    fontSize: isLarge ? "1rem" : "0.9rem",
+                                    fontWeight: 600,
+                                    background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                    color: "#fff",
+                                    textTransform: "none",
+                                    letterSpacing: "0.5px",
+                                    transition: "all 0.3s ease",
+                                    "&:hover": !loading
+                                        ? {
+                                              transform: "translateY(-2px)",
+                                              boxShadow: "0 4px 12px rgba(122, 96, 255, 0.3)",
+                                              background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                          }
+                                        : {},
                                 }}
                             >
-                                {loading ? "Verifying..." : "Verify OTP"}
+                                {loading ? (
+                                    <>
+                                        <CircularProgress size={20} thickness={4} sx={{ color: "#fff", mr: 1 }} />
+                                        Verifying...
+                                    </>
+                                ) : (
+                                    "Verify OTP"
+                                )}
                             </Button>
                         </>
                     )}
 
                     {step === "reset" && (
                         <>
-                            <Typography sx={{ mb: 2 }}>Enter your new password</Typography>
+                            <Typography sx={{ mb: 3, color: "rgba(255, 255, 255, 0.7)" }}>Enter your new password</Typography>
                             <TextField
                                 fullWidth
                                 type="password"
@@ -312,15 +371,25 @@ const ForgotPasswordPage: React.FC = () => {
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 sx={{
+                                    mb: 2,
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: "20px",
+                                        borderRadius: "12px",
+                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                        "& fieldset": {
+                                            borderColor: "rgba(255, 255, 255, 0.1)",
+                                        },
                                         "&:hover fieldset": {
-                                            borderColor: "#767676",
+                                            borderColor: "rgba(122, 96, 255, 0.5)",
                                         },
                                         "&.Mui-focused fieldset": {
-                                            borderColor: "#767676",
-                                            boxShadow: "none",
+                                            borderColor: "rgba(122, 96, 255, 0.8)",
+                                            boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
                                         },
+                                    },
+                                    "& .MuiInputBase-input": {
+                                        color: "#fff",
+                                        fontSize: isLarge ? "1rem" : "0.9rem",
+                                        padding: isLarge ? "14px 16px" : "12px 14px",
                                     },
                                 }}
                             />
@@ -333,15 +402,25 @@ const ForgotPasswordPage: React.FC = () => {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 sx={{
+                                    mb: 4,
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: "20px",
+                                        borderRadius: "12px",
+                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                        "& fieldset": {
+                                            borderColor: "rgba(255, 255, 255, 0.1)",
+                                        },
                                         "&:hover fieldset": {
-                                            borderColor: "#767676",
+                                            borderColor: "rgba(122, 96, 255, 0.5)",
                                         },
                                         "&.Mui-focused fieldset": {
-                                            borderColor: "#767676",
-                                            boxShadow: "none",
+                                            borderColor: "rgba(122, 96, 255, 0.8)",
+                                            boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
                                         },
+                                    },
+                                    "& .MuiInputBase-input": {
+                                        color: "#fff",
+                                        fontSize: isLarge ? "1rem" : "0.9rem",
+                                        padding: isLarge ? "14px 16px" : "12px 14px",
                                     },
                                 }}
                             />
@@ -351,20 +430,56 @@ const ForgotPasswordPage: React.FC = () => {
                                 fullWidth
                                 onClick={handlePasswordReset}
                                 sx={{
-                                    mt: 2.5,
-                                    borderRadius: "15px",
-                                    fontSize: isLarge ? "1rem" : "0.85rem",
-                                    backgroundColor: "#ffffff",
+                                    height: "48px",
+                                    borderRadius: "12px",
+                                    fontSize: isLarge ? "1rem" : "0.9rem",
+                                    fontWeight: 600,
+                                    background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                    color: "#fff",
+                                    textTransform: "none",
+                                    letterSpacing: "0.5px",
+                                    transition: "all 0.3s ease",
+                                    "&:hover": !loading
+                                        ? {
+                                              transform: "translateY(-2px)",
+                                              boxShadow: "0 4px 12px rgba(122, 96, 255, 0.3)",
+                                              background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                          }
+                                        : {},
                                 }}
                             >
-                                {loading ? "Resetting..." : "Reset Password"}
+                                {loading ? (
+                                    <>
+                                        <CircularProgress size={20} thickness={4} sx={{ color: "#fff", mr: 1 }} />
+                                        Resetting...
+                                    </>
+                                ) : (
+                                    "Reset Password"
+                                )}
                             </Button>
                         </>
                     )}
 
-                    <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
+                    <Typography
+                        sx={{
+                            mt: 4,
+                            color: "rgba(255, 255, 255, 0.6)",
+                            fontSize: isLarge ? "0.95rem" : "0.85rem",
+                        }}
+                    >
                         Remember your password?{" "}
-                        <Link href="/login" sx={{ textDecoration: "none", fontWeight: "bold" }}>
+                        <Link
+                            href="/login"
+                            sx={{
+                                color: "rgba(122, 96, 255, 0.9)",
+                                fontWeight: 600,
+                                textDecoration: "none",
+                                "&:hover": {
+                                    color: "rgba(160, 96, 255, 0.9)",
+                                    textDecoration: "underline",
+                                },
+                            }}
+                        >
                             Back to Login
                         </Link>
                     </Typography>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TextField, Button, Container, Typography, Box, Alert, Link, Fade, useMediaQuery, CircularProgress } from "@mui/material";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { loginUser, googleLogin, trackTraffic } from "../services/api";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../store/store";
 import socket from "../services/socket";
 import axios from "axios";
+import ParticleCanvas from "../component/ParticleCanvas";
 
 const LoginPage: React.FC = () => {
     const { setUser } = useGlobalStore();
@@ -94,6 +95,8 @@ const LoginPage: React.FC = () => {
 
     return (
         <GoogleOAuthProvider clientId={"702353220748-2lmc03lb4tcfnuqds67h8bbupmb1aa0q.apps.googleusercontent.com"}>
+            <ParticleCanvas />
+
             <Container
                 sx={{
                     width: isLarge ? "440px" : "400px",
@@ -107,40 +110,38 @@ const LoginPage: React.FC = () => {
                     <Box
                         sx={{
                             textAlign: "center",
-                            padding: isLarge ? "80px 30px" : "40px 30px",
-                            borderRadius: "20px",
+                            padding: isLarge ? "60px 40px" : "40px 30px",
+                            borderRadius: "16px",
                             position: "relative",
                             overflow: "hidden",
-                            border: { xs: "none", sm: "2px solid transparent" },
-                            display: "flex",
-                            justifyContent: "center",
-                            flexDirection: "column",
+                            backgroundColor: "rgba(15, 15, 25, 0.85)",
+                            backdropFilter: "blur(8px)",
+                            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+                            border: "1px solid rgba(122, 96, 255, 0.2)",
+                            width: "100%",
+                            maxWidth: "440px",
                             "&::before": {
                                 content: '""',
                                 position: "absolute",
                                 top: 0,
                                 left: 0,
-                                width: "calc(100% - 4px)",
-                                height: "calc(100% - 4px)",
-                                borderRadius: "20px",
-                                padding: "2px",
+                                width: "100%",
+                                height: "4px",
                                 background: "linear-gradient(to right, rgb(122, 96, 255), rgb(255, 136, 0))",
-                                WebkitMask: "linear-gradient(white, white) content-box, linear-gradient(white, white)",
-                                WebkitMaskComposite: "destination-out",
-                                maskComposite: "exclude",
-                                zIndex: "-100",
-                                display: { xs: "none", sm: "block" },
                             },
                         }}
                     >
                         {/* Heading */}
                         <Typography
-                            style={{
-                                backgroundImage: "linear-gradient(to right,rgb(122, 96, 255),rgb(255, 136, 0))",
+                            sx={{
+                                backgroundImage: "linear-gradient(to right, rgb(122, 96, 255), rgb(255, 136, 0))",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
-                                marginBottom: isLarge ? "20px" : "5px",
-                                fontSize: isLarge ? "50px" : "40px",
+                                mb: 3,
+                                fontSize: isLarge ? "52px" : "42px",
+                                fontWeight: 700,
+                                letterSpacing: "1px",
+                                lineHeight: 1.2,
                             }}
                             className="lily-script-one-regular"
                         >
@@ -149,7 +150,15 @@ const LoginPage: React.FC = () => {
 
                         {/* Error Alert */}
                         {error && (
-                            <Alert severity="error" sx={{ mb: 2 }}>
+                            <Alert
+                                severity="error"
+                                sx={{
+                                    mb: 3,
+                                    backgroundColor: "rgba(255, 50, 50, 0.15)",
+                                    border: "1px solid rgba(255, 50, 50, 0.3)",
+                                    color: "#ff6b6b",
+                                }}
+                            >
                                 {error}
                             </Alert>
                         )}
@@ -164,27 +173,30 @@ const LoginPage: React.FC = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 size={isLarge ? "medium" : "small"}
-                                slotProps={{
-                                    input: {
-                                        style: {
-                                            fontSize: isLarge ? "1rem" : "0.85rem",
-                                            padding: isLarge ? "0px" : "5px",
-                                        },
-                                    },
-                                }}
                                 sx={{
+                                    mb: 2,
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: "20px",
+                                        borderRadius: "12px",
+                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                        "& fieldset": {
+                                            borderColor: "rgba(255, 255, 255, 0.1)",
+                                        },
                                         "&:hover fieldset": {
-                                            borderColor: "#767676",
+                                            borderColor: "rgba(122, 96, 255, 0.5)",
                                         },
                                         "&.Mui-focused fieldset": {
-                                            borderColor: "#767676",
-                                            boxShadow: "none",
+                                            borderColor: "rgba(122, 96, 255, 0.8)",
+                                            boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
                                         },
+                                    },
+                                    "& .MuiInputBase-input": {
+                                        color: "#fff",
+                                        fontSize: isLarge ? "1rem" : "0.9rem",
+                                        padding: isLarge ? "14px 16px" : "12px 14px",
                                     },
                                 }}
                             />
+
                             {/* Password Field */}
                             <TextField
                                 fullWidth
@@ -195,99 +207,113 @@ const LoginPage: React.FC = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 size={isLarge ? "medium" : "small"}
-                                slotProps={{
-                                    input: {
-                                        style: {
-                                            fontSize: isLarge ? "1rem" : "0.85rem",
-                                            padding: isLarge ? "0px" : "5px",
-                                        },
-                                    },
-                                }}
                                 sx={{
+                                    mb: 2,
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: "20px",
+                                        borderRadius: "12px",
+                                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                        "& fieldset": {
+                                            borderColor: "rgba(255, 255, 255, 0.1)",
+                                        },
                                         "&:hover fieldset": {
-                                            borderColor: "#767676",
+                                            borderColor: "rgba(122, 96, 255, 0.5)",
                                         },
                                         "&.Mui-focused fieldset": {
-                                            borderColor: "#767676",
-                                            boxShadow: "none",
+                                            borderColor: "rgba(122, 96, 255, 0.8)",
+                                            boxShadow: "0 0 0 2px rgba(122, 96, 255, 0.2)",
                                         },
+                                    },
+                                    "& .MuiInputBase-input": {
+                                        color: "#fff",
+                                        fontSize: isLarge ? "1rem" : "0.9rem",
+                                        padding: isLarge ? "14px 16px" : "12px 14px",
                                     },
                                 }}
                             />
+
                             <Button
                                 variant="contained"
                                 disabled={loading || !email || !password}
                                 type="submit"
                                 sx={{
                                     mt: 2,
-                                    borderRadius: loading ? "50px" : "15px",
-                                    fontSize: isLarge ? "1rem" : "0.85rem",
-                                    backgroundColor: loading ? "#202327" : "#ffffff",
-                                    color: loading ? "transparent" : "#000000",
-                                    position: "relative",
-                                    overflow: "hidden",
-                                    height: "40px",
-                                    minWidth: loading ? "40px" : "auto",
-                                    width: loading ? "40px" : "100%",
-                                    transition: "all 0.4s cubic-bezier(0.65, 0, 0.35, 1)",
-                                    animation: loading || !email || !password ? "" : "buttonEnabledAnimation 0.6s ease-out",
+                                    mb: 2,
+                                    borderRadius: "12px",
+                                    height: "48px",
+                                    fontSize: isLarge ? "1rem" : "0.9rem",
+                                    fontWeight: 600,
+                                    background: loading
+                                        ? "rgba(122, 96, 255, 0.3)"
+                                        : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                    color: "#fff",
+                                    textTransform: "none",
+                                    letterSpacing: "0.5px",
+                                    transition: "all 0.3s ease",
+                                    width: "100%",
+                                    "&:hover": {
+                                        transform: "translateY(-2px)",
+                                        boxShadow: "0 4px 12px rgba(122, 96, 255, 0.3)",
+                                        background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                    },
+                                    "&:disabled": {
+                                        background: "rgba(122, 96, 255, 0.1)",
+                                        color: "rgba(255, 255, 255, 0.3)",
+                                    },
                                 }}
                             >
-                                {loading ? (
-                                    <CircularProgress
-                                        size={20}
-                                        thickness={5}
-                                        sx={{
-                                            position: "absolute",
-                                            top: "50%",
-                                            left: "50%",
-                                            marginTop: "-10px",
-                                            marginLeft: "-10px",
-                                            color: "#fff",
-                                        }}
-                                    />
-                                ) : (
-                                    "Login"
-                                )}
+                                {loading ? <CircularProgress size={24} thickness={4} sx={{ color: "#fff" }} /> : "Login"}
                             </Button>
                         </form>
 
-                        <Typography sx={{ mt: 2, mb: 2, fontSize: isLarge ? "1rem" : "0.85rem", display: "none" }}>OR</Typography>
-
-                        <Box sx={{ display: "none", justifyContent: "center", width: "100%", mb: 2 }}>
+                        <Box sx={{ display: "none", justifyContent: "center", width: "100%", my: 3 }}>
                             <GoogleLogin
                                 onSuccess={handleGoogleLogin}
-                                onError={() => {
-                                    setError("Google login failed!");
-                                }}
-                                theme="outline"
+                                onError={() => setError("Google login failed!")}
+                                theme="filled_black"
                                 text="signin_with"
                                 shape="pill"
                             />
                         </Box>
 
                         <Button
-                            variant="outlined"
+                            variant="text"
                             fullWidth
                             onClick={() => navigate("/reset-password")}
                             sx={{
-                                mt: 3.5,
-                                borderRadius: "15px",
-                                fontSize: isLarge ? "1rem" : "0.85rem",
-                                color: "#ffffff",
-                                borderColor: "#ffffff",
+                                mt: 1,
+                                color: "rgba(255, 255, 255, 0.7)",
                                 textTransform: "none",
+                                fontSize: isLarge ? "0.95rem" : "0.85rem",
+                                "&:hover": {
+                                    color: "rgba(122, 96, 255, 0.9)",
+                                    backgroundColor: "transparent",
+                                },
                             }}
                         >
-                            Forgot Password
+                            Forgot Password?
                         </Button>
 
-                        <Typography sx={{ mt: 4, fontSize: isLarge ? "1rem" : "0.85rem" }}>
+                        <Typography
+                            sx={{
+                                mt: 4,
+                                color: "rgba(255, 255, 255, 0.6)",
+                                fontSize: isLarge ? "0.95rem" : "0.85rem",
+                            }}
+                        >
                             Don't have an account?{" "}
-                            <Link href="/register" sx={{ textDecoration: "none", fontWeight: "bold" }}>
-                                Create an account
+                            <Link
+                                href="/register"
+                                sx={{
+                                    color: "rgba(122, 96, 255, 0.9)",
+                                    fontWeight: 600,
+                                    textDecoration: "none",
+                                    "&:hover": {
+                                        color: "rgba(160, 96, 255, 0.9)",
+                                        textDecoration: "underline",
+                                    },
+                                }}
+                            >
+                                Sign up
                             </Link>
                         </Typography>
                     </Box>
