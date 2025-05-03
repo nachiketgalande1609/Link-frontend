@@ -213,22 +213,6 @@ const ForgotPasswordPage: React.FC = () => {
                                 },
                             }}
                         >
-                            {/* Animated Glow Effect */}
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 0.3 }}
-                                transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-                                style={{
-                                    position: "absolute",
-                                    top: "-50%",
-                                    left: "-50%",
-                                    width: "200%",
-                                    height: "200%",
-                                    background: "radial-gradient(circle, rgba(122, 96, 255, 0.4) 0%, rgba(122, 96, 255, 0) 70%)",
-                                    zIndex: -1,
-                                }}
-                            />
-
                             {/* Heading with Animation */}
                             <motion.div
                                 initial={{ scale: 0.9, opacity: 0 }}
