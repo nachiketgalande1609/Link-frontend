@@ -144,7 +144,6 @@ const LoginPage: React.FC = () => {
 
             <Container
                 sx={{
-                    width: isLarge ? "440px" : "400px",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -165,8 +164,8 @@ const LoginPage: React.FC = () => {
                                     backdropFilter: "blur(12px)",
                                     boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
                                     border: "1px solid rgba(122, 96, 255, 0.3)",
-                                    width: "100%",
-                                    maxWidth: "440px",
+                                    width: isLarge ? "440px" : "400px",
+                                    boxSizing: "border-box",
                                     "&::before": {
                                         content: '""',
                                         position: "absolute",

@@ -79,7 +79,6 @@ const RegisterPage: React.FC = () => {
     return (
         <Container
             sx={{
-                width: isLarge ? "440px" : "400px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -137,8 +136,8 @@ const RegisterPage: React.FC = () => {
                                 backdropFilter: "blur(12px)",
                                 boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
                                 border: "1px solid rgba(122, 96, 255, 0.3)",
-                                width: "100%",
-                                maxWidth: "440px",
+                                width: isLarge ? "440px" : "400px",
+                                boxSizing: "border-box",
                                 "&::before": {
                                     content: '""',
                                     position: "absolute",
@@ -246,9 +245,9 @@ const RegisterPage: React.FC = () => {
 
                             <form onSubmit={handleRegister}>
                                 {/* Form Fields with Staggered Animation */}
-                                {["Email", "Username", "Password", "Confirm Password"].map((field, index) => {
-                                    const value = [email, username, password, confirmPassword][index];
-                                    const setValue = [setEmail, setUsername, setPassword, setConfirmPassword][index];
+                                {["Username", "Email", "Password", "Confirm Password"].map((field, index) => {
+                                    const value = [username, email, password, confirmPassword][index];
+                                    const setValue = [setUsername, setEmail, setPassword, setConfirmPassword][index];
 
                                     return (
                                         <motion.div

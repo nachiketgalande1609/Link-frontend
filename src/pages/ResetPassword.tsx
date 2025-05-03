@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { TextField, Button, Container, Typography, Box, Alert, useMediaQuery, Link, Grid, CircularProgress } from "@mui/material";
+import { TextField, Button, Container, Typography, Box, Alert, Link, useMediaQuery, CircularProgress, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { generatePasswordResetOTP, ResetPassword, verifyPasswordResetOTP } from "../services/api";
-import { useNotifications } from "@toolpad/core/useNotifications";
 import { motion, AnimatePresence } from "framer-motion";
 import futuristicVideo from "../static/login_bg.mp4";
 
 const ForgotPasswordPage: React.FC = () => {
-    const notifications = useNotifications();
-
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
     const [newPassword, setNewPassword] = useState("");
@@ -18,7 +15,6 @@ const ForgotPasswordPage: React.FC = () => {
     const [checked, setChecked] = useState(false);
     const [step, setStep] = useState<"email" | "otp" | "reset">("email");
     const [videoLoaded, setVideoLoaded] = useState(false);
-
     const isLarge = useMediaQuery("(min-width:1281px)");
     const navigate = useNavigate();
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -31,7 +27,7 @@ const ForgotPasswordPage: React.FC = () => {
     const handleVideoLoad = () => {
         setVideoLoaded(true);
         if (videoRef.current) {
-            videoRef.current.playbackRate = 0.7; // Slow down the video slightly
+            videoRef.current.playbackRate = 0.7;
         }
     };
 
@@ -46,11 +42,11 @@ const ForgotPasswordPage: React.FC = () => {
                 setError(null);
                 setStep("otp");
             } else {
-                setError(response.error || "Reset password failed!");
+                setError(response.error || "Failed to send OTP!");
             }
         } catch (err: any) {
-            console.error("Reset password error:", err);
-            setError(err.response?.data?.error || "Reset password failed!");
+            console.error("Error:", err);
+            setError(err.response?.data?.error || "Failed to send OTP!");
         } finally {
             setLoading(false);
         }
@@ -84,7 +80,7 @@ const ForgotPasswordPage: React.FC = () => {
                 setError(response.error || "Invalid OTP!");
             }
         } catch (err: any) {
-            console.error("OTP verification error:", err);
+            console.error("Error:", err);
             setError(err.response?.data?.error || "OTP verification failed!");
         } finally {
             setLoading(false);
@@ -101,7 +97,6 @@ const ForgotPasswordPage: React.FC = () => {
             setError("Passwords do not match.");
             return;
         }
-
         if (newPassword.length < 6) {
             setError("Password must be at least 6 characters.");
             return;
@@ -113,20 +108,17 @@ const ForgotPasswordPage: React.FC = () => {
             const response = await ResetPassword(email, fullOTP, newPassword);
 
             if (response.success) {
-                notifications.show("Password has been reset successfully! Redirecting to login...", {
-                    severity: "success",
-                    autoHideDuration: 3000,
-                });
-
                 setTimeout(() => {
                     navigate("/login", { state: { resetSuccess: true } });
-                }, 3000);
+                }, 2000);
             } else {
                 setError(response.error || "Password reset failed.");
             }
         } catch (err: any) {
-            console.error("Reset error:", err);
+            console.error("Error:", err);
             setError(err.message || "Password reset failed.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -151,7 +143,6 @@ const ForgotPasswordPage: React.FC = () => {
     return (
         <Container
             sx={{
-                width: isLarge ? "440px" : "400px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -209,8 +200,8 @@ const ForgotPasswordPage: React.FC = () => {
                                 backdropFilter: "blur(12px)",
                                 boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
                                 border: "1px solid rgba(122, 96, 255, 0.3)",
-                                width: "100%",
-                                maxWidth: "440px",
+                                width: isLarge ? "440px" : "400px",
+                                boxSizing: "border-box",
                                 "&::before": {
                                     content: '""',
                                     position: "absolute",
@@ -238,7 +229,7 @@ const ForgotPasswordPage: React.FC = () => {
                                 }}
                             />
 
-                            {/* Title with Animation */}
+                            {/* Heading with Animation */}
                             <motion.div
                                 initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
@@ -294,6 +285,7 @@ const ForgotPasswordPage: React.FC = () => {
                                                 margin="normal"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
+                                                size={isLarge ? "medium" : "small"}
                                                 sx={{
                                                     mb: 2,
                                                     "& .MuiOutlinedInput-root": {
@@ -322,7 +314,6 @@ const ForgotPasswordPage: React.FC = () => {
                                             <Button
                                                 variant="contained"
                                                 disabled={loading || !email}
-                                                fullWidth
                                                 type="submit"
                                                 sx={{
                                                     mt: 2,
@@ -331,32 +322,30 @@ const ForgotPasswordPage: React.FC = () => {
                                                     height: "48px",
                                                     fontSize: isLarge ? "1rem" : "0.9rem",
                                                     fontWeight: 600,
-                                                    background:
-                                                        loading || !email
-                                                            ? "rgba(122, 96, 255, 0.3)"
-                                                            : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                                    background: loading
+                                                        ? "rgba(122, 96, 255, 0.3)"
+                                                        : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
                                                     color: "#fff",
                                                     textTransform: "none",
                                                     letterSpacing: "0.5px",
                                                     transition: "all 0.3s ease",
-                                                    "&:hover":
-                                                        !loading && email
-                                                            ? {
-                                                                  transform: "translateY(-2px)",
-                                                                  boxShadow: "0 8px 20px rgba(122, 96, 255, 0.4)",
-                                                                  background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
-                                                              }
-                                                            : {},
+                                                    width: "100%",
+                                                    "&:hover": {
+                                                        transform: "translateY(-2px)",
+                                                        boxShadow: "0 8px 20px rgba(122, 96, 255, 0.4)",
+                                                        background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                                    },
+                                                    "&:disabled": {
+                                                        background: "rgba(122, 96, 255, 0.1)",
+                                                        color: "rgba(255, 255, 255, 0.3)",
+                                                    },
                                                 }}
                                             >
                                                 {loading ? (
-                                                    <>
-                                                        <CircularProgress size={20} thickness={4} sx={{ color: "#fff", mr: 1 }} />
-                                                        Sending Email...
-                                                    </>
+                                                    <CircularProgress size={24} thickness={4} sx={{ color: "#fff" }} />
                                                 ) : (
                                                     <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-                                                        Reset Password
+                                                        Send OTP
                                                     </motion.span>
                                                 )}
                                             </Button>
@@ -381,6 +370,7 @@ const ForgotPasswordPage: React.FC = () => {
                                                         inputRef={(ref) => (inputRefs.current[index] = ref)}
                                                         value={digit}
                                                         onChange={(e) => handleOTPChange(index, e.target.value)}
+                                                        onPaste={handleOTPPaste}
                                                         InputProps={{
                                                             inputProps: {
                                                                 maxLength: 1,
@@ -389,7 +379,6 @@ const ForgotPasswordPage: React.FC = () => {
                                                                     fontSize: "1.5rem",
                                                                     color: "#fff",
                                                                 },
-                                                                onPaste: handleOTPPaste,
                                                             },
                                                         }}
                                                         sx={{
@@ -417,32 +406,35 @@ const ForgotPasswordPage: React.FC = () => {
                                         <Button
                                             variant="contained"
                                             disabled={loading}
-                                            fullWidth
                                             onClick={handleOTPVerify}
                                             sx={{
-                                                height: "48px",
+                                                mt: 2,
+                                                mb: 2,
                                                 borderRadius: "12px",
+                                                height: "48px",
                                                 fontSize: isLarge ? "1rem" : "0.9rem",
                                                 fontWeight: 600,
-                                                background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                                background: loading
+                                                    ? "rgba(122, 96, 255, 0.3)"
+                                                    : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
                                                 color: "#fff",
                                                 textTransform: "none",
                                                 letterSpacing: "0.5px",
                                                 transition: "all 0.3s ease",
-                                                "&:hover": !loading
-                                                    ? {
-                                                          transform: "translateY(-2px)",
-                                                          boxShadow: "0 8px 20px rgba(122, 96, 255, 0.4)",
-                                                          background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
-                                                      }
-                                                    : {},
+                                                width: "100%",
+                                                "&:hover": {
+                                                    transform: "translateY(-2px)",
+                                                    boxShadow: "0 8px 20px rgba(122, 96, 255, 0.4)",
+                                                    background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                                },
+                                                "&:disabled": {
+                                                    background: "rgba(122, 96, 255, 0.1)",
+                                                    color: "rgba(255, 255, 255, 0.3)",
+                                                },
                                             }}
                                         >
                                             {loading ? (
-                                                <>
-                                                    <CircularProgress size={20} thickness={4} sx={{ color: "#fff", mr: 1 }} />
-                                                    Verifying...
-                                                </>
+                                                <CircularProgress size={24} thickness={4} sx={{ color: "#fff" }} />
                                             ) : (
                                                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                                                     Verify OTP
@@ -456,10 +448,7 @@ const ForgotPasswordPage: React.FC = () => {
                             {/* Reset Step */}
                             {step === "reset" && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-                                        <Typography sx={{ mb: 3, color: "rgba(255, 255, 255, 0.7)" }}>Enter your new password</Typography>
-                                    </motion.div>
-                                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
+                                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
                                         <TextField
                                             fullWidth
                                             type="password"
@@ -468,6 +457,7 @@ const ForgotPasswordPage: React.FC = () => {
                                             margin="normal"
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
+                                            size={isLarge ? "medium" : "small"}
                                             sx={{
                                                 mb: 2,
                                                 "& .MuiOutlinedInput-root": {
@@ -492,7 +482,7 @@ const ForgotPasswordPage: React.FC = () => {
                                             }}
                                         />
                                     </motion.div>
-                                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }}>
+                                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
                                         <TextField
                                             fullWidth
                                             type="password"
@@ -501,8 +491,9 @@ const ForgotPasswordPage: React.FC = () => {
                                             margin="normal"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
+                                            size={isLarge ? "medium" : "small"}
                                             sx={{
-                                                mb: 4,
+                                                mb: 2,
                                                 "& .MuiOutlinedInput-root": {
                                                     borderRadius: "12px",
                                                     backgroundColor: "rgba(255, 255, 255, 0.05)",
@@ -525,36 +516,39 @@ const ForgotPasswordPage: React.FC = () => {
                                             }}
                                         />
                                     </motion.div>
-                                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
+                                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
                                         <Button
                                             variant="contained"
                                             disabled={loading}
-                                            fullWidth
                                             onClick={handlePasswordReset}
                                             sx={{
-                                                height: "48px",
+                                                mt: 2,
+                                                mb: 2,
                                                 borderRadius: "12px",
+                                                height: "48px",
                                                 fontSize: isLarge ? "1rem" : "0.9rem",
                                                 fontWeight: 600,
-                                                background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
+                                                background: loading
+                                                    ? "rgba(122, 96, 255, 0.3)"
+                                                    : "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(160, 96, 255) 100%)",
                                                 color: "#fff",
                                                 textTransform: "none",
                                                 letterSpacing: "0.5px",
                                                 transition: "all 0.3s ease",
-                                                "&:hover": !loading
-                                                    ? {
-                                                          transform: "translateY(-2px)",
-                                                          boxShadow: "0 8px 20px rgba(122, 96, 255, 0.4)",
-                                                          background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
-                                                      }
-                                                    : {},
+                                                width: "100%",
+                                                "&:hover": {
+                                                    transform: "translateY(-2px)",
+                                                    boxShadow: "0 8px 20px rgba(122, 96, 255, 0.4)",
+                                                    background: "linear-gradient(45deg, rgb(122, 96, 255) 0%, rgb(140, 96, 255) 100%)",
+                                                },
+                                                "&:disabled": {
+                                                    background: "rgba(122, 96, 255, 0.1)",
+                                                    color: "rgba(255, 255, 255, 0.3)",
+                                                },
                                             }}
                                         >
                                             {loading ? (
-                                                <>
-                                                    <CircularProgress size={20} thickness={4} sx={{ color: "#fff", mr: 1 }} />
-                                                    Resetting...
-                                                </>
+                                                <CircularProgress size={24} thickness={4} sx={{ color: "#fff" }} />
                                             ) : (
                                                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                                                     Reset Password
@@ -566,7 +560,7 @@ const ForgotPasswordPage: React.FC = () => {
                             )}
 
                             {/* Back to Login Link with Animation */}
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
                                 <Typography
                                     sx={{
                                         mt: 4,
